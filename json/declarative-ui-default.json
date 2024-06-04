@@ -1,0 +1,31 @@
+{
+  "status": 0,
+  "data": {
+    "screen": "home|profile|chat",
+    "component": {
+      "name": "Scaffold",
+      "child": {
+        "name": "Column",
+        "children": [
+          {
+            "name": "Text",
+            "text": "Categories"
+          },
+          {
+            "name": "LazyRow",
+            "children": [
+              
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "messages": [
+    {
+      "severity": "error|warning|info|log",
+      "message": "",
+      "summary": ""
+    }
+  ]
+}
