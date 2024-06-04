@@ -1,12 +1,17 @@
 package presentation.screen
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.tab.CurrentTab
@@ -20,17 +25,21 @@ import presentation.screen.tab.ProfileTab
 class MainScreen : Screen {
     @Composable
     override fun Content() {
-        TabNavigator(HomeTab) { tabNavigator: TabNavigator ->
+        TabNavigator(BubbleTab) { tabNavigator: TabNavigator ->
             Scaffold(
                 bottomBar = {
                     BottomNavigation {
-                        TabNavigationItem(ProfileTab)
                         TabNavigationItem(HomeTab)
                         TabNavigationItem(BubbleTab)
+                        TabNavigationItem(ProfileTab)
                     }
+                },
+            ) { padding ->
+                Box(
+                    modifier = Modifier.padding(padding)
+                ) {
+                    CurrentTab()
                 }
-            ) {
-                CurrentTab()
             }
         }
     }
