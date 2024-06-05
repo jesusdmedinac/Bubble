@@ -94,6 +94,9 @@ object HomeTab : Tab {
                                 "Cocina y gastronomía",
                                 "Voluntariado y comunidad",
                                 "Desarrollo personal y aprendizaje",
+                                "Salud y bienestar",
+                                "Desafíos Ridículos",
+                                "Música y entretenimiento",
                             )
                         ) { category ->
                             Column(
