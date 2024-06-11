@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -14,6 +15,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Card
@@ -85,171 +89,40 @@ object ProfileTab : Tab {
                 modifier = Modifier.padding(8.dp)
             )
             Divider()
-            LazyColumn {
-                item {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
+            LazyVerticalGrid(modifier = Modifier.fillMaxSize(), columns = GridCells.Fixed(2)) {
+                items(listOf("Retos Guardados", "Retos Completados")) {
+                    Column(
+                        modifier = Modifier.clickable {  }
                     ) {
                         Box(
                             modifier = Modifier
+                                .aspectRatio(1f)
                                 .padding(16.dp)
-                                .size(48.dp)
-                                .clip(CircleShape)
-                                .background(Color.Gray)
                         ) {
-
-                        }
-                        Column {
-                            Text(
-                                "Nombre del usuario",
-                                style = MaterialTheme.typography.subtitle1,
-                            )
-                            Text(
-                                "Correo electrónico",
-                                style = MaterialTheme.typography.subtitle2,
-                            )
-                        }
-                    }
-                }
-                item {
-                    Text(
-                        text = "Tiempo en pantalla",
-                        style = MaterialTheme.typography.caption,
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp, vertical = 4.dp)
-                    )
-                }
-                item {
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 4.dp)
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(16.dp)
-                        ) {
-                            Text(
-                                text = "Hoy, 10 de junio",
-                                style = MaterialTheme.typography.subtitle2,
-                            )
-                            Text(
-                                text = "1 h 39 min",
-                                style = MaterialTheme.typography.h4,
-                            )
-                            val pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
-                            Box(
+                            val primary = MaterialTheme.colors.primary
+                            val secondary = MaterialTheme.colors.secondary
+                            Card(
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(128.dp)
-                                    .drawBehind {
-                                        drawRect(
-                                            color = Color.White,
-                                            topLeft = Offset(0f, 0f),
-                                            size = size,
-                                        )
-                                        repeat(6) {
-                                            drawLine(
-                                                color = Color.Black,
-                                                start = Offset(0f, (size.height / 6) * it),
-                                                end = Offset(size.width, (size.height / 6) * it),
-                                                strokeWidth = 2f
-                                            )
-                                        }
-                                        repeat(9) {
-                                            drawLine(
-                                                color = Color.Black,
-                                                start = Offset((size.width / 8) * it, 0f),
-                                                end = Offset((size.width / 8) * it, size.height),
-                                                strokeWidth = 2f,
-                                                pathEffect = pathEffect
-                                            )
-                                        }
-                                    }
+                                    .fillMaxSize(0.95f)
+                                    .aspectRatio(1f)
+                                    .align(Alignment.BottomEnd),
+                                backgroundColor = primary,
+                            ) {
+                            }
+                            Card(
+                                modifier = Modifier
+                                    .fillMaxSize(0.95f)
+                                    .aspectRatio(1f)
+                                    .align(Alignment.TopStart),
+                                backgroundColor = secondary,
                             ) {
                             }
                         }
-                    }
-                }
-                item {
-                    Text(
-                        "Actualizado: hoy, 11:09 p.m.",
-                        style = MaterialTheme.typography.caption,
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp, vertical = 4.dp)
-                    )
-                }
-                item {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 4.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text("Más usadas")
-                        Spacer(modifier = Modifier.weight(1f))
-                        TextButton(
-                            onClick = { /*TODO*/ },
-                        ) {
-                            Text("MOSTRAR CATEGORÍAS")
-                        }
-                    }
-                }
-                item {
-                    Card(
-                        modifier = Modifier.fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 4.dp)
-                    ) {
-                        Column(
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            val stringList = listOf(
-                                "YouTube",
-                                "YouTube",
-                                "YouTube",
-                                "YouTube",
-                                "YouTube",
-                                "YouTube",
-                            )
-                            stringList
-                                .forEachIndexed { index, it ->
-                                    Row(
-                                        modifier = Modifier.clickable { },
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Icon(
-                                            Icons.Default.Home,
-                                            contentDescription = null,
-                                            modifier = Modifier.padding(16.dp)
-                                        )
-                                        Column(
-                                            modifier = Modifier.weight(1f)
-                                        ) {
-                                            Text(it)
-                                            Text("1 h 9 min")
-                                        }
-                                        IconButton(onClick = {}) {
-                                            Icon(
-                                                Icons.AutoMirrored.Filled.KeyboardArrowRight,
-                                                contentDescription = null,
-                                                modifier = Modifier.padding(16.dp)
-                                            )
-                                        }
-                                    }
-                                    Divider(
-                                        modifier = Modifier.padding(start = 56.dp)
-                                    )
-                                }
-                            ListItem(
-                                modifier = Modifier.clickable { }
-                            ) {
-                                Row(
-                                    modifier = Modifier.fillMaxSize()
-                                ) {
-                                    Spacer(modifier = Modifier.width(42.dp))
-                                    Text("Mostrar más", color = MaterialTheme.colors.primary)
-                                }
-                            }
-                        }
+                        Text(
+                            text = it,
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                        )
                     }
                 }
             }
