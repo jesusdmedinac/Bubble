@@ -26,7 +26,7 @@ import presentation.screen.tab.ProfileTab
 class MainScreen : Screen {
     @Composable
     override fun Content() {
-        TabNavigator(BubbleTab) { tabNavigator: TabNavigator ->
+        TabNavigator(ProfileTab) { tabNavigator: TabNavigator ->
             Scaffold(
                 bottomBar = {
                     BottomNavigation {
