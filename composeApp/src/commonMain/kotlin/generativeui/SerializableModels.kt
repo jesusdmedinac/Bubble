@@ -6,16 +6,16 @@ sealed interface Node {
 }
 
 sealed interface Layout : Node {
-    val children: List<Layout>
+    val children: List<Node>
 }
 
 data class RowLayout(
-    override val children: List<Layout> = emptyList(),
+    override val children: List<Node> = emptyList(),
     override val nodeModifiers: List<NodeModifier> = emptyList(),
 ) : Layout
 
 data class ColumnLayout(
-    override val children: List<Layout> = emptyList(),
+    override val children: List<Node> = emptyList(),
     override val nodeModifiers: List<NodeModifier> = emptyList(),
 ) : Layout
 
@@ -37,12 +37,14 @@ data class TextNode(
 sealed class ContentScaleImageAttribute {
     data object None : ContentScaleImageAttribute()
     data object FillWidth : ContentScaleImageAttribute()
+    data object FillHeight : ContentScaleImageAttribute()
 }
 
 data class AsyncImageNode(
     val url: String,
     val contentDescription: String?,
     val contentScale: ContentScaleImageAttribute = ContentScaleImageAttribute.None,
+    val alpha: Float = 1f,
     override val nodeModifiers: List<NodeModifier> = emptyList(),
 ) : Node
 

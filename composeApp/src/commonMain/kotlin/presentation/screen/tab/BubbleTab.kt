@@ -54,18 +54,6 @@ object BubbleTab : Tab {
                     localSoftwareKeyboardController?.hide()
                 }
         ) {
-            TopAppBar(
-                title = {
-                    BubbleTabTitle()
-                },
-                actions = {
-                    BubbleTabActions()
-                },
-                backgroundColor = Color.Transparent,
-                elevation = 0.dp,
-                modifier = Modifier.padding(8.dp)
-            )
-            Divider(modifier = Modifier.fillMaxWidth())
             BubbleMessagesBox()
         }
     }

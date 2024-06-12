@@ -12,5 +12,6 @@ fun ComposeAsyncImageNode(node: AsyncImageNode) {
         contentDescription = node.contentDescription,
         modifier = node.nodeModifiers.toModifier(),
         contentScale = node.contentScale.toContentScale(),
+        alpha = node.alpha,
     )
 }

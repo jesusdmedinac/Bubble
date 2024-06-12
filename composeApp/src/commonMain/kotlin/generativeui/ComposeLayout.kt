@@ -8,7 +8,7 @@ fun ComposeLayout(layout: Layout) {
         is BoxLayout -> TODO()
         is ButtonLayout -> TODO()
         is CardLayout -> TODO()
-        is ColumnLayout -> TODO()
+        is ColumnLayout -> ComposeColumn(layout)
         is RowLayout -> TODO()
     }
 }

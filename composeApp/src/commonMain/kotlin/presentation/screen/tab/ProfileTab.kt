@@ -66,11 +66,11 @@ import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
+import presentation.screen.mainscreen.BubbleTopAppBar
 import presentation.screen.tab.bubble.BubbleTabActions
 import presentation.screen.tab.bubble.BubbleTabTitle
 import kotlin.math.roundToInt
 
-@OptIn(ExperimentalMaterialApi::class)
 object ProfileTab : Tab {
     override val options: TabOptions
         @Composable
@@ -90,18 +90,6 @@ object ProfileTab : Tab {
     @Composable
     override fun Content() {
         Column {
-            TopAppBar(
-                title = {
-                    BubbleTabTitle()
-                },
-                actions = {
-                    BubbleTabActions()
-                },
-                backgroundColor = Color.Transparent,
-                elevation = 0.dp,
-                modifier = Modifier.padding(8.dp)
-            )
-            Divider()
             var completedChallengesIsVisible by remember { mutableStateOf(false) }
             val animatedChallengesIconRotation: Float by animateFloatAsState(if (completedChallengesIsVisible) 180f else 0f)
             LazyColumn(

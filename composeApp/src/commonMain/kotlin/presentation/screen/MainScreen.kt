@@ -19,6 +19,7 @@ import cafe.adriel.voyager.navigator.tab.CurrentTab
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabNavigator
+import presentation.screen.mainscreen.BubbleTopAppBar
 import presentation.screen.tab.BubbleTab
 import presentation.screen.tab.HomeTab
 import presentation.screen.tab.ProfileTab
@@ -26,8 +27,11 @@ import presentation.screen.tab.ProfileTab
 class MainScreen : Screen {
     @Composable
     override fun Content() {
-        TabNavigator(ProfileTab) { tabNavigator: TabNavigator ->
+        TabNavigator(HomeTab) { tabNavigator: TabNavigator ->
             Scaffold(
+                topBar = {
+                    BubbleTopAppBar()
+                },
                 bottomBar = {
                     BottomNavigation {
                         TabNavigationItem(HomeTab)

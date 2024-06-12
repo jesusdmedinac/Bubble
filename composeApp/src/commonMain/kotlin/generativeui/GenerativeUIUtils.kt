@@ -49,4 +49,5 @@ fun TextNodeTypography.toStyle(): TextStyle = when (this) {
 fun ContentScaleImageAttribute.toContentScale(): ContentScale = when (this) {
     ContentScaleImageAttribute.None -> ContentScale.None
     ContentScaleImageAttribute.FillWidth -> ContentScale.FillWidth
+    ContentScaleImageAttribute.FillHeight -> ContentScale.FillHeight
 }
