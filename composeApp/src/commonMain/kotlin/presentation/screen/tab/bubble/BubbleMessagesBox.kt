@@ -27,11 +27,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import data.ChatAPI
+import data.Message
 import kotlinx.coroutines.launch
-import presentation.screen.tab.UIMessage
+import presentation.model.UIMessage
 
 @Composable
-fun ColumnScope.BubbleMessagesBox() {
+fun ColumnScope.BubbleMessagesBox(chatAPI: ChatAPI) {
     var uiMessageList: List<UIMessage> by remember { mutableStateOf(emptyList()) }
     val lazyListState = rememberLazyListState()
     LaunchedEffect(Unit) {
@@ -40,6 +42,7 @@ fun ColumnScope.BubbleMessagesBox() {
         }
     }
     var textFieldValue by remember { mutableStateOf(TextFieldValue("")) }
+    val coroutineScope = rememberCoroutineScope()
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -56,40 +59,49 @@ fun ColumnScope.BubbleMessagesBox() {
                 BubbleTextField(
                     value = textFieldValue,
                     remainingFreeMessages = 50 - uiMessageList
-                        .filter { it.author == "Bubbler" }
+                        .filter { it.author == "user" }
                         .size,
                     onValueChange = {
                         textFieldValue = it
                     },
                     onSendClick = {
-                        uiMessageList = listOf(
-                            UIMessage(
-                                id = uiMessageList.size + 1,
-                                author = "Bubbler",
-                                body = it.text
+                        coroutineScope.launch {
+                            uiMessageList = listOf(
+                                UIMessage(
+                                    id = uiMessageList.size + 1,
+                                    author = "user",
+                                    body = it.text
+                                )
+                            ) + uiMessageList
+                            val bubbleMessage = chatAPI.sendMessage(
+                                uiMessageList.map { uiMessage ->
+                                    Message(
+                                        author = uiMessage.author,
+                                        body = uiMessage.body
+                                    )
+                                }
                             )
-                        ) + uiMessageList
+                            uiMessageList = listOf(
+                                UIMessage(
+                                    id = uiMessageList.size + 1,
+                                    author = bubbleMessage.author,
+                                    body = bubbleMessage.body
+                                )
+                            ) + uiMessageList
+                        }
                         textFieldValue = TextFieldValue("")
-                        uiMessageList = listOf(
-                            UIMessage(
-                                id = uiMessageList.size + 1,
-                                author = "Bubble",
-                                body = "Hola Bubbler"
-                            )
-                        ) + uiMessageList
                     },
                 )
             }
 
             items(uiMessageList) { message ->
-                if (message.author == "Bubbler") {
+                if (message.author == "user") {
                     BubblerMessageCard(message)
                 } else {
                     BubbleMessageCard(message)
                 }
             }
         }
-        val coroutineScope = rememberCoroutineScope()
         androidx.compose.animation.AnimatedVisibility(
             lazyListState.canScrollBackward,
             enter = fadeIn(),

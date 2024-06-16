@@ -28,37 +28,18 @@ import bubble.composeapp.generated.resources.ic_message_corner
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
-import presentation.screen.tab.UIMessage
+import presentation.model.UIMessage
 
 @Composable
 fun BubbleMessageCard(uiMessage: UIMessage) {
     val secondary = MaterialTheme.colors.secondary
-    var text by remember { mutableStateOf("") }
-    val coroutineScope = rememberCoroutineScope()
-    LaunchedEffect(uiMessage) {
-        coroutineScope.launch {
-            repeat(3) {
-                text = "Escribiendo"
-                "...".forEach {
-                    delay(200)
-                    text += it
-                }
-                delay(200)
-            }
-            text = ""
-            uiMessage.body.forEach {
-                delay(50)
-                text += it
-            }
-        }
-    }
     Box(
         modifier = Modifier
             .fillMaxWidth(),
         contentAlignment = Alignment.CenterStart,
     ) {
         Text(
-            text,
+            uiMessage.body,
             modifier = Modifier
                 .padding(vertical = 2.dp)
                 .padding(start = 16.dp)

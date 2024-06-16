@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.dp
 import bubble.composeapp.generated.resources.Res
 import bubble.composeapp.generated.resources.ic_message_corner
 import org.jetbrains.compose.resources.painterResource
-import presentation.screen.tab.UIMessage
+import presentation.model.UIMessage
 
 @Composable
 fun BubblerMessageCard(uiMessage: UIMessage) {

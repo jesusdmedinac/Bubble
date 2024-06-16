@@ -19,13 +19,16 @@ import bubble.composeapp.generated.resources.ic_chat_bubble
 import bubble.composeapp.generated.resources.tab_title_bubble
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
+import data.ChatAPI
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import presentation.screen.tab.bubble.BubbleMessagesBox
 import presentation.screen.tab.bubble.BubbleTabActions
 import presentation.screen.tab.bubble.BubbleTabTitle
 
-object BubbleTab : Tab {
+data class BubbleTab(
+    private val chatAPI: ChatAPI,
+) : Tab {
     override val options: TabOptions
         @Composable
         get() {
@@ -54,7 +57,7 @@ object BubbleTab : Tab {
                     localSoftwareKeyboardController?.hide()
                 }
         ) {
-            BubbleMessagesBox()
+            BubbleMessagesBox(chatAPI)
         }
     }
 }

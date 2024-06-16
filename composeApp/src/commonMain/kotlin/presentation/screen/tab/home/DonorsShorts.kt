@@ -65,7 +65,7 @@ fun DonorsShorts() {
                                 url = "https://picsum.photos/id/${it}/200/300",
                                 contentDescription = null,
                                 nodeModifiers = listOf(
-                                    SizeNodeModifier(width = 128f, height = 196f),
+                                    SizeNodeModifier(width = 112f, height = 196f),
                                     ClipNodeModifier(ShapeNode.RoundedCorner(8f)),
                                 ),
                                 contentScale = ContentScaleImageAttribute.FillHeight
@@ -79,7 +79,7 @@ fun DonorsShorts() {
                         )
                         Column(
                             modifier = Modifier
-                                .size(width = 128.dp, height = 196.dp)
+                                .size(width = 112.dp, height = 196.dp)
                                 .drawBehind {
                                     drawRect(
                                         brush = brush
