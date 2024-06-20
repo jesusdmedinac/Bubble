@@ -44,3 +44,9 @@ app.*.map.json
 
 # Compose Multiplatform
 /composeApp/build/
+
+# KMP Project
+local.properties
+
+# iOS app
+iosApp/iosApp/GenerativeAI-Info.plist

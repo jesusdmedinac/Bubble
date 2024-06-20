@@ -19,10 +19,11 @@ import androidx.compose.ui.unit.dp
 import bubble.composeapp.generated.resources.Res
 import bubble.composeapp.generated.resources.ic_message_corner
 import org.jetbrains.compose.resources.painterResource
+import presentation.model.UIBubblerMessage
 import presentation.model.UIMessage
 
 @Composable
-fun BubblerMessageCard(uiMessage: UIMessage) {
+fun BubblerMessageCard(uiMessage: UIBubblerMessage) {
     val primary = MaterialTheme.colors.primary
     Box(
         modifier = Modifier
@@ -30,7 +31,7 @@ fun BubblerMessageCard(uiMessage: UIMessage) {
         contentAlignment = Alignment.CenterEnd,
     ) {
         Text(
-            uiMessage.body,
+            uiMessage.body.message,
             modifier = Modifier
                 .padding(vertical = 2.dp)
                 .padding(start = 64.dp)

@@ -27,10 +27,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
+import data.Body
+import data.Challenge
 import data.ChatAPI
 import data.Message
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
+import presentation.model.ChallengeCategory
+import presentation.model.UIBubbleMessage
+import presentation.model.UIBubblerMessage
+import presentation.model.UIChallenge
 import presentation.model.UIMessage
+import presentation.model.UIMessageBody
 
 @Composable
 fun ColumnScope.BubbleMessagesBox(chatAPI: ChatAPI) {
@@ -67,25 +75,66 @@ fun ColumnScope.BubbleMessagesBox(chatAPI: ChatAPI) {
                     onSendClick = {
                         coroutineScope.launch {
                             uiMessageList = listOf(
-                                UIMessage(
+                                UIBubblerMessage(
                                     id = uiMessageList.size + 1,
                                     author = "user",
-                                    body = it.text
+                                    body = UIMessageBody(
+                                        message = it.text,
+                                    )
                                 )
                             ) + uiMessageList
                             val bubbleMessage = chatAPI.sendMessage(
                                 uiMessageList.map { uiMessage ->
                                     Message(
                                         author = uiMessage.author,
-                                        body = uiMessage.body
+                                        body = if (uiMessage.author == "user") {
+                                            val uiBubblerMessage = uiMessage as UIBubblerMessage
+                                            Body(
+                                                message = uiBubblerMessage.body.message,
+                                                challenge = uiBubblerMessage.body.challenge?.let { challenge ->
+                                                    Challenge(
+                                                        id = challenge.id,
+                                                        title = challenge.name,
+                                                        description = challenge.description,
+                                                        image = challenge.image,
+                                                    )
+                                                }
+                                            )
+                                        } else {
+                                            val uiBubbleMessage = uiMessage as UIBubbleMessage
+                                            Body(
+                                                message = uiBubbleMessage.body.message,
+                                                challenge = uiBubbleMessage.body.challenge?.let { challenge ->
+                                                    Challenge(
+                                                        id = challenge.id,
+                                                        title = challenge.name,
+                                                        description = challenge.description,
+                                                        image = challenge.image
+                                                    )
+                                                }
+                                            )
+                                        }
                                     )
                                 }
                             )
                             uiMessageList = listOf(
-                                UIMessage(
+                                UIBubbleMessage(
                                     id = uiMessageList.size + 1,
                                     author = bubbleMessage.author,
-                                    body = bubbleMessage.body
+                                    body = bubbleMessage.body.let { body ->
+                                        UIMessageBody(
+                                            message = body.message ?: "",
+                                            challenge = body.challenge?.let { challenge ->
+                                                UIChallenge(
+                                                    id = challenge.id,
+                                                    name = challenge.title,
+                                                    description = challenge.description,
+                                                    image = challenge.image,
+                                                    challengeCategory = ChallengeCategory.TODO
+                                                )
+                                            }
+                                        )
+                                    }
                                 )
                             ) + uiMessageList
                         }
@@ -95,10 +144,9 @@ fun ColumnScope.BubbleMessagesBox(chatAPI: ChatAPI) {
             }
 
             items(uiMessageList) { message ->
-                if (message.author == "user") {
-                    BubblerMessageCard(message)
-                } else {
-                    BubbleMessageCard(message)
+                when (message) {
+                    is UIBubbleMessage -> BubbleMessageCard(message)
+                    is UIBubblerMessage -> BubblerMessageCard(message)
                 }
             }
         }

@@ -1,13 +1,27 @@
 package presentation.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class UIChallenge(
     override val id: Int,
     override val name: String,
     override val description: String,
     override val image: String,
     val challengeCategory: ChallengeCategory,
+    val rewards: List<UIReward> = emptyList()
 ) : UICard
 
+@Serializable
+data class UIReward(
+    val id: Int = -1,
+    val title: String = "",
+    val description: String = "",
+    val image: String = "",
+    val points: Int = 0,
+)
+
+@Serializable
 enum class ChallengeCategory(
     val title: String
 ) {

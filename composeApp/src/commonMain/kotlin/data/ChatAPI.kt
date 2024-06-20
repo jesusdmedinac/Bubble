@@ -1,147 +1,260 @@
 package data
 
-import io.ktor.client.HttpClient
-import io.ktor.client.call.body
-import io.ktor.client.request.post
-import io.ktor.client.request.setBody
-import io.ktor.http.ContentType
-import io.ktor.http.contentType
-import kotlinx.serialization.Serializable
+import kotlin.random.Random
 
 interface ChatAPI {
     suspend fun sendMessage(messages: List<Message>): Message
 }
 
-class ChatAPIImpl(
-    private val client: HttpClient
-) : ChatAPI {
-    override suspend fun sendMessage(messages: List<Message>): Message {
-        /**
-         * curl \
-         *   -H 'Content-Type: application/json' \
-         *   -d '{"contents":[{"parts":[{"text":"Explain how AI works"}]}]}' \
-         *   -X POST 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=YOUR_API_KEY'
-         *
-         *   response example:
-         *   {
-         *   "candidates": [
-         *     {
-         *       "content": {
-         *         "parts": [
-         *           {
-         *             "text": "## Demystifying AI: A Simple Explanation\n\nArtificial intelligence (AI) is essentially making computers think and act like humans. It's not about creating conscious robots, but rather about building machines that can **learn, understand, and make decisions** based on data.\n\nHere's a simplified breakdown:\n\n**1. Data is the Fuel:** AI systems learn from vast amounts of data, like text, images, sounds, or even sensor readings. Think of it as training a child with experiences.\n\n**2. Algorithms are the Brains:** These are sets of instructions that tell the computer how to process and analyze the data. Different algorithms are used for different tasks, like image recognition or language translation.\n\n**3. Machine Learning is the Key:** This is the process where AI systems learn from data without explicit programming. Imagine a computer observing thousands of pictures of cats and learning to recognize them.\n\n**4. Deep Learning is the Powerhouse:** A subset of machine learning, deep learning uses artificial neural networks inspired by the human brain. This allows computers to learn complex patterns from data, enabling tasks like self-driving cars or natural language processing.\n\n**Types of AI:**\n\n* **Narrow or Weak AI:** Designed for specific tasks, like recommending movies or playing chess. Most AI systems today fall into this category.\n* **General or Strong AI:** Aims to create machines with human-level intelligence capable of performing any intellectual task. This is still a distant goal.\n* **Super AI:** Hypothetical AI systems that surpass human intelligence. This remains in the realm of science fiction.\n\n**In essence, AI works by:**\n\n* **Collecting and analyzing vast amounts of data.**\n* **Applying algorithms to learn patterns and relationships.**\n* **Making predictions and decisions based on the learned information.**\n\n**It's important to remember:**\n\n* AI is still evolving, and its capabilities are constantly expanding.\n* AI is a powerful tool that can be used for good or bad. It's crucial to develop ethical guidelines for its development and use.\n* AI is not about replacing humans but rather augmenting our abilities and making our lives easier.\n\nThis is a basic overview of AI. The field is complex and multifaceted, but this explanation provides a foundation for understanding its core concepts.\n"
-         *           }
-         *         ],
-         *         "role": "model"
-         *       },
-         *       "finishReason": "STOP",
-         *       "index": 0,
-         *       "safetyRatings": [
-         *         {
-         *           "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-         *           "probability": "NEGLIGIBLE"
-         *         },
-         *         {
-         *           "category": "HARM_CATEGORY_HATE_SPEECH",
-         *           "probability": "NEGLIGIBLE"
-         *         },
-         *         {
-         *           "category": "HARM_CATEGORY_HARASSMENT",
-         *           "probability": "NEGLIGIBLE"
-         *         },
-         *         {
-         *           "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
-         *           "probability": "NEGLIGIBLE"
-         *         }
-         *       ]
-         *     }
-         *   ],
-         *   "usageMetadata": {
-         *     "promptTokenCount": 4,
-         *     "candidatesTokenCount": 468,
-         *     "totalTokenCount": 472
-         *   }
-         * }
-         */
-        val response = client
-            .post("https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=AIzaSyCqJirMwoz8fcMNbfcYXnge0dBro5DdwLs") {
-                contentType(ContentType.Application.Json)
-                setBody(
-                    RequestBody(
-                        systemInstruction = "Tu nombre es Maxister",
-                        contents = messages
-                            .map { Content(parts = listOf(Part(text = it.body)), role = it.author) },
-                    )
+private val challenges: List<Challenge>
+    get() = listOf(
+        Challenge(
+            1,
+            "Desafío de la hora sin pantalla",
+            "Dedica al menos una hora al día a actividades que no requieran el uso de dispositivos móviles, como leer un libro, hacer ejercicio o salir a caminar.",
+            "https://picsum.photos/id/${Random.nextInt(0, 30)}/200/300",
+            rewards = listOf(
+                Reward(
+                    title = "Amazon Gift Card",
+                    description = "Disfruta de tiempo adicional para dedicarte a tus pasatiempos favoritos.",
+                    image = "https://images-na.ssl-images-amazon.com/images/G/01/GiftCards/GCLP/D_AGC_US-es.jpg"
+                ),
+                Reward(
+                    title = "Un boleto 2x1 al cine",
+                    description = "Mejora tu capacidad de concentración al reducir la distracción de los dispositivos móviles.",
+                    image = "https://pbs.twimg.com/media/EVPaRBUVAAAupv0?format=jpg&name=medium"
                 )
-            }
-        val responseBody = response.body<ResponseBody>()
-        return Message(
-            "model",
-            responseBody.candidates.firstOrNull()?.content?.parts?.firstOrNull()?.text ?: "No candidates"
+            )
+        ),
+        Challenge(
+            2,
+            "Día sin redes sociales",
+            "Escoge un día a la semana para abstenerse completamente de usar cualquier red social. Utiliza ese tiempo para conectarte con amigos y familiares de forma presencial o mediante llamadas telefónicas.",
+            "https://picsum.photos/id/${Random.nextInt(0, 30)}/200/300",
+            rewards = listOf(
+                Reward(
+                    title = "Amazon Gift Card",
+                    description = "Disfruta de tiempo adicional para dedicarte a tus pasatiempos favoritos.",
+                    image = "https://images-na.ssl-images-amazon.com/images/G/01/GiftCards/GCLP/D_AGC_US-es.jpg"
+                ),
+                Reward(
+                    title = "Un boleto 2x1 al cine",
+                    description = "Mejora tu capacidad de concentración al reducir la distracción de los dispositivos móviles.",
+                    image = "https://pbs.twimg.com/media/EVPaRBUVAAAupv0?format=jpg&name=medium"
+                )
+            )
+        ),
+        Challenge(
+            3,
+            "Desconexión digital antes de dormir",
+            "Establece un límite de tiempo, como una hora antes de acostarte, para apagar todos los dispositivos electrónicos y dedicarte a actividades relajantes, como leer un libro o meditar, para mejorar la calidad de tu sueño.",
+            "https://picsum.photos/id/${Random.nextInt(0, 30)}/200/300",
+            rewards = listOf(
+                Reward(
+                    title = "Amazon Gift Card",
+                    description = "Disfruta de tiempo adicional para dedicarte a tus pasatiempos favoritos.",
+                    image = "https://images-na.ssl-images-amazon.com/images/G/01/GiftCards/GCLP/D_AGC_US-es.jpg"
+                ),
+                Reward(
+                    title = "Un boleto 2x1 al cine",
+                    description = "Mejora tu capacidad de concentración al reducir la distracción de los dispositivos móviles.",
+                    image = "https://pbs.twimg.com/media/EVPaRBUVAAAupv0?format=jpg&name=medium"
+                )
+            )
+        ),
+        Challenge(
+            4,
+            "Caja de carga fuera del dormitorio",
+            "Coloca tu cargador de dispositivos móviles en una habitación diferente a la que duermes para evitar la tentación de revisar tu teléfono antes de dormir y al despertar.",
+            "https://picsum.photos/id/${Random.nextInt(0, 30)}/200/300",
+            rewards = listOf(
+                Reward(
+                    title = "Amazon Gift Card",
+                    description = "Disfruta de tiempo adicional para dedicarte a tus pasatiempos favoritos.",
+                    image = "https://images-na.ssl-images-amazon.com/images/G/01/GiftCards/GCLP/D_AGC_US-es.jpg"
+                ),
+                Reward(
+                    title = "Un boleto 2x1 al cine",
+                    description = "Mejora tu capacidad de concentración al reducir la distracción de los dispositivos móviles.",
+                    image = "https://pbs.twimg.com/media/EVPaRBUVAAAupv0?format=jpg&name=medium"
+                )
+            )
+        ),
+        Challenge(
+            5,
+            "Paseo sin teléfono",
+            "Realiza caminatas cortas o paseos diarios sin llevar contigo tu dispositivo móvil. Esto te ayudará a desconectar y a disfrutar del entorno sin distracciones.",
+            "https://picsum.photos/id/${Random.nextInt(0, 30)}/200/300",
+            rewards = listOf(
+                Reward(
+                    title = "Amazon Gift Card",
+                    description = "Disfruta de tiempo adicional para dedicarte a tus pasatiempos favoritos.",
+                    image = "https://images-na.ssl-images-amazon.com/images/G/01/GiftCards/GCLP/D_AGC_US-es.jpg"
+                ),
+                Reward(
+                    title = "Un boleto 2x1 al cine",
+                    description = "Mejora tu capacidad de concentración al reducir la distracción de los dispositivos móviles.",
+                    image = "https://pbs.twimg.com/media/EVPaRBUVAAAupv0?format=jpg&name=medium"
+                )
+            )
+        ),
+        Challenge(
+            6,
+            "Desafío de la pantalla en blanco y negro",
+            "Configura tu teléfono para que la pantalla se muestre en blanco y negro durante un día entero. Esto puede reducir la atracción visual y limitar el tiempo que pasas frente a la pantalla.",
+            "https://picsum.photos/id/${Random.nextInt(0, 30)}/200/300",
+            rewards = listOf(
+                Reward(
+                    title = "Amazon Gift Card",
+                    description = "Disfruta de tiempo adicional para dedicarte a tus pasatiempos favoritos.",
+                    image = "https://images-na.ssl-images-amazon.com/images/G/01/GiftCards/GCLP/D_AGC_US-es.jpg"
+                ),
+                Reward(
+                    title = "Un boleto 2x1 al cine",
+                    description = "Mejora tu capacidad de concentración al reducir la distracción de los dispositivos móviles.",
+                    image = "https://pbs.twimg.com/media/EVPaRBUVAAAupv0?format=jpg&name=medium"
+                )
+            )
+        ),
+        Challenge(
+            7,
+            "Desafío de notificaciones",
+            "Desactiva las notificaciones innecesarias de aplicaciones que no son urgentes o importantes. Esto te ayudará a reducir las interrupciones constantes y a enfocarte en tus tareas diarias.",
+            "https://picsum.photos/id/${Random.nextInt(0, 30)}/200/300",
+            rewards = listOf(
+                Reward(
+                    title = "Amazon Gift Card",
+                    description = "Disfruta de tiempo adicional para dedicarte a tus pasatiempos favoritos.",
+                    image = "https://images-na.ssl-images-amazon.com/images/G/01/GiftCards/GCLP/D_AGC_US-es.jpg"
+                ),
+                Reward(
+                    title = "Un boleto 2x1 al cine",
+                    description = "Mejora tu capacidad de concentración al reducir la distracción de los dispositivos móviles.",
+                    image = "https://pbs.twimg.com/media/EVPaRBUVAAAupv0?format=jpg&name=medium"
+                )
+            )
+        ),
+        Challenge(
+            8,
+            "Hora de pantalla limitada",
+            "Establece un límite de tiempo diario para el uso de dispositivos móviles y utiliza aplicaciones o funciones del dispositivo que te ayuden a monitorear y limitar tu tiempo de pantalla.",
+            "https://picsum.photos/id/${Random.nextInt(0, 30)}/200/300",
+            rewards = listOf(
+                Reward(
+                    title = "Amazon Gift Card",
+                    description = "Disfruta de tiempo adicional para dedicarte a tus pasatiempos favoritos.",
+                    image = "https://images-na.ssl-images-amazon.com/images/G/01/GiftCards/GCLP/D_AGC_US-es.jpg"
+                ),
+                Reward(
+                    title = "Un boleto 2x1 al cine",
+                    description = "Mejora tu capacidad de concentración al reducir la distracción de los dispositivos móviles.",
+                    image = "https://pbs.twimg.com/media/EVPaRBUVAAAupv0?format=jpg&name=medium"
+                )
+            )
+        ),
+        Challenge(
+            9,
+            "Desafío de la conversación cara a cara",
+            "Prioriza las interacciones en persona sobre las conversaciones en línea. Programa encuentros con amigos y familiares para disfrutar de momentos de calidad sin la distracción de los dispositivos móviles.",
+            "https://picsum.photos/id/${Random.nextInt(0, 30)}/200/300",
+            rewards = listOf(
+                Reward(
+                    title = "Amazon Gift Card",
+                    description = "Disfruta de tiempo adicional para dedicarte a tus pasatiempos favoritos.",
+                    image = "https://images-na.ssl-images-amazon.com/images/G/01/GiftCards/GCLP/D_AGC_US-es.jpg"
+                ),
+                Reward(
+                    title = "Un boleto 2x1 al cine",
+                    description = "Mejora tu capacidad de concentración al reducir la distracción de los dispositivos móviles.",
+                    image = "https://pbs.twimg.com/media/EVPaRBUVAAAupv0?format=jpg&name=medium"
+                )
+            )
+        ),
+        Challenge(
+            10,
+            "Día de actividades sin tecnología",
+            "Dedica un día completo a realizar actividades que no requieran el uso de tecnología, como cocinar, hacer manualidades o practicar deportes al aire libre.",
+            "https://picsum.photos/id/${Random.nextInt(0, 30)}/200/300",
+            rewards = listOf(
+                Reward(
+                    title = "Amazon Gift Card",
+                    description = "Disfruta de tiempo adicional para dedicarte a tus pasatiempos favoritos.",
+                    image = "https://images-na.ssl-images-amazon.com/images/G/01/GiftCards/GCLP/D_AGC_US-es.jpg"
+                ),
+                Reward(
+                    title = "Un boleto 2x1 al cine",
+                    description = "Mejora tu capacidad de concentración al reducir la distracción de los dispositivos móviles.",
+                    image = "https://pbs.twimg.com/media/EVPaRBUVAAAupv0?format=jpg&name=medium"
+                )
+            )
         )
-    }
+    )
+
+fun systemInstructions(): String = """
+    Tu nombre es Bubble. Eres un asistente para reducir el uso de dispositivos móviles.
+    
+    Naciste bajo la idea del siguiente publicación:
+    The mediating role of loneliness in the relationship between smartphone addiction and subjective well-being
+    
+    Este estudio examinó el papel mediador de la soledad en la relación entre la adicción al
+    smartphone y el bienestar subjetivo entre estudiantes universitarios chinos. Se llevó a 
+    cabo en 16 universidades de ocho provincias y municipios en China, con la participación 
+    de 1527 estudiantes. Se utilizaron escalas para medir la adicción al smartphone, la soledad 
+    y el bienestar subjetivo. Los hallazgos revelaron que: (1) variables demográficas como 
+    el lugar de origen, nivel educativo e ingreso familiar influían en el bienestar subjetivo 
+    de los estudiantes universitarios; (2) existía una correlación negativa significativa 
+    entre la adicción al smartphone y el bienestar subjetivo, junto con una correlación 
+    positiva significativa entre la adicción al smartphone y la soledad, indicando el efecto 
+    predictivo negativo significativo de la adicción al smartphone en el bienestar subjetivo; 
+    (3) la soledad mediaba parcialmente la relación entre la adicción al smartphone y el 
+    bienestar subjetivo entre los estudiantes universitarios, lo que sugiere que la adicción 
+    al smartphone podría impactar directamente en el bienestar subjetivo de los estudiantes 
+    universitarios, o indirectamente a través de su efecto en la soledad.
+    
+    Bajo esta premisa, puedes sugerir retos a los usuarios de acuerdo a la conversación.
+    
+    La lista de retos disponibles es la siguiente: $challenges
+    
+    Debes justificar la razón para sugerir cada reto.
+
+    Si el usuario te pregunta, puedes utilizar los datos de uso para generar una respuesta
+    personalizada sobre el tiempo real de uso del usuario.
+    
+    Es ESTRICTAMENTE NECESARIO que respondas con el siguiente formato JSON sin ninguna otra información,
+    es decir, el primer caracter de tu respuesta debe ser el símbolo "{" y el último debe ser el 
+    símbolo "}":
+
+    message: Tu respuesta en texto plano de tipo String
+    challenge: Un objeto JSON con los siguientes campos:
+        id: El ID del reto de tipo Int
+        title: El título del reto de tipo String
+        description: La descripción del reto de tipo String
+        image: La URL de la imagen del reto de tipo String
+        rewards: Un array de objetos JSON con los siguientes campos:
+            id: El ID del premio de tipo Int
+            title: El título del premio de tipo String
+            description: La descripción del premio de tipo String
+            image: La URL de la imagen del premio de tipo String
+            points: Los puntos que se le darán al usuario de tipo Int
+""".trimIndent()
+
+fun String.toJsonAsString(): String = runCatching {
+    if (contains("```json")) this
+        .substringAfter("```json")
+        .substringBefore("```")
+    else if (contains("```")) this
+        .substringAfter("```")
+        .substringBefore("```")
+    else this
 }
-
-data class Message(val author: String, val body: String)
-
-@Serializable
-data class RequestBody(
-    val contents: List<Content> = emptyList(),
-    val systemInstruction: String = ""
-)
-
-@Serializable
-data class Part(
-    val text: String = "",
-)
-
-@Serializable
-data class ResponseBody(
-    val candidates: List<Candidate> = emptyList(),
-    val usageMetadata: UsageMetadata = UsageMetadata(),
-)
-
-@Serializable
-data class Candidate(
-    val content: Content = Content(),
-    val finishReason: String = "",
-    val index: Int = 0,
-    val safetyRatings: List<SafetyRating> = emptyList(),
-)
-
-@Serializable
-data class Content(
-    val parts: List<Part> = emptyList(),
-    val role: String = "",
-)
-
-@Serializable
-data class SafetyRating(
-    val category: String = "",
-    val probability: String = "",
-)
-
-@Serializable
-data class UsageMetadata(
-    val promptTokenCount: Int = 0,
-    val candidatesTokenCount: Int = 0,
-    val totalTokenCount: Int = 0,
-)
-
-@Serializable
-data class Challenge(
-    val id: Int = -1,
-    val title: String = "",
-    val description: String = "",
-    val image: String = "",
-    val rewards: List<Reward> = emptyList(),
-)
-
-@Serializable
-data class Reward(
-    val id: Int = -1,
-    val title: String = "",
-    val description: String = "",
-    val image: String = "",
-    val points: Int = 0,
-)
+    .fold(
+        onSuccess = { it },
+        onFailure = {
+            """
+                    {
+                        "message": "Perdona, no tengo respuesta",
+                        "challenge": null
+                    }
+                """.trimIndent()
+        }
+    )

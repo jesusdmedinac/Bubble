@@ -1,13 +1,18 @@
 package presentation.screen.tab.bubble
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -22,24 +27,28 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import bubble.composeapp.generated.resources.Res
 import bubble.composeapp.generated.resources.ic_message_corner
+import com.mikepenz.markdown.m2.Markdown
+import io.kamel.image.KamelImage
+import io.kamel.image.asyncPainterResource
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
+import presentation.model.UIBubbleMessage
 import presentation.model.UIMessage
 
 @Composable
-fun BubbleMessageCard(uiMessage: UIMessage) {
+fun BubbleMessageCard(uiMessage: UIBubbleMessage) {
     val secondary = MaterialTheme.colors.secondary
     Box(
         modifier = Modifier
             .fillMaxWidth(),
         contentAlignment = Alignment.CenterStart,
     ) {
-        Text(
-            uiMessage.body,
+        Column(
             modifier = Modifier
                 .padding(vertical = 2.dp)
                 .padding(start = 16.dp)
@@ -48,10 +57,51 @@ fun BubbleMessageCard(uiMessage: UIMessage) {
                 .clip(RoundedCornerShape(topStart = 8.dp, bottomStart = 0.dp))
                 .background(secondary)
                 .padding(12.dp),
-            style = MaterialTheme.typography.body1.copy(
-                color = MaterialTheme.colors.onSecondary
-            )
-        )
+        ) {
+            Markdown(uiMessage.body.message)
+            uiMessage
+                .body
+                .challenge
+                ?.let { challenge ->
+                    Card(
+                        modifier = Modifier
+                            .clickable { },
+                        shape = RoundedCornerShape(8.dp),
+                    ) {
+                        Column {
+                            KamelImage(
+                                asyncPainterResource(challenge.image),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(128.dp)
+                                    .clip(RoundedCornerShape(8.dp)),
+                                contentScale = ContentScale.FillWidth
+                            )
+                            Text(
+                                challenge.name,
+                                style = MaterialTheme.typography.h6,
+                                modifier = Modifier.padding(
+                                    start = 8.dp,
+                                    end = 8.dp,
+                                    top = 8.dp,
+                                    bottom = 4.dp,
+                                ),
+                            )
+                            Text(
+                                challenge.description,
+                                style = MaterialTheme.typography.body1,
+                                modifier = Modifier.padding(
+                                    start = 8.dp,
+                                    end = 8.dp,
+                                    top = 4.dp,
+                                    bottom = 4.dp,
+                                ),
+                            )
+                        }
+                    }
+                }
+        }
 
         Box(
             modifier = Modifier

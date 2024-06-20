@@ -1,5 +1,9 @@
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import java.io.FileInputStream
+import java.io.InputStreamReader
+import java.util.Properties
+
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -16,7 +20,7 @@ kotlin {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
-    
+
     listOf(
         iosX64(),
         iosArm64(),
@@ -27,7 +31,7 @@ kotlin {
             isStatic = true
         }
     }
-    
+
     sourceSets {
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
@@ -58,6 +62,8 @@ kotlin {
 
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.serialization.kotlinx.json)
+
+            implementation("com.mikepenz:multiplatform-markdown-renderer-m2:0.22.0")
         }
     }
 }
@@ -85,6 +91,10 @@ android {
     buildTypes {
         getByName("release") {
             isMinifyEnabled = false
+            buildConfigField("String", "apiKey", getLocalProperty("apiKey"))
+        }
+        getByName("debug") {
+            buildConfigField("String", "apiKey", getLocalProperty("apiKey"))
         }
     }
     compileOptions {
@@ -93,9 +103,22 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     dependencies {
         debugImplementation(compose.uiTooling)
     }
+}
+
+fun Project.getLocalProperty(key: String, file: String = "local.properties"): String {
+    val properties = Properties()
+    val localProperties = File(file)
+    if (localProperties.isFile) {
+        InputStreamReader(FileInputStream(localProperties), Charsets.UTF_8).use { reader ->
+            properties.load(reader)
+        }
+    } else error("File from not found")
+
+    return properties.getProperty(key)
 }
 
