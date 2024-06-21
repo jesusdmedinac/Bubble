@@ -7,6 +7,7 @@ import cafe.adriel.voyager.transitions.SlideTransition
 import data.ChatAPI
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import presentation.screen.MainScreen
+import presentation.screen.tab.BubbleTab
 import presentation.ui.theme.BubbleTheme
 
 val LocalAppNavigator: ProvidableCompositionLocal<Navigator?> =
@@ -16,7 +17,7 @@ val LocalAppNavigator: ProvidableCompositionLocal<Navigator?> =
 @Preview
 fun App(chatAPI: ChatAPI) {
     BubbleTheme {
-        Navigator(MainScreen(chatAPI)) { navigator: Navigator ->
+        Navigator(BubbleTab(chatAPI)) { navigator: Navigator ->
             CompositionLocalProvider(
                 LocalAppNavigator provides navigator
             ) {

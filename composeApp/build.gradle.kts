@@ -11,6 +11,8 @@ plugins {
     alias(libs.plugins.jetbrainsCompose)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlinxSerialization)
+    id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
 }
 
 kotlin {
@@ -43,6 +45,10 @@ kotlin {
             implementation(libs.ktor.client.android)
 
             implementation("com.google.ai.client.generativeai:generativeai:0.6.0")
+
+            implementation(platform("com.google.firebase:firebase-bom:33.1.1"))
+            implementation("com.google.firebase:firebase-crashlytics")
+            implementation("com.google.firebase:firebase-analytics")
         }
         commonMain.dependencies {
             implementation(compose.runtime)

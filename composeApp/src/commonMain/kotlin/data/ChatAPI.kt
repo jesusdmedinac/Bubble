@@ -190,6 +190,7 @@ private val challenges: List<Challenge>
         )
     )
 
+
 fun systemInstructions(): String = """
     Tu nombre es Bubble. Eres un asistente para reducir el uso de dispositivos móviles.
     
