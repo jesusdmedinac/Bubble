@@ -50,11 +50,6 @@ class MainActivity : ComponentActivity() {
                             prettyPrint = true
                         })
                     )
-                    Button(onClick = {
-                        throw RuntimeException("Test Error")
-                    }) {
-                        Text(text = "Send Test Error")
-                    }
                 }
             }
         }

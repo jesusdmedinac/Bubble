@@ -1,0 +1,29 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:android)
+
+platform :android do
+  desc "Internal Testing"
+  lane :internal do
+    gradle(task: "bundleRelease")
+    release = firebase_app_distribution(
+        app: "1:973832178689:android:bde41deb08004e0b728400",
+        groups: "Bubblers",
+        android_artifact_path: "composeApp/build/outputs/bundle/release/composeApp-release.aab",
+        service_credentials_file: "composeApp/bubble-firebase-adminsdk.json"
+    )
+  end
+end

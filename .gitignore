@@ -42,6 +42,9 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
+# Local configuration
+.gradle
+
 # Compose Multiplatform
 /composeApp/build/
 
@@ -53,3 +56,4 @@ iosApp/iosApp/GenerativeAI-Info.plist
 
 # Firebase
 composeApp/google-services.json
+composeApp/bubble-firebase-adminsdk.json
