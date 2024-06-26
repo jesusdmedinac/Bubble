@@ -16,14 +16,19 @@
 default_platform(:android)
 
 platform :android do
-  desc "Internal Testing"
-  lane :internal do
-    gradle(task: "bundleRelease")
-    release = firebase_app_distribution(
-        app: "1:973832178689:android:bde41deb08004e0b728400",
-        groups: "Bubblers",
-        android_artifact_path: "composeApp/build/outputs/bundle/release/composeApp-release.aab",
-        service_credentials_file: "composeApp/bubble-firebase-adminsdk.json"
-    )
-  end
+    desc "Build Release Bundle"
+    lane :bundleRelease do
+        gradle(task: "bundleRelease")
+    end
+
+    desc "Internal Testing"
+    lane :internal do
+        bundleRelease
+        release = firebase_app_distribution(
+            app: "1:973832178689:android:bde41deb08004e0b728400",
+            groups: "Bubblers",
+            android_artifact_path: "composeApp/build/outputs/bundle/release/composeApp-release.aab",
+            service_credentials_file: "composeApp/bubble-firebase-adminsdk.json"
+        )
+    end
 end
