@@ -1,5 +1,6 @@
 package presentation.screen.tab.bubble
 
+import LocalAnalytics
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Box
@@ -32,7 +33,6 @@ import data.Challenge
 import data.ChatAPI
 import data.Message
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
 import presentation.model.ChallengeCategory
 import presentation.model.UIBubbleMessage
 import presentation.model.UIBubblerMessage
@@ -51,6 +51,7 @@ fun ColumnScope.BubbleMessagesBox(chatAPI: ChatAPI) {
     }
     var textFieldValue by remember { mutableStateOf(TextFieldValue("")) }
     val coroutineScope = rememberCoroutineScope()
+    val analytics = LocalAnalytics.current
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -117,6 +118,7 @@ fun ColumnScope.BubbleMessagesBox(chatAPI: ChatAPI) {
                                     )
                                 }
                             )
+                            analytics.sendChatResponseEvent(bubbleMessage)
                             uiMessageList = listOf(
                                 UIBubbleMessage(
                                     id = uiMessageList.size + 1,

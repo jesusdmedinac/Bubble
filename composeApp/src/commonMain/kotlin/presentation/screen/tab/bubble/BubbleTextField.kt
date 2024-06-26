@@ -1,5 +1,6 @@
 package presentation.screen.tab.bubble
 
+import LocalAnalytics
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,6 +28,7 @@ import bubble.composeapp.generated.resources.Res
 import bubble.composeapp.generated.resources.ic_chat_bubble
 import bubble.composeapp.generated.resources.ic_message
 import bubble.composeapp.generated.resources.ic_send
+import data.Analytics
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
@@ -36,6 +38,7 @@ fun BubbleTextField(
     onValueChange: (TextFieldValue) -> Unit,
     onSendClick: (TextFieldValue) -> Unit = {}
 ) {
+    val analytics = LocalAnalytics.current
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -127,6 +130,7 @@ fun BubbleTextField(
                     )
                 }
                 IconButton(onClick = {
+                    analytics.sendClickEvent(value.text.length)
                     onSendClick(value)
                 }) {
                     Icon(
