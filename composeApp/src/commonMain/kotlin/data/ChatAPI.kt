@@ -13,180 +13,70 @@ private val challenges: List<Challenge>
             "Desafío de la hora sin pantalla",
             "Dedica al menos una hora al día a actividades que no requieran el uso de dispositivos móviles, como leer un libro, hacer ejercicio o salir a caminar.",
             "https://picsum.photos/id/${Random.nextInt(0, 30)}/200/300",
-            rewards = listOf(
-                Reward(
-                    title = "Amazon Gift Card",
-                    description = "Disfruta de tiempo adicional para dedicarte a tus pasatiempos favoritos.",
-                    image = "https://images-na.ssl-images-amazon.com/images/G/01/GiftCards/GCLP/D_AGC_US-es.jpg"
-                ),
-                Reward(
-                    title = "Un boleto 2x1 al cine",
-                    description = "Mejora tu capacidad de concentración al reducir la distracción de los dispositivos móviles.",
-                    image = "https://pbs.twimg.com/media/EVPaRBUVAAAupv0?format=jpg&name=medium"
-                )
-            )
+            rewards = emptyList()
         ),
         Challenge(
             2,
             "Día sin redes sociales",
             "Escoge un día a la semana para abstenerse completamente de usar cualquier red social. Utiliza ese tiempo para conectarte con amigos y familiares de forma presencial o mediante llamadas telefónicas.",
             "https://picsum.photos/id/${Random.nextInt(0, 30)}/200/300",
-            rewards = listOf(
-                Reward(
-                    title = "Amazon Gift Card",
-                    description = "Disfruta de tiempo adicional para dedicarte a tus pasatiempos favoritos.",
-                    image = "https://images-na.ssl-images-amazon.com/images/G/01/GiftCards/GCLP/D_AGC_US-es.jpg"
-                ),
-                Reward(
-                    title = "Un boleto 2x1 al cine",
-                    description = "Mejora tu capacidad de concentración al reducir la distracción de los dispositivos móviles.",
-                    image = "https://pbs.twimg.com/media/EVPaRBUVAAAupv0?format=jpg&name=medium"
-                )
-            )
+            rewards = emptyList()
         ),
         Challenge(
             3,
             "Desconexión digital antes de dormir",
             "Establece un límite de tiempo, como una hora antes de acostarte, para apagar todos los dispositivos electrónicos y dedicarte a actividades relajantes, como leer un libro o meditar, para mejorar la calidad de tu sueño.",
             "https://picsum.photos/id/${Random.nextInt(0, 30)}/200/300",
-            rewards = listOf(
-                Reward(
-                    title = "Amazon Gift Card",
-                    description = "Disfruta de tiempo adicional para dedicarte a tus pasatiempos favoritos.",
-                    image = "https://images-na.ssl-images-amazon.com/images/G/01/GiftCards/GCLP/D_AGC_US-es.jpg"
-                ),
-                Reward(
-                    title = "Un boleto 2x1 al cine",
-                    description = "Mejora tu capacidad de concentración al reducir la distracción de los dispositivos móviles.",
-                    image = "https://pbs.twimg.com/media/EVPaRBUVAAAupv0?format=jpg&name=medium"
-                )
-            )
+            rewards = emptyList()
         ),
         Challenge(
             4,
             "Caja de carga fuera del dormitorio",
             "Coloca tu cargador de dispositivos móviles en una habitación diferente a la que duermes para evitar la tentación de revisar tu teléfono antes de dormir y al despertar.",
             "https://picsum.photos/id/${Random.nextInt(0, 30)}/200/300",
-            rewards = listOf(
-                Reward(
-                    title = "Amazon Gift Card",
-                    description = "Disfruta de tiempo adicional para dedicarte a tus pasatiempos favoritos.",
-                    image = "https://images-na.ssl-images-amazon.com/images/G/01/GiftCards/GCLP/D_AGC_US-es.jpg"
-                ),
-                Reward(
-                    title = "Un boleto 2x1 al cine",
-                    description = "Mejora tu capacidad de concentración al reducir la distracción de los dispositivos móviles.",
-                    image = "https://pbs.twimg.com/media/EVPaRBUVAAAupv0?format=jpg&name=medium"
-                )
-            )
+            rewards = emptyList()
         ),
         Challenge(
             5,
             "Paseo sin teléfono",
             "Realiza caminatas cortas o paseos diarios sin llevar contigo tu dispositivo móvil. Esto te ayudará a desconectar y a disfrutar del entorno sin distracciones.",
             "https://picsum.photos/id/${Random.nextInt(0, 30)}/200/300",
-            rewards = listOf(
-                Reward(
-                    title = "Amazon Gift Card",
-                    description = "Disfruta de tiempo adicional para dedicarte a tus pasatiempos favoritos.",
-                    image = "https://images-na.ssl-images-amazon.com/images/G/01/GiftCards/GCLP/D_AGC_US-es.jpg"
-                ),
-                Reward(
-                    title = "Un boleto 2x1 al cine",
-                    description = "Mejora tu capacidad de concentración al reducir la distracción de los dispositivos móviles.",
-                    image = "https://pbs.twimg.com/media/EVPaRBUVAAAupv0?format=jpg&name=medium"
-                )
-            )
+            rewards = emptyList()
         ),
         Challenge(
             6,
             "Desafío de la pantalla en blanco y negro",
             "Configura tu teléfono para que la pantalla se muestre en blanco y negro durante un día entero. Esto puede reducir la atracción visual y limitar el tiempo que pasas frente a la pantalla.",
             "https://picsum.photos/id/${Random.nextInt(0, 30)}/200/300",
-            rewards = listOf(
-                Reward(
-                    title = "Amazon Gift Card",
-                    description = "Disfruta de tiempo adicional para dedicarte a tus pasatiempos favoritos.",
-                    image = "https://images-na.ssl-images-amazon.com/images/G/01/GiftCards/GCLP/D_AGC_US-es.jpg"
-                ),
-                Reward(
-                    title = "Un boleto 2x1 al cine",
-                    description = "Mejora tu capacidad de concentración al reducir la distracción de los dispositivos móviles.",
-                    image = "https://pbs.twimg.com/media/EVPaRBUVAAAupv0?format=jpg&name=medium"
-                )
-            )
+            rewards = emptyList()
         ),
         Challenge(
             7,
             "Desafío de notificaciones",
             "Desactiva las notificaciones innecesarias de aplicaciones que no son urgentes o importantes. Esto te ayudará a reducir las interrupciones constantes y a enfocarte en tus tareas diarias.",
             "https://picsum.photos/id/${Random.nextInt(0, 30)}/200/300",
-            rewards = listOf(
-                Reward(
-                    title = "Amazon Gift Card",
-                    description = "Disfruta de tiempo adicional para dedicarte a tus pasatiempos favoritos.",
-                    image = "https://images-na.ssl-images-amazon.com/images/G/01/GiftCards/GCLP/D_AGC_US-es.jpg"
-                ),
-                Reward(
-                    title = "Un boleto 2x1 al cine",
-                    description = "Mejora tu capacidad de concentración al reducir la distracción de los dispositivos móviles.",
-                    image = "https://pbs.twimg.com/media/EVPaRBUVAAAupv0?format=jpg&name=medium"
-                )
-            )
+            rewards = emptyList()
         ),
         Challenge(
             8,
             "Hora de pantalla limitada",
             "Establece un límite de tiempo diario para el uso de dispositivos móviles y utiliza aplicaciones o funciones del dispositivo que te ayuden a monitorear y limitar tu tiempo de pantalla.",
             "https://picsum.photos/id/${Random.nextInt(0, 30)}/200/300",
-            rewards = listOf(
-                Reward(
-                    title = "Amazon Gift Card",
-                    description = "Disfruta de tiempo adicional para dedicarte a tus pasatiempos favoritos.",
-                    image = "https://images-na.ssl-images-amazon.com/images/G/01/GiftCards/GCLP/D_AGC_US-es.jpg"
-                ),
-                Reward(
-                    title = "Un boleto 2x1 al cine",
-                    description = "Mejora tu capacidad de concentración al reducir la distracción de los dispositivos móviles.",
-                    image = "https://pbs.twimg.com/media/EVPaRBUVAAAupv0?format=jpg&name=medium"
-                )
-            )
+            rewards = emptyList()
         ),
         Challenge(
             9,
             "Desafío de la conversación cara a cara",
             "Prioriza las interacciones en persona sobre las conversaciones en línea. Programa encuentros con amigos y familiares para disfrutar de momentos de calidad sin la distracción de los dispositivos móviles.",
             "https://picsum.photos/id/${Random.nextInt(0, 30)}/200/300",
-            rewards = listOf(
-                Reward(
-                    title = "Amazon Gift Card",
-                    description = "Disfruta de tiempo adicional para dedicarte a tus pasatiempos favoritos.",
-                    image = "https://images-na.ssl-images-amazon.com/images/G/01/GiftCards/GCLP/D_AGC_US-es.jpg"
-                ),
-                Reward(
-                    title = "Un boleto 2x1 al cine",
-                    description = "Mejora tu capacidad de concentración al reducir la distracción de los dispositivos móviles.",
-                    image = "https://pbs.twimg.com/media/EVPaRBUVAAAupv0?format=jpg&name=medium"
-                )
-            )
+            rewards = emptyList()
         ),
         Challenge(
             10,
             "Día de actividades sin tecnología",
             "Dedica un día completo a realizar actividades que no requieran el uso de tecnología, como cocinar, hacer manualidades o practicar deportes al aire libre.",
             "https://picsum.photos/id/${Random.nextInt(0, 30)}/200/300",
-            rewards = listOf(
-                Reward(
-                    title = "Amazon Gift Card",
-                    description = "Disfruta de tiempo adicional para dedicarte a tus pasatiempos favoritos.",
-                    image = "https://images-na.ssl-images-amazon.com/images/G/01/GiftCards/GCLP/D_AGC_US-es.jpg"
-                ),
-                Reward(
-                    title = "Un boleto 2x1 al cine",
-                    description = "Mejora tu capacidad de concentración al reducir la distracción de los dispositivos móviles.",
-                    image = "https://pbs.twimg.com/media/EVPaRBUVAAAupv0?format=jpg&name=medium"
-                )
-            )
+            rewards = emptyList()
         )
     )
 

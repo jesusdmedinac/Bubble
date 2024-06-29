@@ -10,7 +10,31 @@ data class UIChallenge(
     override val image: String,
     val challengeCategory: ChallengeCategory,
     val rewards: List<UIReward> = emptyList()
-) : UICard
+) : UICard {
+    val shareText: String
+        get() {
+            val rewardsText = if (rewards.isNotEmpty()) {
+                "Recompensas: ${rewards.joinToString { it.title }}"
+            } else {
+                "La recompensa es mi nuevo hábito saludable."
+            }
+            return """
+                ¡Bubble me recomendó el reto "$name"!
+              
+                $description
+                
+                $rewardsText
+                
+                ¡Únete a mí!
+                https://tally.so/r/3E1E2A
+                
+                #Bubble #BuildWithGemini 
+                #KMP #CMP 
+                #KotlinMultiplatform #ComposeMultiplatform
+                @JesusDMedinaC 
+            """.trimIndent()
+        }
+}
 
 @Serializable
 data class UIReward(

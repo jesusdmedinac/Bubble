@@ -13,7 +13,7 @@ data class Event(
 interface Analytics {
     fun sendEvent(event: Event)
 
-    fun sendClickEvent(stringLength: Int) {
+    fun sendClickEvent(stringLength: Long) {
         sendEvent(Event(
             EVENT_SEND_CLICK,
             listOf(
@@ -38,17 +38,17 @@ interface Analytics {
     companion object {
         val Default: Analytics = object : Analytics {
             override fun sendEvent(event: Event) {
-                TODO("Not yet implemented")
+                TODO("sendEvent on Analytics is not implemented yet")
             }
         }
-        const val SCREEN_BUBBLE_TAB = "BubbleTab"
+        const val SCREEN_BUBBLE_TAB = "bb_bubble_tab"
 
-        const val PARAM_SCREEN_NAME = "screen_name"
-        const val PARAM_STRING_LENGTH = "string_length"
-        const val PARAM_MESSAGE = "message"
+        const val PARAM_SCREEN_NAME = "bb_screen_name"
+        const val PARAM_STRING_LENGTH = "bb_string_length"
+        const val PARAM_MESSAGE = "bb_message"
 
-        const val EVENT_SEND_CLICK = "send_click"
-        const val EVENT_CHAT_RESPONSE = "chat_response"
+        const val EVENT_SEND_CLICK = "bb_send_click"
+        const val EVENT_CHAT_RESPONSE = "bb_chat_response"
 
     }
 }

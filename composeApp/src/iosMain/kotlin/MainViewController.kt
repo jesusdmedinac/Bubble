@@ -1,6 +1,39 @@
-import androidx.compose.ui.uikit.OnFocusBehavior
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.window.ComposeUIViewController
+import data.Analytics
 import data.ChatAPI
-import data.Message
+import data.Event
+import data.SendingData
+import platform.UIKit.UIActivity
+import platform.UIKit.UIActivityViewController
+import platform.UIKit.UIApplication
+import platform.UIKit.UIViewController
 
-fun MainViewController(chatAPI: ChatAPI) = ComposeUIViewController { App(chatAPI) }
+fun MainViewController(chatAPI: ChatAPI) = ComposeUIViewController {
+    CompositionLocalProvider(LocalSendingData provides object : SendingData {
+        override fun sendPlainText(data: String) {
+            shareText(data)
+        }
+    }) {
+        CompositionLocalProvider(LocalAnalytics provides object : Analytics {
+            override fun sendEvent(event: Event) {
+                // TODO implement send event to Firebase
+            }
+        }) {
+            App(chatAPI)
+        }
+    }
+}
+
+fun shareText(text: String) {
+    val rootViewController = UIApplication.sharedApplication.keyWindow?.rootViewController
+    shareTextFromViewController(rootViewController, text)
+}
+
+fun shareTextFromViewController(viewController: UIViewController?, text: String) {
+    val activityItems = listOf(text)
+    val applicationActivities: List<UIActivity>? = null
+    val activityViewController = UIActivityViewController(activityItems, applicationActivities)
+
+    viewController?.presentViewController(activityViewController, true, null)
+}

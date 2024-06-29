@@ -149,6 +149,7 @@ fun ColumnScope.BubbleMessagesBox(chatAPI: ChatAPI) {
                 when (message) {
                     is UIBubbleMessage -> BubbleMessageCard(message)
                     is UIBubblerMessage -> BubblerMessageCard(message)
+                    else -> Unit
                 }
             }
         }

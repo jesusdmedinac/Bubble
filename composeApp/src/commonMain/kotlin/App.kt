@@ -6,23 +6,25 @@ import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.SlideTransition
 import data.Analytics
 import data.ChatAPI
-import io.kamel.core.config.KamelConfig
-import io.kamel.image.config.Default
+import data.SendingData
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import presentation.screen.MainScreen
-import presentation.screen.tab.BubbleTab
 import presentation.ui.theme.BubbleTheme
 
 val LocalAppNavigator: ProvidableCompositionLocal<Navigator?> =
     staticCompositionLocalOf { null }
 
-val LocalAnalytics: ProvidableCompositionLocal<Analytics> = staticCompositionLocalOf { Analytics.Default }
+val LocalAnalytics: ProvidableCompositionLocal<Analytics> =
+    staticCompositionLocalOf { Analytics.Default }
+
+val LocalSendingData: ProvidableCompositionLocal<SendingData> =
+    staticCompositionLocalOf { SendingData.Default }
 
 @Composable
 @Preview
 fun App(chatAPI: ChatAPI) {
     BubbleTheme {
-        Navigator(BubbleTab(chatAPI)) { navigator: Navigator ->
+        Navigator(MainScreen(chatAPI)) { navigator: Navigator ->
             CompositionLocalProvider(
                 LocalAppNavigator provides navigator
             ) {

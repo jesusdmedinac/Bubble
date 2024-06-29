@@ -43,11 +43,11 @@ data class MainScreen(
                     BubbleTopAppBar()
                 },
                 bottomBar = {
-                    BottomNavigation {
+                    /*BottomNavigation {
                         TabNavigationItem(HomeTab)
                         TabNavigationItem(bubbleTab)
                         TabNavigationItem(ProfileTab)
-                    }
+                    }*/
                 },
                 content = { padding ->
                     Box(

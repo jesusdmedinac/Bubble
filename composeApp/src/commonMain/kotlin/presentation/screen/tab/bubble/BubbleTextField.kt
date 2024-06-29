@@ -130,7 +130,7 @@ fun BubbleTextField(
                     )
                 }
                 IconButton(onClick = {
-                    analytics.sendClickEvent(value.text.length)
+                    analytics.sendClickEvent(value.text.length.toLong())
                     onSendClick(value)
                 }) {
                     Icon(
