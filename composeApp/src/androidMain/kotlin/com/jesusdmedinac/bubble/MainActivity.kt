@@ -2,6 +2,7 @@ package com.jesusdmedinac.bubble
 
 import App
 import LocalAnalytics
+import LocalChatAPI
 import LocalSendingData
 import android.content.Intent
 import android.net.Uri
@@ -44,8 +45,19 @@ class MainActivity : ComponentActivity() {
                     .fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                SendingDataCompositionProvider()
+                ChatAPICompositionProvider()
             }
+        }
+    }
+
+    @Composable
+    private fun ChatAPICompositionProvider() {
+        val chatAPIImpl = ChatAPIImpl(Json {
+            ignoreUnknownKeys = true
+            prettyPrint = true
+        })
+        CompositionLocalProvider(LocalChatAPI provides chatAPIImpl) {
+            SendingDataCompositionProvider()
         }
     }
 
@@ -96,12 +108,7 @@ class MainActivity : ComponentActivity() {
             }
         }
         CompositionLocalProvider(LocalKamelConfig provides androidConfig) {
-            App(
-                chatAPI = ChatAPIImpl(Json {
-                    ignoreUnknownKeys = true
-                    prettyPrint = true
-                })
-            )
+            App()
         }
     }
 
@@ -120,9 +127,5 @@ class MainActivity : ComponentActivity() {
 @Preview
 @Composable
 fun AppAndroidPreview() {
-    App(chatAPI = object : ChatAPI {
-        override suspend fun sendMessage(messages: List<Message>): Message {
-            TODO("Not yet implemented")
-        }
-    })
+    App()
 }

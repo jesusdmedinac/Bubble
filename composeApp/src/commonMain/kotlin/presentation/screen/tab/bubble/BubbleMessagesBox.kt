@@ -1,6 +1,7 @@
 package presentation.screen.tab.bubble
 
 import LocalAnalytics
+import LocalChatAPI
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Box
@@ -41,8 +42,13 @@ import presentation.model.UIMessage
 import presentation.model.UIMessageBody
 
 @Composable
-fun ColumnScope.BubbleMessagesBox(chatAPI: ChatAPI) {
+fun ColumnScope.BubbleMessagesBox() {
+    val chatAPI = LocalChatAPI.current
     var uiMessageList: List<UIMessage> by remember { mutableStateOf(emptyList()) }
+    val messagesLimit = 50
+    val remainingFreeMessages = messagesLimit - uiMessageList
+        .filter { it.author == "user" }
+        .size
     val lazyListState = rememberLazyListState()
     LaunchedEffect(Unit) {
         if (uiMessageList.isNotEmpty()) {
@@ -67,9 +73,7 @@ fun ColumnScope.BubbleMessagesBox(chatAPI: ChatAPI) {
             item {
                 BubbleTextField(
                     value = textFieldValue,
-                    remainingFreeMessages = 50 - uiMessageList
-                        .filter { it.author == "user" }
-                        .size,
+                    remainingFreeMessages = remainingFreeMessages,
                     onValueChange = {
                         textFieldValue = it
                     },

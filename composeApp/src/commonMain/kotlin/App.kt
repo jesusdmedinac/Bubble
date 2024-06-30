@@ -14,6 +14,9 @@ import presentation.ui.theme.BubbleTheme
 val LocalAppNavigator: ProvidableCompositionLocal<Navigator?> =
     staticCompositionLocalOf { null }
 
+val LocalChatAPI: ProvidableCompositionLocal<ChatAPI> =
+    staticCompositionLocalOf { ChatAPI.Default }
+
 val LocalAnalytics: ProvidableCompositionLocal<Analytics> =
     staticCompositionLocalOf { Analytics.Default }
 
@@ -22,9 +25,9 @@ val LocalSendingData: ProvidableCompositionLocal<SendingData> =
 
 @Composable
 @Preview
-fun App(chatAPI: ChatAPI) {
+fun App() {
     BubbleTheme {
-        Navigator(MainScreen(chatAPI)) { navigator: Navigator ->
+        Navigator(MainScreen()) { navigator: Navigator ->
             CompositionLocalProvider(
                 LocalAppNavigator provides navigator
             ) {

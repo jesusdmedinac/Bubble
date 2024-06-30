@@ -29,14 +29,12 @@ import presentation.screen.tab.BubbleTab
 import presentation.screen.tab.HomeTab
 import presentation.screen.tab.ProfileTab
 
-data class MainScreen(
-    private val chatAPI: ChatAPI,
-) : Screen {
+class MainScreen : Screen {
     override val key: ScreenKey = uniqueScreenKey
 
     @Composable
     override fun Content() {
-        val bubbleTab = remember { BubbleTab(chatAPI) }
+        val bubbleTab = remember { BubbleTab() }
         TabNavigator(bubbleTab) { tabNavigator: TabNavigator ->
             Scaffold(
                 topBar = {

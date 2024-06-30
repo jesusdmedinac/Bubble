@@ -4,6 +4,14 @@ import kotlin.random.Random
 
 interface ChatAPI {
     suspend fun sendMessage(messages: List<Message>): Message
+
+    companion object {
+        val Default = object : ChatAPI {
+            override suspend fun sendMessage(messages: List<Message>): Message {
+                TODO("sendMessage on ChatAPI is not implemented yet")
+            }
+        }
+    }
 }
 
 private val challenges: List<Challenge>

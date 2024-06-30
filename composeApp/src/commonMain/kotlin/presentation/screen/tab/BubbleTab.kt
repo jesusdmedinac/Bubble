@@ -26,9 +26,7 @@ import presentation.screen.tab.bubble.BubbleMessagesBox
 import presentation.screen.tab.bubble.BubbleTabActions
 import presentation.screen.tab.bubble.BubbleTabTitle
 
-data class BubbleTab(
-    private val chatAPI: ChatAPI,
-) : Tab {
+class BubbleTab : Tab {
     override val options: TabOptions
         @Composable
         get() {
@@ -57,7 +55,7 @@ data class BubbleTab(
                     localSoftwareKeyboardController?.hide()
                 }
         ) {
-            BubbleMessagesBox(chatAPI)
+            BubbleMessagesBox()
         }
     }
 }
