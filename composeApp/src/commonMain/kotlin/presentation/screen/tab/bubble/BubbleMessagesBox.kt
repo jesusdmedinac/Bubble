@@ -1,13 +1,11 @@
 package presentation.screen.tab.bubble
 
-import LocalAnalytics
-import LocalChatAPI
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -19,6 +17,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,43 +26,49 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import data.Body
-import data.Challenge
-import data.ChatAPI
-import data.Message
+import cafe.adriel.voyager.koin.getNavigatorScreenModel
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import kotlinx.coroutines.launch
-import presentation.model.ChallengeCategory
 import presentation.model.UIBubbleMessage
 import presentation.model.UIBubblerMessage
-import presentation.model.UIChallenge
-import presentation.model.UIMessage
-import presentation.model.UIMessageBody
+import presentation.screenmodel.BubbleTabScreenModel
+import presentation.screenmodel.BubbleTabState
 
 @Composable
-fun ColumnScope.BubbleMessagesBox() {
-    val chatAPI = LocalChatAPI.current
-    var uiMessageList: List<UIMessage> by remember { mutableStateOf(emptyList()) }
-    val messagesLimit = 50
-    val remainingFreeMessages = messagesLimit - uiMessageList
-        .filter { it.author == "user" }
-        .size
+fun BubbleMessagesBox(
+    modifier: Modifier = Modifier
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val localSoftwareKeyboardController = LocalSoftwareKeyboardController.current
+    val navigator = LocalNavigator.currentOrThrow
+    val screenModel = navigator.getNavigatorScreenModel<BubbleTabScreenModel>()
+    val state: BubbleTabState by screenModel.container.stateFlow.collectAsState()
+
     val lazyListState = rememberLazyListState()
-    LaunchedEffect(Unit) {
-        if (uiMessageList.isNotEmpty()) {
-            lazyListState.animateScrollToItem(uiMessageList.size - 1)
-        }
-    }
-    var textFieldValue by remember { mutableStateOf(TextFieldValue("")) }
-    val coroutineScope = rememberCoroutineScope()
-    val analytics = LocalAnalytics.current
+    val messages = state.messages
+    val remainingFreeMessages = state.remainingFreeMessages
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .weight(1f),
-        contentAlignment = Alignment.BottomEnd,
+        modifier = modifier
+            .fillMaxSize()
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null
+            ) {
+                localSoftwareKeyboardController?.hide()
+            },
+        contentAlignment = Alignment.Center,
     ) {
+        LaunchedEffect(Unit) {
+            if (messages.isNotEmpty()) {
+                lazyListState.animateScrollToItem(0)
+            }
+        }
+        var currentTextFieldValue by remember { mutableStateOf(TextFieldValue("")) }
+        val coroutineScope = rememberCoroutineScope()
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize(),
@@ -72,88 +77,22 @@ fun ColumnScope.BubbleMessagesBox() {
         ) {
             item {
                 BubbleTextField(
-                    value = textFieldValue,
+                    value = currentTextFieldValue,
                     remainingFreeMessages = remainingFreeMessages,
                     onValueChange = {
-                        textFieldValue = it
+                        currentTextFieldValue = it
                     },
-                    onSendClick = {
-                        coroutineScope.launch {
-                            uiMessageList = listOf(
-                                UIBubblerMessage(
-                                    id = uiMessageList.size + 1,
-                                    author = "user",
-                                    body = UIMessageBody(
-                                        message = it.text,
-                                    )
-                                )
-                            ) + uiMessageList
-                            val bubbleMessage = chatAPI.sendMessage(
-                                uiMessageList.map { uiMessage ->
-                                    Message(
-                                        author = uiMessage.author,
-                                        body = if (uiMessage.author == "user") {
-                                            val uiBubblerMessage = uiMessage as UIBubblerMessage
-                                            Body(
-                                                message = uiBubblerMessage.body.message,
-                                                challenge = uiBubblerMessage.body.challenge?.let { challenge ->
-                                                    Challenge(
-                                                        id = challenge.id,
-                                                        title = challenge.name,
-                                                        description = challenge.description,
-                                                        image = challenge.image,
-                                                    )
-                                                }
-                                            )
-                                        } else {
-                                            val uiBubbleMessage = uiMessage as UIBubbleMessage
-                                            Body(
-                                                message = uiBubbleMessage.body.message,
-                                                challenge = uiBubbleMessage.body.challenge?.let { challenge ->
-                                                    Challenge(
-                                                        id = challenge.id,
-                                                        title = challenge.name,
-                                                        description = challenge.description,
-                                                        image = challenge.image
-                                                    )
-                                                }
-                                            )
-                                        }
-                                    )
-                                }
-                            )
-                            analytics.sendChatResponseEvent(bubbleMessage)
-                            uiMessageList = listOf(
-                                UIBubbleMessage(
-                                    id = uiMessageList.size + 1,
-                                    author = bubbleMessage.author,
-                                    body = bubbleMessage.body.let { body ->
-                                        UIMessageBody(
-                                            message = body.message ?: "",
-                                            challenge = body.challenge?.let { challenge ->
-                                                UIChallenge(
-                                                    id = challenge.id,
-                                                    name = challenge.title,
-                                                    description = challenge.description,
-                                                    image = challenge.image,
-                                                    challengeCategory = ChallengeCategory.TODO
-                                                )
-                                            }
-                                        )
-                                    }
-                                )
-                            ) + uiMessageList
-                        }
-                        textFieldValue = TextFieldValue("")
+                    onSendClick = { textFieldValue ->
+                        screenModel.sendMessage(textFieldValue.text)
+                        currentTextFieldValue = TextFieldValue("")
                     },
                 )
             }
 
-            items(uiMessageList) { message ->
+            items(messages) { message ->
                 when (message) {
                     is UIBubbleMessage -> BubbleMessageCard(message)
                     is UIBubblerMessage -> BubblerMessageCard(message)
-                    else -> Unit
                 }
             }
         }

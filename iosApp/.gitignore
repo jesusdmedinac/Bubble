@@ -1,0 +1,48 @@
+# Gemini
+GenerativeAI-Info.plist
+
+# Xcode
+DerivedData/
+build/
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+xcuserdata/
+*.xcscmblueprint
+*.xccheckout
+
+# Swift Package Manager
+.build/
+Packages/
+Package.pins
+Package.resolved
+# Xcode 11+
+xcdebugger/
+
+# CocoaPods
+Pods/
+Podfile.lock
+# Carthage
+Carthage/Build/
+
+# fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots
+fastlane/test_output
+
+# Xcode Server
+*.xccrashpoint
+*.xcactivitylog
+
+# Others
+*.moved-aside
+*.xcuserstate
+*.xcuserstate-old
+*.swp
+*.swp~
+.DS_Store

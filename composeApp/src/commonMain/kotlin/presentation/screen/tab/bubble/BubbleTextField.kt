@@ -18,31 +18,33 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.primarySurface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import bubble.composeapp.generated.resources.Res
 import bubble.composeapp.generated.resources.ic_chat_bubble
 import bubble.composeapp.generated.resources.ic_message
 import bubble.composeapp.generated.resources.ic_send
-import data.Analytics
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun BubbleTextField(
     value: TextFieldValue,
-    remainingFreeMessages: Int = 0,
     onValueChange: (TextFieldValue) -> Unit,
-    onSendClick: (TextFieldValue) -> Unit = {}
+    remainingFreeMessages: Int = 0,
+    onSendClick: (TextFieldValue) -> Unit = {},
+    modifier: Modifier = Modifier,
 ) {
     val analytics = LocalAnalytics.current
+    val noMoreMessages = remainingFreeMessages <= 0
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column {
@@ -51,7 +53,8 @@ fun BubbleTextField(
                 onClick = {},
                 modifier = Modifier
                     .size(48.dp)
-                    .clip(CircleShape)
+                    .clip(CircleShape),
+                enabled = !noMoreMessages
             ) {
                 Icon(
                     painterResource(Res.drawable.ic_message),
@@ -84,7 +87,7 @@ fun BubbleTextField(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        "Tienes ${remainingFreeMessages} mensajes restantes con Bubble",
+                        "Tienes $remainingFreeMessages mensajes restantes con Bubble",
                         style = MaterialTheme.typography.caption,
                         color = MaterialTheme.colors.onSecondary
                     )
@@ -100,7 +103,11 @@ fun BubbleTextField(
                     .fillMaxWidth()
                     .height(56.dp)
                     .clip(CircleShape)
-                    .background(MaterialTheme.colors.primary)
+                    .background(
+                        if (!noMoreMessages) MaterialTheme.colors.primary else
+                            MaterialTheme.colors.onSurface.copy(alpha = 0.12f)
+                                .compositeOver(MaterialTheme.colors.surface)
+                    )
                     .padding(horizontal = 16.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -126,7 +133,8 @@ fun BubbleTextField(
                             .fillMaxWidth(),
                         textStyle = MaterialTheme.typography.body1.copy(
                             color = MaterialTheme.colors.onPrimary,
-                        )
+                        ),
+                        enabled = !noMoreMessages
                     )
                 }
                 IconButton(onClick = {

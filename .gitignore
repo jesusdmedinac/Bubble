@@ -49,10 +49,8 @@ app.*.map.json
 /composeApp/build/
 
 # KMP Project
+.kotlin/
 local.properties
-
-# iOS app
-iosApp/iosApp/GenerativeAI-Info.plist
 
 # Firebase
 composeApp/google-services.json

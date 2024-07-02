@@ -44,9 +44,9 @@ kotlin {
 
             implementation(libs.ktor.client.android)
 
-            implementation("com.google.ai.client.generativeai:generativeai:0.6.0")
+            implementation(libs.generative.ai)
 
-            implementation(platform("com.google.firebase:firebase-bom:33.1.1"))
+            implementation(project.dependencies.platform("com.google.firebase:firebase-bom:33.1.1"))
             implementation("com.google.firebase:firebase-crashlytics")
             implementation("com.google.firebase:firebase-analytics")
         }
@@ -69,7 +69,13 @@ kotlin {
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.serialization.kotlinx.json)
 
-            implementation("com.mikepenz:multiplatform-markdown-renderer-m2:0.22.0")
+            implementation(project.dependencies.platform("io.insert-koin:koin-bom:3.6.0-wasm-alpha2"))
+            implementation("io.insert-koin:koin-core")
+            implementation("io.insert-koin:koin-compose")
+
+            implementation(libs.orbit.mvi)
+
+            implementation(libs.multiplatform.markdown.renderer.m2)
         }
     }
 }

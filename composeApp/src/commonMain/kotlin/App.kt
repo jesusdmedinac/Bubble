@@ -7,7 +7,11 @@ import cafe.adriel.voyager.transitions.SlideTransition
 import data.Analytics
 import data.ChatAPI
 import data.SendingData
+import di.appModules
+import kotlinx.serialization.json.Json
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.KoinApplication
+import org.koin.dsl.module
 import presentation.screen.MainScreen
 import presentation.ui.theme.BubbleTheme
 
@@ -26,12 +30,26 @@ val LocalSendingData: ProvidableCompositionLocal<SendingData> =
 @Composable
 @Preview
 fun App() {
-    BubbleTheme {
-        Navigator(MainScreen()) { navigator: Navigator ->
-            CompositionLocalProvider(
-                LocalAppNavigator provides navigator
-            ) {
-                SlideTransition(navigator)
+    val chatAPI = LocalChatAPI.current
+    val analytics = LocalAnalytics.current
+    val sendingData = LocalSendingData.current
+    KoinApplication(application = {
+        modules(
+            module {
+                single<ChatAPI> { chatAPI }
+                single<Analytics> { analytics }
+                single<SendingData> { sendingData }
+            } +
+                    appModules()
+        )
+    }) {
+        BubbleTheme {
+            Navigator(MainScreen()) { navigator: Navigator ->
+                CompositionLocalProvider(
+                    LocalAppNavigator provides navigator
+                ) {
+                    SlideTransition(navigator)
+                }
             }
         }
     }

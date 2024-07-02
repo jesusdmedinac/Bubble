@@ -11,13 +11,18 @@ androidx-espresso-core = "3.5.1"
 androidx-material = "1.12.0"
 androidx-test-junit = "1.1.5"
 compose-plugin = "1.6.10"
+gemini = "0.8.0"
 junit = "4.13.2"
+koinBom = "3.6.0-wasm-alpha2"
 kotlin = "2.0.0"
+multiplatformMarkdownRendererM2 = "0.22.0"
 voyager = "1.0.0"
 kamel = "0.9.0"
 ktor = "2.3.11"
+orbit = "8.0.0"
 
 [libraries]
+generative-ai = { module = "com.google.ai.client.generativeai:generativeai", version.ref = "gemini" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -28,6 +33,7 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 androidx-material = { group = "com.google.android.material", name = "material", version.ref = "androidx-material" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "androidx-constraintlayout" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
+multiplatform-markdown-renderer-m2 = { module = "com.mikepenz:multiplatform-markdown-renderer-m2", version.ref = "multiplatformMarkdownRendererM2" }
 voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
 voyager-screenmodel = { module = "cafe.adriel.voyager:voyager-screenmodel", version.ref = "voyager" }
 voyager-tab-navigator = { module = "cafe.adriel.voyager:voyager-tab-navigator", version.ref = "voyager" }
@@ -38,6 +44,7 @@ ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
 ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "ktor" }
 ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
 ktor-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
+orbit-mvi = { module = "org.orbit-mvi:orbit-compose", version.ref = "orbit" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
