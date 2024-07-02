@@ -34,7 +34,6 @@ import io.kamel.image.config.LocalKamelConfig
 import io.kamel.image.config.resourcesFetcher
 import kotlinx.serialization.json.Json
 
-
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

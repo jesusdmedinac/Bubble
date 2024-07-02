@@ -69,9 +69,8 @@ kotlin {
             implementation(libs.ktor.client.core)
             implementation(libs.ktor.serialization.kotlinx.json)
 
-            implementation(project.dependencies.platform("io.insert-koin:koin-bom:3.6.0-wasm-alpha2"))
-            implementation("io.insert-koin:koin-core")
-            implementation("io.insert-koin:koin-compose")
+            implementation("io.insert-koin:koin-core:3.5.6")
+            implementation("io.insert-koin:koin-compose:1.1.5")
 
             implementation(libs.orbit.mvi)
 

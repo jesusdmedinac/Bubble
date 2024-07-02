@@ -10,17 +10,19 @@ import platform.UIKit.UIApplication
 import platform.UIKit.UIViewController
 
 fun MainViewController(chatAPI: ChatAPI) = ComposeUIViewController {
-    CompositionLocalProvider(LocalSendingData provides object : SendingData {
-        override fun sendPlainText(data: String) {
-            shareText(data)
-        }
-    }) {
-        CompositionLocalProvider(LocalAnalytics provides object : Analytics {
-            override fun sendEvent(event: Event) {
-                // TODO implement send event to Firebase
+    CompositionLocalProvider(LocalChatAPI provides chatAPI) {
+        CompositionLocalProvider(LocalSendingData provides object : SendingData {
+            override fun sendPlainText(data: String) {
+                shareText(data)
             }
         }) {
-            App(chatAPI)
+            CompositionLocalProvider(LocalAnalytics provides object : Analytics {
+                override fun sendEvent(event: Event) {
+                    // TODO implement send event to Firebase
+                }
+            }) {
+                App()
+            }
         }
     }
 }

@@ -8,7 +8,6 @@ import data.Analytics
 import data.ChatAPI
 import data.SendingData
 import di.appModules
-import kotlinx.serialization.json.Json
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.KoinApplication
 import org.koin.dsl.module
@@ -39,8 +38,7 @@ fun App() {
                 single<ChatAPI> { chatAPI }
                 single<Analytics> { analytics }
                 single<SendingData> { sendingData }
-            } +
-                    appModules()
+            } + appModules()
         )
     }) {
         BubbleTheme {
