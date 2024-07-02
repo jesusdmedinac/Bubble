@@ -1,6 +1,9 @@
 package presentation.screen.tab.bubble
 
 import LocalAnalytics
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,12 +17,19 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.Button
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.minimumInteractiveComponentSize
 import androidx.compose.material.primarySurface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -30,19 +40,22 @@ import bubble.composeapp.generated.resources.Res
 import bubble.composeapp.generated.resources.ic_chat_bubble
 import bubble.composeapp.generated.resources.ic_message
 import bubble.composeapp.generated.resources.ic_send
+import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun BubbleTextField(
     value: TextFieldValue,
-    onValueChange: (TextFieldValue) -> Unit,
     remainingFreeMessages: Int = 0,
+    isSendingMessage: Boolean = false,
+    onValueChange: (TextFieldValue) -> Unit,
     onSendClick: (TextFieldValue) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
     val analytics = LocalAnalytics.current
     val noMoreMessages = remainingFreeMessages <= 0
+    val isSendingMessageEnabled = !isSendingMessage && !noMoreMessages && value.text.isNotEmpty()
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
@@ -137,15 +150,43 @@ fun BubbleTextField(
                         enabled = !noMoreMessages
                     )
                 }
-                IconButton(onClick = {
-                    analytics.sendClickEvent(value.text.length.toLong())
-                    onSendClick(value)
-                }) {
-                    Icon(
-                        painterResource(Res.drawable.ic_send),
-                        contentDescription = null,
-                        tint = MaterialTheme.colors.onPrimary
-                    )
+                var bool by remember { mutableStateOf(false) }
+                LaunchedEffect(Unit) {
+                    while (true) {
+                        bool = !bool
+                        delay(1000)
+                    }
+                }
+                IconButton(
+                    onClick = {
+                        analytics.sendClickEvent(value.text.length.toLong())
+                        onSendClick(value)
+                    },
+                    enabled = isSendingMessageEnabled
+                ) {
+                    AnimatedVisibility(
+                        isSendingMessage,
+                        enter = fadeIn(),
+                        exit = fadeOut(),
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .minimumInteractiveComponentSize()
+                                .size(24.dp),
+                            color = MaterialTheme.colors.onPrimary
+                        )
+                    }
+                    AnimatedVisibility(
+                        !isSendingMessage,
+                        enter = fadeIn(),
+                        exit = fadeOut(),
+                    ) {
+                        Icon(
+                            painterResource(Res.drawable.ic_send),
+                            contentDescription = null,
+                            tint = MaterialTheme.colors.onPrimary
+                        )
+                    }
                 }
             }
         }

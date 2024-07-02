@@ -79,6 +79,7 @@ fun BubbleMessagesBox(
                 BubbleTextField(
                     value = currentTextFieldValue,
                     remainingFreeMessages = remainingFreeMessages,
+                    isSendingMessage = state.loading,
                     onValueChange = {
                         currentTextFieldValue = it
                     },

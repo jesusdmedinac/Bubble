@@ -28,6 +28,11 @@ class BubbleTabScreenModel(
 
     fun sendMessage(textMessage: String) = intent {
         reduce {
+            state.copy(
+                loading = true
+            )
+        }
+        reduce {
             val updatedMessages = listOf(
                 UIBubblerMessage(
                     id = state.messages.size + 1,
@@ -99,11 +104,17 @@ class BubbleTabScreenModel(
                 messages = updatedMessages
             )
         }
+        reduce {
+            state.copy(
+                loading = false
+            )
+        }
     }
 }
 
 data class BubbleTabState(
-    val messagesLimit: Int = 50,
+    val loading: Boolean = false,
+    val messagesLimit: Int = 10,
     val messages: List<UIMessage> = emptyList()
 ) {
     val remainingFreeMessages: Int
