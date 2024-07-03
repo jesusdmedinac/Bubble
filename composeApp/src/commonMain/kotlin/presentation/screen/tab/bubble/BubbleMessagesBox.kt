@@ -1,5 +1,6 @@
 package presentation.screen.tab.bubble
 
+import LocalAppNavigator
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
@@ -35,6 +36,7 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import kotlinx.coroutines.launch
 import presentation.model.UIBubbleMessage
 import presentation.model.UIBubblerMessage
+import presentation.screen.PaywallScreen
 import presentation.screenmodel.BubbleTabScreenModel
 import presentation.screenmodel.BubbleTabState
 
@@ -44,6 +46,7 @@ fun BubbleMessagesBox(
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val localSoftwareKeyboardController = LocalSoftwareKeyboardController.current
+    val appNavigator = LocalAppNavigator.currentOrThrow
     val navigator = LocalNavigator.currentOrThrow
     val screenModel = navigator.getNavigatorScreenModel<BubbleTabScreenModel>()
     val state: BubbleTabState by screenModel.container.stateFlow.collectAsState()
@@ -87,6 +90,17 @@ fun BubbleMessagesBox(
                         screenModel.sendMessage(textFieldValue.text)
                         currentTextFieldValue = TextFieldValue("")
                     },
+                    modifier = Modifier
+                        .let {
+                            if (remainingFreeMessages <= 0) {
+                                it.clickable(
+                                    interactionSource = interactionSource,
+                                    indication = null,
+                                ) {
+                                    appNavigator.push(PaywallScreen())
+                                }
+                            } else it
+                        }
                 )
             }
 

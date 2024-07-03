@@ -22,7 +22,7 @@ class ChatAPIImpl(
         systemInstruction = content { text(systemInstructions()) },
     )
 
-    override suspend fun sendMessage(messages: List<Message>): Message {
+    override suspend fun sendMessage(messages: List<Message>): Message = runCatching {
         val reversedMessages = messages
             .reversed()
         val history = reversedMessages
@@ -62,4 +62,15 @@ class ChatAPIImpl(
             body = body
         )
     }
+        .fold(
+            onSuccess = { it },
+            onFailure = {
+                Message(
+                    author = "model",
+                    body = Body(
+                        message = it.message.toString()
+                    )
+                )
+            }
+        )
 }

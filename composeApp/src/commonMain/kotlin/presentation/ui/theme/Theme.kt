@@ -9,21 +9,21 @@ import androidx.compose.runtime.Composable
 private val DarkColorPalette = darkColors(
     primary = Green500,
     primaryVariant = Green700,
-    secondary = Teal500,
-    secondaryVariant = Teal700,
+    secondary = Teal200,
+    secondaryVariant = Teal500,
 )
 
 private val LightColorPalette = lightColors(
     primary = Green500,
     primaryVariant = Green700,
-    secondary = Teal500,
-    secondaryVariant = Teal700,
+    secondary = Teal200,
+    secondaryVariant = Teal500,
 )
 
 @Composable
 fun BubbleTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable() () -> Unit
+    content: @Composable () -> Unit
 ) {
     val colors = if (darkTheme) {
         DarkColorPalette

@@ -24,7 +24,7 @@ fun MainViewController(chatAPI: ChatAPI) = ComposeUIViewController {
             }) {
                 CompositionLocalProvider(LocalBuildConfig provides object : BuildConfig {
                     override val versionName: String
-                        get() = "0.0.2"
+                        get() = "0.0.3"
                 }) {
                     App()
                 }

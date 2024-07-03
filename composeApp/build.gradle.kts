@@ -91,8 +91,8 @@ android {
         applicationId = "com.jesusdmedinac.bubble"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 4
-        versionName = "0.0.2"
+        versionCode = 6
+        versionName = "0.0.3"
     }
     packaging {
         resources {
