@@ -5,6 +5,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.SlideTransition
 import data.Analytics
+import data.BuildConfig
 import data.ChatAPI
 import data.SendingData
 import di.appModules
@@ -12,6 +13,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.KoinApplication
 import org.koin.dsl.module
 import presentation.screen.MainScreen
+import presentation.screen.PaywallScreen
 import presentation.ui.theme.BubbleTheme
 
 val LocalAppNavigator: ProvidableCompositionLocal<Navigator?> =
@@ -26,18 +28,23 @@ val LocalAnalytics: ProvidableCompositionLocal<Analytics> =
 val LocalSendingData: ProvidableCompositionLocal<SendingData> =
     staticCompositionLocalOf { SendingData.Default }
 
+val LocalBuildConfig: ProvidableCompositionLocal<BuildConfig> =
+    staticCompositionLocalOf { BuildConfig.Default }
+
 @Composable
 @Preview
 fun App() {
     val chatAPI = LocalChatAPI.current
     val analytics = LocalAnalytics.current
     val sendingData = LocalSendingData.current
+    val buildConfig = LocalBuildConfig.current
     KoinApplication(application = {
         modules(
             module {
                 single<ChatAPI> { chatAPI }
                 single<Analytics> { analytics }
                 single<SendingData> { sendingData }
+                single<BuildConfig> { buildConfig }
             } + appModules()
         )
     }) {

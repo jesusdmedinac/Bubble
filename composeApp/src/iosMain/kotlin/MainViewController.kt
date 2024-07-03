@@ -1,6 +1,7 @@
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.window.ComposeUIViewController
 import data.Analytics
+import data.BuildConfig
 import data.ChatAPI
 import data.Event
 import data.SendingData
@@ -21,7 +22,12 @@ fun MainViewController(chatAPI: ChatAPI) = ComposeUIViewController {
                     // TODO implement send event to Firebase
                 }
             }) {
-                App()
+                CompositionLocalProvider(LocalBuildConfig provides object : BuildConfig {
+                    override val versionName: String
+                        get() = "0.0.2"
+                }) {
+                    App()
+                }
             }
         }
     }

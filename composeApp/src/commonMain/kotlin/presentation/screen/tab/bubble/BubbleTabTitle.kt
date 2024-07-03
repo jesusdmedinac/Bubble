@@ -1,5 +1,6 @@
 package presentation.screen.tab.bubble
 
+import LocalBuildConfig
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
@@ -17,6 +18,7 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun BubbleTabTitle() {
+    val buildConfig = LocalBuildConfig.current
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -26,6 +28,6 @@ fun BubbleTabTitle() {
             modifier = Modifier.size(32.dp)
         )
         Spacer(modifier = Modifier.size(8.dp))
-        Text(text = stringResource(Res.string.tab_title_bubble))
+        Text(text = stringResource(Res.string.tab_title_bubble) + " ${buildConfig.versionName}")
     }
 }

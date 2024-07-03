@@ -2,6 +2,7 @@ package com.jesusdmedinac.bubble
 
 import App
 import LocalAnalytics
+import LocalBuildConfig
 import LocalChatAPI
 import LocalSendingData
 import android.content.Intent
@@ -21,6 +22,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
 import com.jesusdmedinac.bubble.data.ChatAPIImpl
 import data.Analytics
+import data.BuildConfig
 import data.ChatAPI
 import data.Event
 import data.Message
@@ -107,6 +109,17 @@ class MainActivity : ComponentActivity() {
             }
         }
         CompositionLocalProvider(LocalKamelConfig provides androidConfig) {
+            BuildConfigCompositionProvider()
+        }
+    }
+
+    @Composable
+    private fun BuildConfigCompositionProvider() {
+        val buildConfig = object : BuildConfig {
+            override val versionName: String
+                get() = com.jesusdmedinac.bubble.BuildConfig.VERSION_NAME
+        }
+        CompositionLocalProvider(LocalBuildConfig provides buildConfig) {
             App()
         }
     }
