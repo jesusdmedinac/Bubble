@@ -74,6 +74,8 @@ kotlin {
 
             implementation(libs.orbit.mvi)
 
+            implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0")
+
             implementation(libs.multiplatform.markdown.renderer.m2)
         }
     }

@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
+import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.runtime.Composable
@@ -33,9 +34,11 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.koin.getNavigatorScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import data.TimeUtils
 import kotlinx.coroutines.launch
 import presentation.model.UIBubbleMessage
 import presentation.model.UIBubblerMessage
+import presentation.model.UIMessageBody
 import presentation.screen.PaywallScreen
 import presentation.screenmodel.BubbleTabScreenModel
 import presentation.screenmodel.BubbleTabState

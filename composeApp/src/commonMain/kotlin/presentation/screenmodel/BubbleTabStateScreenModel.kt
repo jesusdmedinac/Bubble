@@ -7,6 +7,8 @@ import data.Body
 import data.Challenge
 import data.ChatAPI
 import data.Message
+import data.TimeUtils
+import data.UsageAPI
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
@@ -18,13 +20,31 @@ import presentation.model.UIBubblerMessage
 import presentation.model.UIChallenge
 import presentation.model.UIMessage
 import presentation.model.UIMessageBody
+import presentation.model.UIUsageStats
 
 class BubbleTabScreenModel(
     private val chatAPI: ChatAPI,
     private val analytics: Analytics,
+    private val usageAPI: UsageAPI,
 ) : ScreenModel, ContainerHost<BubbleTabState, BubbleTabSideEffect> {
     override val container: Container<BubbleTabState, BubbleTabSideEffect> =
-        screenModelScope.container(BubbleTabState())
+        screenModelScope.container(BubbleTabState()) {
+            val usageStats = usageAPI.getUsageStats()
+                .filterNot { usageStats ->
+                    usageAPI.packagesToFilter().any { usageStats.packageName.startsWith(it) }
+                }
+            reduce {
+                state.copy(
+                    usageStats = usageStats
+                        .map { UIUsageStats(it.packageName, it.totalTimeInForeground) }
+                )
+            }
+            sendMessage(
+                """
+                Hola Bubble, mi tiempo en pantalla es de ${TimeUtils.formatDuration(state.usageStats.sumOf { it.totalTimeInForeground })}
+            """.trimIndent()
+            )
+        }
 
     fun sendMessage(textMessage: String) = intent {
         reduce {
@@ -115,7 +135,8 @@ class BubbleTabScreenModel(
 data class BubbleTabState(
     val loading: Boolean = false,
     val messagesLimit: Int = 10,
-    val messages: List<UIMessage> = emptyList()
+    val messages: List<UIMessage> = emptyList(),
+    val usageStats: List<UIUsageStats> = emptyList()
 ) {
     val remainingFreeMessages: Int
         get() = messagesLimit - messages

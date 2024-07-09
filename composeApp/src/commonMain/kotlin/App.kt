@@ -8,6 +8,7 @@ import data.Analytics
 import data.BuildConfig
 import data.ChatAPI
 import data.SendingData
+import data.UsageAPI
 import di.appModules
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.KoinApplication
@@ -31,6 +32,9 @@ val LocalSendingData: ProvidableCompositionLocal<SendingData> =
 val LocalBuildConfig: ProvidableCompositionLocal<BuildConfig> =
     staticCompositionLocalOf { BuildConfig.Default }
 
+val LocalUsageAPI: ProvidableCompositionLocal<UsageAPI> =
+    staticCompositionLocalOf { UsageAPI.Default }
+
 @Composable
 @Preview
 fun App() {
@@ -38,6 +42,7 @@ fun App() {
     val analytics = LocalAnalytics.current
     val sendingData = LocalSendingData.current
     val buildConfig = LocalBuildConfig.current
+    val usageAPI = LocalUsageAPI.current
     KoinApplication(application = {
         modules(
             module {
@@ -45,6 +50,7 @@ fun App() {
                 single<Analytics> { analytics }
                 single<SendingData> { sendingData }
                 single<BuildConfig> { buildConfig }
+                single<UsageAPI> { usageAPI }
             } + appModules()
         )
     }) {
