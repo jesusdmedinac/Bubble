@@ -1,5 +1,6 @@
 package presentation.screen.tab.bubble
 
+import LocalAppNavigator
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
@@ -15,13 +16,18 @@ import bubble.composeapp.generated.resources.Res
 import bubble.composeapp.generated.resources.ic_help
 import bubble.composeapp.generated.resources.ic_premium
 import bubble.composeapp.generated.resources.ic_settings
+import cafe.adriel.voyager.navigator.currentOrThrow
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import presentation.screen.PaywallScreen
 
 @Composable
 fun BubbleTabActions() {
-    /*Button(
-        onClick = {},
+    val appNavigator = LocalAppNavigator.currentOrThrow
+    Button(
+        onClick = {
+            appNavigator.push(PaywallScreen())
+        },
         modifier = Modifier
             .size(48.dp)
             .clip(CircleShape),
@@ -32,7 +38,7 @@ fun BubbleTabActions() {
             contentDescription = null
         )
     }
-    Spacer(modifier = Modifier.size(8.dp))
+    Spacer(modifier = Modifier.size(8.dp))/*
     Button(
         onClick = {},
         modifier = Modifier

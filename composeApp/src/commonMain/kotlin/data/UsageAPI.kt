@@ -7,11 +7,11 @@ interface UsageAPI {
     companion object {
         val Default = object : UsageAPI {
             override fun getUsageStats(): List<UsageStats> {
-                TODO("Not yet implemented")
+                TODO("getUsageStats on UsageAPI is not yet implemented")
             }
 
             override fun packagesToFilter(): List<String> {
-                TODO("Not yet implemented")
+                TODO("packagesToFilter on UsageAPI is not yet implemented")
             }
         }
     }

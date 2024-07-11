@@ -5,28 +5,42 @@ import data.BuildConfig
 import data.ChatAPI
 import data.Event
 import data.SendingData
+import data.UsageAPI
+import data.UsageStats
 import platform.UIKit.UIActivity
 import platform.UIKit.UIActivityViewController
 import platform.UIKit.UIApplication
 import platform.UIKit.UIViewController
 
 fun MainViewController(chatAPI: ChatAPI) = ComposeUIViewController {
-    CompositionLocalProvider(LocalChatAPI provides chatAPI) {
-        CompositionLocalProvider(LocalSendingData provides object : SendingData {
-            override fun sendPlainText(data: String) {
-                shareText(data)
-            }
-        }) {
-            CompositionLocalProvider(LocalAnalytics provides object : Analytics {
-                override fun sendEvent(event: Event) {
-                    // TODO implement send event to Firebase
+    val usageAPIImpl = object : UsageAPI {
+        override fun getUsageStats(): List<UsageStats> =
+            emptyList()
+
+        override fun packagesToFilter(): List<String> =
+            emptyList()
+    }
+    CompositionLocalProvider(LocalUsageAPI provides usageAPIImpl) {
+        CompositionLocalProvider(LocalChatAPI provides chatAPI) {
+            val sendingData = object : SendingData {
+                override fun sendPlainText(data: String) {
+                    shareText(data)
                 }
-            }) {
-                CompositionLocalProvider(LocalBuildConfig provides object : BuildConfig {
-                    override val versionName: String
-                        get() = "0.0.3"
-                }) {
-                    App()
+            }
+            CompositionLocalProvider(LocalSendingData provides sendingData) {
+                val analytics = object : Analytics {
+                    override fun sendEvent(event: Event) {
+                        // TODO implement send event to Firebase
+                    }
+                }
+                CompositionLocalProvider(LocalAnalytics provides analytics) {
+                    val buildConfig = object : BuildConfig {
+                        override val versionName: String
+                            get() = "0.0.3"
+                    }
+                    CompositionLocalProvider(LocalBuildConfig provides buildConfig) {
+                        App()
+                    }
                 }
             }
         }

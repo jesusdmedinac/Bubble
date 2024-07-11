@@ -10,7 +10,7 @@ import SwiftUI
 import FamilyControls
 import DeviceActivity
 
-@main
+//@main
 struct ScreenTimeApp: App {
   let center = AuthorizationCenter.shared
       //1 added next line here

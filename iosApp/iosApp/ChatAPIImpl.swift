@@ -42,7 +42,7 @@ class ChatAPIImpl : ChatAPI {
     systemInstruction: ModelContent(role: "model", parts: [.text(ChatAPIKt.systemInstructions())])
   )
   
-  func sendMessage(messages: [Message]) async throws -> Message {
+  func sendMessage(messages: [Message]) async -> Message {
     let reversedMessages = messages
       .reversed()
     let history: [ModelContent] = reversedMessages
@@ -53,26 +53,32 @@ class ChatAPIImpl : ChatAPI {
     let chat = generativeModel.startChat(
       history: history
     )
-    let response = try await chat.sendMessage(
-      reversedMessages.last?.body.message ?? "Empty message"
-    )
-    let jsonAsString = ChatAPIKt.toJsonAsString(response.text ?? """
+    var message = Message(author: "model", body: Body(message: "No tengo respuesta", challenge: nil))
+    do {
+      let response = try await chat.sendMessage(
+        reversedMessages.last?.body.message ?? "Empty message"
+      )
+      let jsonAsString = ChatAPIKt.toJsonAsString(response.text ?? """
 {
   "message": "No tengo respuesta",
   "challenge": null
 }
 """)
-    let chatBody = try json.decode(ChatBody.self, from: (jsonAsString).data(using: .utf8)!)
-    let body: Body
-    if (chatBody.challenge == nil) {
-      body = Body(message: chatBody.message, challenge: nil)
-    } else {
-      let chatChallenge = chatBody.challenge!
-      let challenge = Challenge(id: Int32(chatChallenge.id), title: chatChallenge.title, description: chatChallenge.description, image: chatChallenge.image, rewards: chatChallenge.rewards.map({ reward in
-        Reward(id: Int32(reward.id), title: reward.title, description: reward.description, image: reward.image, points: Int32(reward.points))
-      }))
-      body = Body(message: chatBody.message, challenge: challenge)
+      let chatBody = try json.decode(ChatBody.self, from: (jsonAsString).data(using: .utf8)!)
+      let body: Body
+      if (chatBody.challenge == nil) {
+        body = Body(message: chatBody.message, challenge: nil)
+      } else {
+        let chatChallenge = chatBody.challenge!
+        let challenge = Challenge(id: Int32(chatChallenge.id), title: chatChallenge.title, description: chatChallenge.description, image: chatChallenge.image, rewards: chatChallenge.rewards.map({ reward in
+          Reward(id: Int32(reward.id), title: reward.title, description: reward.description, image: reward.image, points: Int32(reward.points))
+        }))
+        body = Body(message: chatBody.message, challenge: challenge)
+      }
+      message = Message(author: "model", body: body)
+    } catch {
+      message = Message(author: "model", body: Body(message: "\(error)", challenge: nil))
     }
-    return Message(author: "model", body: body)
+    return message
   }
 }
