@@ -16,6 +16,7 @@
 		D97108AB2C392D680054DBE0 /* TotalActivityReport.swift in Sources */ = {isa = PBXBuildFile; fileRef = D97108AA2C392D680054DBE0 /* TotalActivityReport.swift */; };
 		D97108AD2C392D680054DBE0 /* TotalActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D97108AC2C392D680054DBE0 /* TotalActivityView.swift */; };
 		D97108B22C392D680054DBE0 /* ReportExtension.appex in Embed ExtensionKit Extensions */ = {isa = PBXBuildFile; fileRef = D97108A62C392D680054DBE0 /* ReportExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		D9714FB72C407851006EAD97 /* NetworkAPIImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9714FB62C407851006EAD97 /* NetworkAPIImpl.swift */; };
 		D99B83172C2492D500CEF980 /* GenerativeAI-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D99B83162C2492D500CEF980 /* GenerativeAI-Info.plist */; };
 		D99B83192C24934C00CEF980 /* APIKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99B83182C24934C00CEF980 /* APIKey.swift */; };
 		D99B831B2C24937D00CEF980 /* ChatAPIImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99B831A2C24937D00CEF980 /* ChatAPIImpl.swift */; };
@@ -63,6 +64,7 @@
 		D97108AC2C392D680054DBE0 /* TotalActivityView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TotalActivityView.swift; sourceTree = "<group>"; };
 		D97108AE2C392D680054DBE0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D97108AF2C392D680054DBE0 /* ReportExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ReportExtension.entitlements; sourceTree = "<group>"; };
+		D9714FB62C407851006EAD97 /* NetworkAPIImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkAPIImpl.swift; sourceTree = "<group>"; };
 		D99B83162C2492D500CEF980 /* GenerativeAI-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GenerativeAI-Info.plist"; sourceTree = "<group>"; };
 		D99B83182C24934C00CEF980 /* APIKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKey.swift; sourceTree = "<group>"; };
 		D99B831A2C24937D00CEF980 /* ChatAPIImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAPIImpl.swift; sourceTree = "<group>"; };
@@ -126,6 +128,7 @@
 		7555FF7D242A565900829871 /* iosApp */ = {
 			isa = PBXGroup;
 			children = (
+				D9714FB52C40783C006EAD97 /* Data */,
 				D92474E92C3932D100231855 /* iosAppRelease.entitlements */,
 				058557BA273AAA24004C7B11 /* Assets.xcassets */,
 				7555FF82242A565900829871 /* ContentView.swift */,
@@ -134,7 +137,6 @@
 				058557D7273AAEEB004C7B11 /* Preview Content */,
 				D99B83162C2492D500CEF980 /* GenerativeAI-Info.plist */,
 				D99B83182C24934C00CEF980 /* APIKey.swift */,
-				D99B831A2C24937D00CEF980 /* ChatAPIImpl.swift */,
 				D97108A02C392C550054DBE0 /* ScreenTimeApp.swift */,
 			);
 			path = iosApp;
@@ -158,6 +160,15 @@
 				D97108AF2C392D680054DBE0 /* ReportExtension.entitlements */,
 			);
 			path = ReportExtension;
+			sourceTree = "<group>";
+		};
+		D9714FB52C40783C006EAD97 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				D99B831A2C24937D00CEF980 /* ChatAPIImpl.swift */,
+				D9714FB62C407851006EAD97 /* NetworkAPIImpl.swift */,
+			);
+			path = Data;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -291,6 +302,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D99B831B2C24937D00CEF980 /* ChatAPIImpl.swift in Sources */,
+				D9714FB72C407851006EAD97 /* NetworkAPIImpl.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
 				D99B83192C24934C00CEF980 /* APIKey.swift in Sources */,
 				D97108A12C392C550054DBE0 /* ScreenTimeApp.swift in Sources */,

@@ -36,6 +36,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import data.TimeUtils
 import di.LocalNetworkAPI
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import presentation.model.UIBubbleMessage
 import presentation.model.UIBubblerMessage
@@ -49,7 +50,15 @@ fun BubbleMessagesBox(
     modifier: Modifier = Modifier
 ) {
     val networkAPI = LocalNetworkAPI.current
-    val isConnected by networkAPI.isConnected().collectAsState(false)
+    var isConnected by remember { mutableStateOf(false) }
+    LaunchedEffect(Unit) {
+        while (true) {
+            delay(1000)
+            networkAPI.isConnected {
+                isConnected = it
+            }
+        }
+    }
     val interactionSource = remember { MutableInteractionSource() }
     val localSoftwareKeyboardController = LocalSoftwareKeyboardController.current
     val appNavigator = LocalAppNavigator.currentOrThrow

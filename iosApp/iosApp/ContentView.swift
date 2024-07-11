@@ -4,7 +4,10 @@ import ComposeApp
 
 struct ComposeView: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
-        MainViewControllerKt.MainViewController(chatAPI: ChatAPIImpl())
+        MainViewControllerKt.MainViewController(
+          chatAPI: ChatAPIImpl(),
+          networkAPI: NetworkAPIImpl.shared
+        )
     }
 
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}

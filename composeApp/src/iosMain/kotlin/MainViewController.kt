@@ -2,44 +2,56 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.window.ComposeUIViewController
 import data.remote.Analytics
 import data.local.BuildConfig
+import data.local.NetworkAPI
 import data.remote.ChatAPI
 import data.remote.Event
 import data.local.SendingData
 import data.local.UsageAPI
 import data.local.UsageStats
+import di.LocalUsageAPI
+import di.LocalChatAPI
+import di.LocalSendingData
+import di.LocalAnalytics
+import di.LocalBuildConfig
+import di.LocalNetworkAPI
 import platform.UIKit.UIActivity
 import platform.UIKit.UIActivityViewController
 import platform.UIKit.UIApplication
 import platform.UIKit.UIViewController
 
-fun MainViewController(chatAPI: ChatAPI) = ComposeUIViewController {
-    val usageAPIImpl = object : UsageAPI {
-        override fun getUsageStats(): List<UsageStats> =
-            emptyList()
+fun MainViewController(
+    chatAPI: ChatAPI,
+    networkAPI: NetworkAPI,
+) = ComposeUIViewController {
+    CompositionLocalProvider(LocalNetworkAPI provides networkAPI) {
+        val usageAPIImpl = object : UsageAPI {
+            override fun getUsageStats(): List<UsageStats> =
+                emptyList()
 
-        override fun packagesToFilter(): List<String> =
-            emptyList()
-    }
-    CompositionLocalProvider(LocalUsageAPI provides usageAPIImpl) {
-        CompositionLocalProvider(LocalChatAPI provides chatAPI) {
-            val sendingData = object : SendingData {
-                override fun sendPlainText(data: String) {
-                    shareText(data)
-                }
-            }
-            CompositionLocalProvider(LocalSendingData provides sendingData) {
-                val analytics = object : Analytics {
-                    override fun sendEvent(event: Event) {
-                        // TODO implement send event to Firebase
+            override fun packagesToFilter(): List<String> =
+                emptyList()
+        }
+        CompositionLocalProvider(LocalUsageAPI provides usageAPIImpl) {
+            CompositionLocalProvider(LocalChatAPI provides chatAPI) {
+                val sendingData = object : SendingData {
+                    override fun sendPlainText(data: String) {
+                        shareText(data)
                     }
                 }
-                CompositionLocalProvider(LocalAnalytics provides analytics) {
-                    val buildConfig = object : BuildConfig {
-                        override val versionName: String
-                            get() = "0.0.3"
+                CompositionLocalProvider(LocalSendingData provides sendingData) {
+                    val analytics = object : Analytics {
+                        override fun sendEvent(event: Event) {
+                            // TODO implement send event to Firebase
+                        }
                     }
-                    CompositionLocalProvider(LocalBuildConfig provides buildConfig) {
-                        App()
+                    CompositionLocalProvider(LocalAnalytics provides analytics) {
+                        val buildConfig = object : BuildConfig {
+                            override val versionName: String
+                                get() = "0.0.3"
+                        }
+                        CompositionLocalProvider(LocalBuildConfig provides buildConfig) {
+                            App()
+                        }
                     }
                 }
             }
