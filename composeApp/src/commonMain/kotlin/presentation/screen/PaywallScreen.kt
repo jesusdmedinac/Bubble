@@ -1,6 +1,6 @@
 package presentation.screen
 
-import LocalAppNavigator
+import di.LocalAppNavigator
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas

@@ -2,13 +2,13 @@ package presentation.screenmodel
 
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
-import data.Analytics
-import data.Body
-import data.Challenge
-import data.ChatAPI
-import data.Message
+import data.remote.Analytics
+import data.remote.Body
+import data.remote.Challenge
+import data.remote.ChatAPI
+import data.remote.Message
 import data.TimeUtils
-import data.UsageAPI
+import data.local.UsageAPI
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container

@@ -1,6 +1,5 @@
 package presentation.screen
 
-import LocalAppNavigator
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Button
 import androidx.compose.material.Divider
@@ -42,6 +40,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.core.screen.ScreenKey
 import cafe.adriel.voyager.core.screen.uniqueScreenKey
 import cafe.adriel.voyager.navigator.currentOrThrow
+import di.LocalAppNavigator
 import generativeui.ComposeTextNode
 import generativeui.PaddingNodeModifier
 import generativeui.TextNode
@@ -49,7 +48,6 @@ import generativeui.TextNodeTypography
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 import io.ktor.http.Url
-import presentation.model.ChallengeCategory
 import presentation.model.UICard
 import presentation.model.UIChallenge
 

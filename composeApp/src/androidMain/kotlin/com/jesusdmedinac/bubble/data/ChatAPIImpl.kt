@@ -4,11 +4,11 @@ import android.util.Log
 import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.content
 import com.jesusdmedinac.bubble.BuildConfig
-import data.Body
-import data.ChatAPI
-import data.Message
-import data.systemInstructions
-import data.toJsonAsString
+import data.remote.Body
+import data.remote.ChatAPI
+import data.remote.Message
+import data.remote.systemInstructions
+import data.remote.toJsonAsString
 import kotlinx.serialization.json.Json
 
 class ChatAPIImpl(

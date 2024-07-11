@@ -1,4 +1,4 @@
-package data
+package data.local
 
 interface BuildConfig {
     val versionName: String

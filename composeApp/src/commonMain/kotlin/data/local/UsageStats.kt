@@ -1,4 +1,4 @@
-package data
+package data.local
 
 import kotlinx.serialization.Serializable
 

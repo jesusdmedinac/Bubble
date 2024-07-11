@@ -1,12 +1,12 @@
 package data
 
+import data.local.UsageStats
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.isoDayNumber
 import kotlinx.datetime.minus
 import kotlinx.datetime.toLocalDateTime
-import kotlinx.serialization.Serializable
 
 object TimeUtils {
     fun formatDuration(durationInMilliseconds: Long): String {

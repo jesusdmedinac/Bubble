@@ -1,4 +1,4 @@
-package data
+package data.remote
 
 import kotlin.random.Random
 

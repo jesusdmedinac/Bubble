@@ -6,8 +6,8 @@ import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.os.Process
 import data.TimeUtils
-import data.UsageAPI
-import data.UsageStats
+import data.local.UsageAPI
+import data.local.UsageStats
 
 class UsageAPIImpl(
     private val applicationContext: Context

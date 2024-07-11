@@ -1,4 +1,4 @@
-package data
+package data.local
 
 interface UsageAPI {
     fun getUsageStats(): List<UsageStats>

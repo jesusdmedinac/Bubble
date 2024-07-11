@@ -1,6 +1,6 @@
 package presentation.screen.tab.bubble
 
-import LocalAppNavigator
+import di.LocalAppNavigator
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
@@ -35,6 +35,7 @@ import cafe.adriel.voyager.koin.getNavigatorScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import data.TimeUtils
+import di.LocalNetworkAPI
 import kotlinx.coroutines.launch
 import presentation.model.UIBubbleMessage
 import presentation.model.UIBubblerMessage
@@ -47,6 +48,8 @@ import presentation.screenmodel.BubbleTabState
 fun BubbleMessagesBox(
     modifier: Modifier = Modifier
 ) {
+    val networkAPI = LocalNetworkAPI.current
+    val isConnected by networkAPI.isConnected().collectAsState(false)
     val interactionSource = remember { MutableInteractionSource() }
     val localSoftwareKeyboardController = LocalSoftwareKeyboardController.current
     val appNavigator = LocalAppNavigator.currentOrThrow
@@ -57,6 +60,8 @@ fun BubbleMessagesBox(
     val lazyListState = rememberLazyListState()
     val messages = state.messages
     val remainingFreeMessages = state.remainingFreeMessages
+    var currentTextFieldValue by remember { mutableStateOf(TextFieldValue("")) }
+    val coroutineScope = rememberCoroutineScope()
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -73,38 +78,50 @@ fun BubbleMessagesBox(
                 lazyListState.animateScrollToItem(0)
             }
         }
-        var currentTextFieldValue by remember { mutableStateOf(TextFieldValue("")) }
-        val coroutineScope = rememberCoroutineScope()
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize(),
             state = lazyListState,
             reverseLayout = true,
         ) {
-            item {
-                BubbleTextField(
-                    value = currentTextFieldValue,
-                    remainingFreeMessages = remainingFreeMessages,
-                    isSendingMessage = state.loading,
-                    onValueChange = {
-                        currentTextFieldValue = it
-                    },
-                    onSendClick = { textFieldValue ->
-                        screenModel.sendMessage(textFieldValue.text)
-                        currentTextFieldValue = TextFieldValue("")
-                    },
-                    modifier = Modifier
-                        .let {
-                            if (remainingFreeMessages <= 0) {
-                                it.clickable(
-                                    interactionSource = interactionSource,
-                                    indication = null,
-                                ) {
-                                    appNavigator.push(PaywallScreen())
-                                }
-                            } else it
-                        }
-                )
+            if (isConnected) {
+                item {
+                    BubbleTextField(
+                        value = currentTextFieldValue,
+                        remainingFreeMessages = remainingFreeMessages,
+                        isSendingMessage = state.loading,
+                        onValueChange = {
+                            currentTextFieldValue = it
+                        },
+                        onSendClick = { textFieldValue ->
+                            screenModel.sendMessage(textFieldValue.text)
+                            currentTextFieldValue = TextFieldValue("")
+                        },
+                        modifier = Modifier
+                            .let {
+                                if (remainingFreeMessages <= 0) {
+                                    it.clickable(
+                                        interactionSource = interactionSource,
+                                        indication = null,
+                                    ) {
+                                        appNavigator.push(PaywallScreen())
+                                    }
+                                } else it
+                            }
+                    )
+                }
+            } else {
+                item {
+                    BubbleMessageCard(
+                        UIBubbleMessage(
+                            id = 0,
+                            author = "model",
+                            body = UIMessageBody("""
+                                ¡Ups!, parece que no hay conexión a internet. Actívalo para poder seguir nuestra conversación
+                            """.trimIndent())
+                        )
+                    )
+                }
             }
 
             items(messages) { message ->

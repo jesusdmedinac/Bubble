@@ -1,48 +1,43 @@
 package com.jesusdmedinac.bubble
 
 import App
-import LocalAnalytics
-import LocalBuildConfig
-import LocalChatAPI
-import LocalSendingData
-import LocalUsageAPI
 import android.content.Intent
-import android.net.Uri
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
+import android.net.NetworkRequest
 import android.os.Bundle
-import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
 import com.jesusdmedinac.bubble.data.ChatAPIImpl
+import com.jesusdmedinac.bubble.data.NetworkAPIImpl
 import com.jesusdmedinac.bubble.data.UsageAPIImpl
-import data.Analytics
-import data.BuildConfig
-import data.ChatAPI
-import data.Event
-import data.Message
-import data.SendingData
-import data.TimeUtils
-import data.UsageAPI
-import data.UsageStats
+import data.local.BuildConfig
+import data.local.SendingData
+import data.remote.Analytics
+import data.remote.Event
+import di.LocalAnalytics
+import di.LocalBuildConfig
+import di.LocalChatAPI
+import di.LocalNetworkAPI
+import di.LocalSendingData
+import di.LocalUsageAPI
 import getHttpClient
 import io.kamel.core.config.KamelConfig
 import io.kamel.core.config.httpFetcher
@@ -50,15 +45,18 @@ import io.kamel.core.config.takeFrom
 import io.kamel.image.config.Default
 import io.kamel.image.config.LocalKamelConfig
 import io.kamel.image.config.resourcesFetcher
+import kotlinx.coroutines.flow.update
 import kotlinx.serialization.json.Json
-import org.jetbrains.compose.resources.painterResource
-import org.orbitmvi.orbit.syntax.simple.reduce
 
 class MainActivity : ComponentActivity() {
+    private val networkAPIImpl: NetworkAPIImpl by lazy { NetworkAPIImpl() }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         //startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
+
+        setupNetworkCallback()
 
         setContent {
             Box(
@@ -66,13 +64,63 @@ class MainActivity : ComponentActivity() {
                     .fillMaxSize(),
                 contentAlignment = Alignment.Center
             ) {
-                UsageAPICompositionProvider()
+                NetworkAPICompositionProvider()
             }
         }
     }
 
+    private fun setupNetworkCallback() {
+        val networkRequest = NetworkRequest.Builder()
+            .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+            .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
+            // .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR) Not sure if it is required
+            .build()
+
+        val networkCallback = object : ConnectivityManager.NetworkCallback() {
+            override fun onAvailable(network: Network) {
+                super.onAvailable(network)
+                println("Network available")
+                networkAPIImpl.isConnected.update { true }
+            }
+
+            override fun onCapabilitiesChanged(
+                network: Network,
+                networkCapabilities: NetworkCapabilities
+            ) {
+                super.onCapabilitiesChanged(network, networkCapabilities)
+                println("Network capabilities changed")
+                println("dani Network: $network")
+                println("dani Network capabilities: $networkCapabilities")
+                networkAPIImpl
+                    .upstreamBandWidthKbps
+                    .update { networkCapabilities.linkUpstreamBandwidthKbps }
+                networkAPIImpl
+                    .downstreamBandWidthKbps
+                    .update { networkCapabilities.linkDownstreamBandwidthKbps }
+            }
+
+            override fun onLost(network: Network) {
+                super.onLost(network)
+                println("Network lost")
+                networkAPIImpl.isConnected.update { false }
+            }
+        }
+
+        val connectivityManager =
+            getSystemService(ConnectivityManager::class.java) as ConnectivityManager
+        connectivityManager.requestNetwork(networkRequest, networkCallback)
+        connectivityManager.activeNetworkInfo
+    }
+
     @Composable
-    private fun MainActivity.UsageAPICompositionProvider() {
+    private fun NetworkAPICompositionProvider() {
+        CompositionLocalProvider(LocalNetworkAPI provides networkAPIImpl) {
+            UsageAPICompositionProvider()
+        }
+    }
+
+    @Composable
+    private fun UsageAPICompositionProvider() {
         val usageAPIImpl = remember {
             UsageAPIImpl(applicationContext)
         }

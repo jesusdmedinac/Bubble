@@ -1,4 +1,4 @@
-package data
+package data.local
 
 interface SendingData {
     fun sendPlainText(data: String)

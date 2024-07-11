@@ -1,6 +1,6 @@
 package presentation.screen.tab.bubble
 
-import LocalBuildConfig
+import di.LocalBuildConfig
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size

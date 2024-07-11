@@ -1,6 +1,5 @@
 package presentation.screen.tab.bubble
 
-import LocalAnalytics
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -23,7 +22,6 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.minimumInteractiveComponentSize
-import androidx.compose.material.primarySurface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -40,9 +38,9 @@ import bubble.composeapp.generated.resources.Res
 import bubble.composeapp.generated.resources.ic_chat_bubble
 import bubble.composeapp.generated.resources.ic_message
 import bubble.composeapp.generated.resources.ic_send
+import di.LocalAnalytics
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun BubbleTextField(
@@ -60,12 +58,16 @@ fun BubbleTextField(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Column {
+        Column(
+            modifier = Modifier
+                .height(88.dp)
+                .padding(start = 8.dp, top = 8.dp, bottom = 8.dp)
+        ) {
             Spacer(modifier = Modifier.size(16.dp))
             Button(
                 onClick = {},
                 modifier = Modifier
-                    .size(48.dp)
+                    .size(56.dp)
                     .clip(CircleShape),
                 enabled = !noMoreMessages
             ) {

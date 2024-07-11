@@ -1,4 +1,4 @@
-package data
+package data.remote
 
 data class Param<T : Any>(
     val key: String,
@@ -14,13 +14,15 @@ interface Analytics {
     fun sendEvent(event: Event)
 
     fun sendClickEvent(stringLength: Long) {
-        sendEvent(Event(
+        sendEvent(
+            Event(
             EVENT_SEND_CLICK,
             listOf(
                 Param(PARAM_SCREEN_NAME, SCREEN_BUBBLE_TAB),
                 Param(PARAM_STRING_LENGTH, stringLength)
             )
-        ))
+        )
+        )
     }
 
     fun sendChatResponseEvent(message: Message) {

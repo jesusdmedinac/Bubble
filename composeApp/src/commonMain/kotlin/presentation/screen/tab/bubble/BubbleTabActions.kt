@@ -1,6 +1,6 @@
 package presentation.screen.tab.bubble
 
-import LocalAppNavigator
+import di.LocalAppNavigator
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
