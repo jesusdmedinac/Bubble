@@ -7,6 +7,7 @@ import android.net.Network
 import android.net.NetworkCapabilities
 import android.net.NetworkRequest
 import android.os.Bundle
+import android.provider.Settings
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.Box
@@ -23,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import cafe.adriel.voyager.navigator.currentOrThrow
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
 import com.jesusdmedinac.bubble.data.ChatAPIImpl
@@ -32,7 +34,9 @@ import data.local.BuildConfig
 import data.local.SendingData
 import data.remote.Analytics
 import data.remote.Event
+import di.KoinDI
 import di.LocalAnalytics
+import di.LocalAppNavigator
 import di.LocalBuildConfig
 import di.LocalChatAPI
 import di.LocalNetworkAPI
@@ -47,14 +51,13 @@ import io.kamel.image.config.LocalKamelConfig
 import io.kamel.image.config.resourcesFetcher
 import kotlinx.coroutines.flow.update
 import kotlinx.serialization.json.Json
+import presentation.screenmodel.BubbleTabScreenModel
 
 class MainActivity : ComponentActivity() {
     private val networkAPIImpl: NetworkAPIImpl by lazy { NetworkAPIImpl() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        //startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
 
         setupNetworkCallback()
 
@@ -66,6 +69,15 @@ class MainActivity : ComponentActivity() {
             ) {
                 NetworkAPICompositionProvider()
             }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        runCatching {
+            KoinDI
+                .get<BubbleTabScreenModel>()
+                .loadUsageStats()
         }
     }
 
@@ -122,12 +134,12 @@ class MainActivity : ComponentActivity() {
     @Composable
     private fun UsageAPICompositionProvider() {
         val usageAPIImpl = remember {
-            UsageAPIImpl(applicationContext)
+            UsageAPIImpl(this@MainActivity)
         }
         LaunchedEffect(usageAPIImpl) {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 usageAPIImpl.usageStatsManager
-                usageAPIImpl.checkForPermission()
+                usageAPIImpl.hasPermission()
                 usageAPIImpl.getUsageStats()
             }
         }

@@ -49,6 +49,8 @@ kotlin {
             implementation(project.dependencies.platform("com.google.firebase:firebase-bom:33.1.1"))
             implementation("com.google.firebase:firebase-crashlytics")
             implementation("com.google.firebase:firebase-analytics")
+
+            implementation("com.android.billingclient:billing-ktx:7.0.0")
         }
         commonMain.dependencies {
             implementation(compose.runtime)

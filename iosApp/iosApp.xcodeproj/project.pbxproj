@@ -17,6 +17,7 @@
 		D97108AD2C392D680054DBE0 /* TotalActivityView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D97108AC2C392D680054DBE0 /* TotalActivityView.swift */; };
 		D97108B22C392D680054DBE0 /* ReportExtension.appex in Embed ExtensionKit Extensions */ = {isa = PBXBuildFile; fileRef = D97108A62C392D680054DBE0 /* ReportExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		D9714FB72C407851006EAD97 /* NetworkAPIImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9714FB62C407851006EAD97 /* NetworkAPIImpl.swift */; };
+		D9714FB92C40CEDF006EAD97 /* UsageAPIImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9714FB82C40CEDF006EAD97 /* UsageAPIImpl.swift */; };
 		D99B83172C2492D500CEF980 /* GenerativeAI-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D99B83162C2492D500CEF980 /* GenerativeAI-Info.plist */; };
 		D99B83192C24934C00CEF980 /* APIKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99B83182C24934C00CEF980 /* APIKey.swift */; };
 		D99B831B2C24937D00CEF980 /* ChatAPIImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99B831A2C24937D00CEF980 /* ChatAPIImpl.swift */; };
@@ -65,6 +66,7 @@
 		D97108AE2C392D680054DBE0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D97108AF2C392D680054DBE0 /* ReportExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ReportExtension.entitlements; sourceTree = "<group>"; };
 		D9714FB62C407851006EAD97 /* NetworkAPIImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkAPIImpl.swift; sourceTree = "<group>"; };
+		D9714FB82C40CEDF006EAD97 /* UsageAPIImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageAPIImpl.swift; sourceTree = "<group>"; };
 		D99B83162C2492D500CEF980 /* GenerativeAI-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GenerativeAI-Info.plist"; sourceTree = "<group>"; };
 		D99B83182C24934C00CEF980 /* APIKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKey.swift; sourceTree = "<group>"; };
 		D99B831A2C24937D00CEF980 /* ChatAPIImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAPIImpl.swift; sourceTree = "<group>"; };
@@ -167,6 +169,7 @@
 			children = (
 				D99B831A2C24937D00CEF980 /* ChatAPIImpl.swift */,
 				D9714FB62C407851006EAD97 /* NetworkAPIImpl.swift */,
+				D9714FB82C40CEDF006EAD97 /* UsageAPIImpl.swift */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -302,6 +305,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				D99B831B2C24937D00CEF980 /* ChatAPIImpl.swift in Sources */,
+				D9714FB92C40CEDF006EAD97 /* UsageAPIImpl.swift in Sources */,
 				D9714FB72C407851006EAD97 /* NetworkAPIImpl.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
 				D99B83192C24934C00CEF980 /* APIKey.swift in Sources */,

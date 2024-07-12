@@ -6,25 +6,34 @@ sealed interface UIMessage {
     val id: Int
     val author: String
     val body: UIMessageBody
+    val isFree: Boolean
 }
 
 data class UIBubblerMessage(
     override val id: Int,
     override val author: String,
     override val body: UIMessageBody,
+    override val isFree: Boolean = false
 ) : UIMessage
 
 data class UIBubbleMessage(
     override val id: Int,
     override val author: String,
-    override val body: UIMessageBody
+    override val body: UIMessageBody,
+    override val isFree: Boolean = true
 ) : UIMessage
 
 @Serializable
 data class UIMessageBody(
     val message: String,
-    val challenge: UIChallenge? = null
+    val challenge: UIChallenge? = null,
+    val callToAction: UICallToActionType? = null
 )
+
+@Serializable
+enum class UICallToActionType {
+    REQUEST_USAGE_ACCESS_SETTINGS
+}
 
 /*
 runCatching {

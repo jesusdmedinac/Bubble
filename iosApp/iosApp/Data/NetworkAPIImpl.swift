@@ -33,9 +33,7 @@ class NetworkAPIImpl : NetworkAPI, ObservableObject {
   
   func isConnected(onChange: @escaping (KotlinBoolean) -> Void) async throws {
     $isConnectedPublished
-      .sink {
-        onChange(KotlinBoolean(bool: $0))
-      }
+      .sink { onChange(KotlinBoolean(bool: $0)) }
   }
   
   func upstreamBandWidthKbps(onChange: @escaping (KotlinInt) -> Void) async throws {

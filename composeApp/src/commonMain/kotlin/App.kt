@@ -2,6 +2,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.SlideTransition
+import di.KoinDI
 import di.LocalAppNavigator
 import di.LocalAppProvidablesModule
 import di.appModules
@@ -20,6 +21,7 @@ fun App() {
         modules(
             localAppProvidablesModule + appModules()
         )
+        KoinDI.init(this)
     }) {
         BubbleTheme {
             Navigator(MainScreen()) { navigator: Navigator ->

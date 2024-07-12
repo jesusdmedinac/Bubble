@@ -12,11 +12,13 @@ import data.local.UsageAPI
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
+import org.orbitmvi.orbit.syntax.simple.SimpleSyntax
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 import presentation.model.ChallengeCategory
 import presentation.model.UIBubbleMessage
 import presentation.model.UIBubblerMessage
+import presentation.model.UICallToActionType
 import presentation.model.UIChallenge
 import presentation.model.UIMessage
 import presentation.model.UIMessageBody
@@ -29,24 +31,66 @@ class BubbleTabScreenModel(
 ) : ScreenModel, ContainerHost<BubbleTabState, BubbleTabSideEffect> {
     override val container: Container<BubbleTabState, BubbleTabSideEffect> =
         screenModelScope.container(BubbleTabState()) {
-            val usageStats = usageAPI.getUsageStats()
-                .filterNot { usageStats ->
-                    usageAPI.packagesToFilter().any { usageStats.packageName.startsWith(it) }
-                }
-            reduce {
-                state.copy(
-                    usageStats = usageStats
-                        .map { UIUsageStats(it.packageName, it.totalTimeInForeground) }
-                )
-            }
-            sendMessage(
-                """
-                Hola Bubble, mi tiempo en pantalla es de ${TimeUtils.formatDuration(state.usageStats.sumOf { it.totalTimeInForeground })}
-            """.trimIndent()
-            )
+            loadUsageStats()
         }
 
-    fun sendMessage(textMessage: String) = intent {
+    fun loadUsageStats() = intent {
+        val hasPermission = usageAPI.hasPermission()
+        if (!hasPermission) {
+            sendBubbleRequestPermissionMessage()
+        } else {
+            sendBubblerIntroductionMessage()
+        }
+    }
+
+    private suspend fun SimpleSyntax<BubbleTabState, BubbleTabSideEffect>.sendBubbleRequestPermissionMessage() {
+        reduce {
+            state.copy(
+                messages = state.messages + UIBubbleMessage(
+                    id = state.messages.size + 1,
+                    author = "model",
+                    body = UIMessageBody(
+                        message = """
+                            ¡Ups! parece que no tengo permiso de revisar tu tiempo en pantalla. Puedes activar esta función en "Acceso al uso" 
+                        """.trimIndent(),
+                        callToAction = UICallToActionType.REQUEST_USAGE_ACCESS_SETTINGS
+                    )
+                )
+            )
+        }
+    }
+
+    private suspend fun SimpleSyntax<BubbleTabState, BubbleTabSideEffect>.sendBubblerIntroductionMessage() {
+        val usageStats = usageAPI.getUsageStats()
+            .filterNot { usageStats ->
+                usageAPI.packagesToFilter().any { usageStats.packageName.startsWith(it) }
+            }
+        reduce {
+            state.copy(
+                usageStats = usageStats
+                    .map { UIUsageStats(it.packageName, it.totalTimeInForeground) }
+            )
+        }
+        val bubblerIntroductionMessage = if (state.usageStats.isNotEmpty()) {
+            val averageTimeInForeground = state.usageStats
+                .map { it.totalTimeInForeground }
+                .average()
+                .toLong()
+            """
+                Hola Bubble, mi tiempo en pantalla es de ${TimeUtils.formatDuration(averageTimeInForeground)}
+            """.trimIndent()
+        } else {
+            """
+                Hola Bubble
+            """.trimIndent()
+        }
+        sendMessage(
+            bubblerIntroductionMessage,
+            isFree = true
+        )
+    }
+
+    fun sendMessage(textMessage: String, isFree: Boolean = false) = intent {
         reduce {
             state.copy(
                 loading = true
@@ -57,7 +101,8 @@ class BubbleTabScreenModel(
                 UIBubblerMessage(
                     id = state.messages.size + 1,
                     author = "user",
-                    body = UIMessageBody(message = textMessage)
+                    body = UIMessageBody(message = textMessage),
+                    isFree = isFree
                 )
             ) + state.messages
             state.copy(
@@ -136,12 +181,11 @@ data class BubbleTabState(
     val loading: Boolean = false,
     val messagesLimit: Int = 10,
     val messages: List<UIMessage> = emptyList(),
-    val usageStats: List<UIUsageStats> = emptyList()
+    val usageStats: List<UIUsageStats> = emptyList(),
 ) {
     val remainingFreeMessages: Int
         get() = messagesLimit - messages
-            .filter { it.author == "user" }
-            .size
+            .count { !it.isFree }
 }
 
 sealed class BubbleTabSideEffect

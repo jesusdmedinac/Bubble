@@ -4,26 +4,32 @@ import android.app.Activity
 import android.app.AppOpsManager
 import android.app.usage.UsageStatsManager
 import android.content.Context
+import android.content.Intent
 import android.os.Process
+import android.provider.Settings
 import data.TimeUtils
 import data.local.UsageAPI
 import data.local.UsageStats
 
 class UsageAPIImpl(
-    private val applicationContext: Context
+    private val activity: Activity
 ) : UsageAPI {
     val usageStatsManager: UsageStatsManager?
-        get() = if (checkForPermission()) {
-            applicationContext.getSystemService(Activity.USAGE_STATS_SERVICE) as? UsageStatsManager
+        get() = if (hasPermission()) {
+            activity.getSystemService(Activity.USAGE_STATS_SERVICE) as? UsageStatsManager
         } else null
 
-    fun checkForPermission(): Boolean {
-        val appOps = applicationContext.getSystemService(Activity.APP_OPS_SERVICE) as AppOpsManager
+    override fun requestUsageSettings() {
+        activity.startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
+    }
+
+    override fun hasPermission(): Boolean {
+        val appOps = activity.getSystemService(Activity.APP_OPS_SERVICE) as AppOpsManager
         val mode =
             appOps.checkOpNoThrow(
                 AppOpsManager.OPSTR_GET_USAGE_STATS,
                 Process.myUid(),
-                applicationContext.packageName
+                activity.packageName
             )
         return mode == AppOpsManager.MODE_ALLOWED
     }
@@ -38,7 +44,7 @@ class UsageAPIImpl(
                 currentTimeInMillis
             )
             ?.filter { it.totalTimeInForeground > 0 }
-            ?.filter { it.packageName != applicationContext.packageName }
+            ?.filter { it.packageName != activity.packageName }
             ?.map { UsageStats(it.packageName, it.totalTimeInForeground) }
             ?.sortedByDescending { it.totalTimeInForeground }
             ?: emptyList()

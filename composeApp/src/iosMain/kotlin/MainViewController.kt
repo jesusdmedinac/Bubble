@@ -25,6 +25,9 @@ fun MainViewController(
 ) = ComposeUIViewController {
     CompositionLocalProvider(LocalNetworkAPI provides networkAPI) {
         val usageAPIImpl = object : UsageAPI {
+            override fun hasPermission(): Boolean =
+                false
+
             override fun getUsageStats(): List<UsageStats> =
                 emptyList()
 

@@ -27,6 +27,7 @@ import bubble.composeapp.generated.resources.Res
 import bubble.composeapp.generated.resources.ic_message_corner
 import com.mikepenz.markdown.m2.Markdown
 import di.LocalSendingData
+import di.LocalUsageAPI
 import io.kamel.image.KamelImage
 import io.kamel.image.asyncPainterResource
 import org.jetbrains.compose.resources.painterResource
@@ -34,6 +35,7 @@ import presentation.model.UIBubbleMessage
 
 @Composable
 fun BubbleMessageCard(uiMessage: UIBubbleMessage) {
+    val usageAPI = LocalUsageAPI.current
     val secondary = MaterialTheme.colors.secondary
     Box(
         modifier = Modifier
@@ -109,6 +111,16 @@ fun BubbleMessageCard(uiMessage: UIBubbleMessage) {
                                 }
                             }
                         }
+                    }
+                }
+            uiMessage
+                .body
+                .callToAction
+                ?.let {
+                    Button(onClick = {
+                        usageAPI.requestUsageSettings()
+                    }) {
+                        Text("Acceso al uso")
                     }
                 }
         }
