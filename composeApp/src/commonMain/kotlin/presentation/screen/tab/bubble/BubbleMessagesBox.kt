@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.koin.getNavigatorScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import data.local.ConnectionState
 import di.LocalAppNavigator
 import di.LocalNetworkAPI
 import kotlinx.coroutines.delay
@@ -45,18 +46,9 @@ import presentation.screenmodel.BubbleTabState
 
 @Composable
 fun BubbleMessagesBox(
+    connectionState: ConnectionState,
     modifier: Modifier = Modifier
 ) {
-    val networkAPI = LocalNetworkAPI.current
-    var isConnected by remember { mutableStateOf(false) }
-    LaunchedEffect(Unit) {
-        while (true) {
-            delay(1000)
-            networkAPI.isConnected {
-                isConnected = it
-            }
-        }
-    }
     val interactionSource = remember { MutableInteractionSource() }
     val localSoftwareKeyboardController = LocalSoftwareKeyboardController.current
     val appNavigator = LocalAppNavigator.currentOrThrow
@@ -91,8 +83,9 @@ fun BubbleMessagesBox(
             state = lazyListState,
             reverseLayout = true,
         ) {
-            if (isConnected) {
-                item {
+            when (connectionState) {
+                ConnectionState.Idle -> Unit
+                ConnectionState.Connected -> item {
                     BubbleTextField(
                         value = currentTextFieldValue,
                         remainingFreeMessages = remainingFreeMessages,
@@ -111,21 +104,22 @@ fun BubbleMessagesBox(
                                         interactionSource = interactionSource,
                                         indication = null,
                                     ) {
-                                        appNavigator.push(PaywallScreen())
+                                        appNavigator.push(PaywallScreen)
                                     }
                                 } else it
                             }
                     )
                 }
-            } else {
-                item {
+                ConnectionState.Disconnected -> item {
                     BubbleMessageCard(
                         UIBubbleMessage(
                             id = 0,
                             author = "model",
-                            body = UIMessageBody("""
+                            body = UIMessageBody(
+                                """
                                 ¡Ups! parece que no hay conexión a internet. Actívalo para poder seguir nuestra conversación
-                            """.trimIndent())
+                            """.trimIndent()
+                            )
                         )
                     )
                 }

@@ -1,5 +1,14 @@
 package data.local
 
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+
+enum class ConnectionState {
+    Idle,
+    Connected,
+    Disconnected
+}
+
 interface NetworkAPI {
     suspend fun isConnected(onChange: (Boolean) -> Unit)
     suspend fun upstreamBandWidthKbps(onChange: (Int) -> Unit)

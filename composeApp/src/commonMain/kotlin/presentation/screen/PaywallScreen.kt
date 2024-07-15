@@ -85,7 +85,7 @@ import presentation.model.UIPremiumRewards
 import presentation.model.UIPremiumStatistics
 
 @OptIn(ExperimentalMaterial3Api::class)
-class PaywallScreen : Screen {
+object PaywallScreen : Screen {
     @Composable
     override fun Content() {
         val appNavigator = LocalAppNavigator.currentOrThrow
@@ -96,7 +96,7 @@ class PaywallScreen : Screen {
                     },
                     navigationIcon = {
                         IconButton(onClick = {
-                            appNavigator.pop()
+                            appNavigator.popUntil { it is MainScreen }
                         }) {
                             Icon(
                                 painter = painterResource(Res.drawable.ic_close),

@@ -21,12 +21,12 @@ import presentation.screen.mainscreen.BubbleTopAppBar
 import presentation.screen.tab.BubbleTab
 import presentation.screen.tab.ProfileTab
 
-class MainScreen : Screen {
+object MainScreen : Screen {
     override val key: ScreenKey = uniqueScreenKey
 
     @Composable
     override fun Content() {
-        val bubbleTab = remember { BubbleTab() }
+        val bubbleTab = remember { BubbleTab }
         TabNavigator(bubbleTab) { tabNavigator: TabNavigator ->
             Scaffold(
                 topBar = {

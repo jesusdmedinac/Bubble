@@ -39,7 +39,7 @@ class BubbleTabScreenModel(
         val hasPermission = usageAPI.hasPermission()
         if (!hasPermission) {
             sendBubbleRequestPermissionMessage()
-        } else {
+        } else if (!state.bubblerHasBeenIntroduced) {
             sendBubblerIntroductionMessage()
         }
     }
@@ -89,6 +89,11 @@ class BubbleTabScreenModel(
             bubblerIntroductionMessage,
             isFree = true
         )
+        reduce {
+            state.copy(
+                bubblerHasBeenIntroduced = true
+            )
+        }
     }
 
     fun sendMessage(textMessage: String, isFree: Boolean = false) = intent {
@@ -180,6 +185,7 @@ class BubbleTabScreenModel(
 
 data class BubbleTabState(
     val loading: Boolean = false,
+    val bubblerHasBeenIntroduced: Boolean = false,
     val messagesLimit: Int = 10,
     val messages: List<UIMessage> = emptyList(),
     val usageStats: List<UIUsageStats> = emptyList(),

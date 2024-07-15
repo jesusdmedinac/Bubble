@@ -24,7 +24,7 @@ fun App() {
         KoinDI.init(this)
     }) {
         BubbleTheme {
-            Navigator(MainScreen()) { navigator: Navigator ->
+            Navigator(MainScreen) { navigator: Navigator ->
                 CompositionLocalProvider(
                     LocalAppNavigator provides navigator
                 ) {

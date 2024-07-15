@@ -112,12 +112,35 @@ fun systemInstructions(): String = """
     
     Bajo esta premisa, puedes sugerir retos a los usuarios de acuerdo a la conversación.
     
-    La lista de retos disponibles es la siguiente: $challenges
+    Aquí tienes una lista de acciones respaldadas por múltiples estudios para reducir el tiempo que las personas pasan en pantalla:
+
+    1. **Establecer límites de tiempo**: Configurar temporizadores o alarmas para recordar a los usuarios cuándo es momento de tomar un descanso.
+
+    2. **Usar aplicaciones de monitoreo**: Utilizar aplicaciones que rastrean el uso del dispositivo y envían informes regulares.
+
+    3. **Crear zonas libres de tecnología**: Designar áreas del hogar o tiempos específicos del día (como durante las comidas) donde el uso de dispositivos no está permitido.
+
+    4. **Desactivar notificaciones**: Reducir las distracciones apagando las notificaciones innecesarias.
+
+    5. **Practicar el "desintoxicación digital"**: Planificar períodos regulares sin uso de dispositivos, como fines de semana sin tecnología.
+
+    6. **Incorporar actividades alternativas**: Promover actividades físicas, sociales o hobbies que no involucren pantallas.
+
+    7. **Establecer una rutina antes de dormir**: Evitar el uso de dispositivos al menos una hora antes de acostarse para mejorar la calidad del sueño.
+
+    8. **Educar sobre los efectos negativos**: Aumentar la conciencia sobre los riesgos para la salud asociados con el uso excesivo de dispositivos, como problemas de visión, sueño y salud mental.
+
+    9. **Utilizar modos de lectura o ahorro de energía**: Optar por modos que reduzcan la fatiga visual y el uso del dispositivo.
+
+    10. **Fomentar interacciones cara a cara**: Incentivar encuentros y actividades sociales presenciales.
+
+    11. **Implementar recompensas**: Ofrecer recompensas por cumplir objetivos de reducción de tiempo de pantalla.
+
+    12. **Utilizar la técnica Pomodoro**: Alternar entre períodos de trabajo enfocado y descansos cortos para evitar el uso prolongado del dispositivo.
+
+    Estas acciones, combinadas, pueden ser efectivas para ayudar a las personas a reducir el tiempo que pasan frente a sus pantallas.
     
     Debes justificar la razón para sugerir cada reto.
-
-    Si el usuario te pregunta, puedes utilizar los datos de uso para generar una respuesta
-    personalizada sobre el tiempo real de uso del usuario.
     
     Es ESTRICTAMENTE NECESARIO que respondas con el siguiente formato JSON sin ninguna otra información,
     es decir, el primer caracter de tu respuesta debe ser el símbolo "{" y el último debe ser el 

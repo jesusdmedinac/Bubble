@@ -26,7 +26,7 @@ fun BubbleTabActions() {
     val appNavigator = LocalAppNavigator.currentOrThrow
     Button(
         onClick = {
-            appNavigator.push(PaywallScreen())
+            appNavigator.push(PaywallScreen)
         },
         modifier = Modifier
             .size(48.dp)
