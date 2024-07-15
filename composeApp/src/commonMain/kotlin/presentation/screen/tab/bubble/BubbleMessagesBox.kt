@@ -141,7 +141,10 @@ fun BubbleMessagesBox(
         androidx.compose.animation.AnimatedVisibility(
             lazyListState.canScrollBackward,
             enter = fadeIn(),
-            exit = fadeOut()
+            exit = fadeOut(),
+            modifier = Modifier
+                .padding(8.dp)
+                .align(Alignment.BottomEnd)
         ) {
             FloatingActionButton(
                 onClick = {
