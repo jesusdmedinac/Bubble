@@ -124,7 +124,7 @@ fun BubbleMessagesBox(
                             id = 0,
                             author = "model",
                             body = UIMessageBody("""
-                                ¡Ups!, parece que no hay conexión a internet. Actívalo para poder seguir nuestra conversación
+                                ¡Ups! parece que no hay conexión a internet. Actívalo para poder seguir nuestra conversación
                             """.trimIndent())
                         )
                     )

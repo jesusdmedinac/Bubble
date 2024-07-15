@@ -2,13 +2,14 @@ package presentation.screenmodel
 
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
+import data.formattedDuration
 import data.remote.Analytics
 import data.remote.Body
 import data.remote.Challenge
 import data.remote.ChatAPI
 import data.remote.Message
-import data.TimeUtils
 import data.local.UsageAPI
+import data.startOfWeekInMillis
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
@@ -77,7 +78,7 @@ class BubbleTabScreenModel(
                 .average()
                 .toLong()
             """
-                Hola Bubble, mi tiempo en pantalla es de ${TimeUtils.formatDuration(averageTimeInForeground)}
+                Hola Bubble, mi tiempo en pantalla es de ${averageTimeInForeground.formattedDuration()}
             """.trimIndent()
         } else {
             """

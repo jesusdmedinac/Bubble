@@ -9,26 +9,75 @@
 #
 #     https://docs.fastlane.tools/plugins/available-plugins
 #
-
-# Uncomment the line if you want fastlane to automatically update itself
-# update_fastlane
-
 default_platform(:android)
 
 platform :android do
     desc "Build Release Bundle"
     lane :bundleRelease do
-        gradle(task: "bundleRelease")
+        store_file = generate_hash_from_local_properties["store_file"]
+        store_password = generate_hash_from_local_properties["store_password"]
+        key_alias = generate_hash_from_local_properties["key_alias"]
+        key_password = generate_hash_from_local_properties["key_password"]
+
+        gradle(
+            task: "bundle",
+            build_type: "Release",
+            print_command: false,
+            properties: {
+                "android.injected.signing.store.file" => store_file,
+                "android.injected.signing.store.password" => store_password,
+                "android.injected.signing.key.alias" => key_alias,
+                "android.injected.signing.key.password" => key_password,
+            }
+        )
     end
 
-    desc "Internal Testing"
-    lane :internal do
-        bundleRelease
+    desc "Firebase App Distribution"
+    lane :distribution do
         release = firebase_app_distribution(
             app: "1:973832178689:android:bde41deb08004e0b728400",
             groups: "Bubblers",
             android_artifact_path: "composeApp/build/outputs/bundle/release/composeApp-release.aab",
             service_credentials_file: "composeApp/bubble-firebase-adminsdk.json"
         )
+    end
+
+    desc "Upload to internal testing on Play Store"
+    lane :internal do
+        upload_to_play_store(
+            aab: "composeApp/build/outputs/bundle/release/composeApp-release.aab",
+            track: "internal"
+        )
+    end
+
+    desc "Distribute to Firebase and Upload to Play Store as Internal"
+    lane :publish do
+        gradle(
+            task: "clean"
+        )
+        bundleRelease
+        distribution
+        internal
+    end
+
+    # Método para leer el archivo local.properties y generar un hash
+    def generate_hash_from_properties(file_path)
+      properties = {}
+
+      File.foreach(file_path) do |line|
+        # Ignorar líneas en blanco y comentarios
+        next if line.strip.empty? || line.strip.start_with?('#')
+
+        # Dividir la línea en clave y valor
+        key, value = line.strip.split('=', 2)
+        properties[key] = value
+      end
+
+      properties
+    end
+
+    def generate_hash_from_local_properties()
+        file_path = '../local.properties'
+        generate_hash_from_properties(file_path)
     end
 end

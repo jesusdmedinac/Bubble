@@ -3,11 +3,10 @@ package com.jesusdmedinac.bubble.data
 import android.app.Activity
 import android.app.AppOpsManager
 import android.app.usage.UsageStatsManager
-import android.content.Context
 import android.content.Intent
 import android.os.Process
 import android.provider.Settings
-import data.TimeUtils
+import data.startOfWeekInMillis
 import data.local.UsageAPI
 import data.local.UsageStats
 
@@ -35,7 +34,7 @@ class UsageAPIImpl(
     }
 
     override fun getUsageStats(): List<UsageStats> {
-        val startOfWeekInMillis = TimeUtils.getStartOfWeekInMillis()
+        val startOfWeekInMillis = startOfWeekInMillis()
         val currentTimeInMillis = System.currentTimeMillis()
         return usageStatsManager
             ?.queryUsageStats(

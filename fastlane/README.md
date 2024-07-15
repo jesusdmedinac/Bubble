@@ -23,13 +23,29 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 Build Release Bundle
 
+### android distribution
+
+```sh
+[bundle exec] fastlane android distribution
+```
+
+Firebase App Distribution
+
 ### android internal
 
 ```sh
 [bundle exec] fastlane android internal
 ```
 
-Internal Testing
+Upload to internal testing on Play Store
+
+### android publish
+
+```sh
+[bundle exec] fastlane android publish
+```
+
+Distribute to Firebase and Upload to Play Store as Internal
 
 ----
 
