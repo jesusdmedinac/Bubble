@@ -11,11 +11,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.Card
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import bubble.composeapp.generated.resources.Res
 import bubble.composeapp.generated.resources.ic_message_corner
 import com.mikepenz.markdown.m2.Markdown
+import com.mikepenz.markdown.m2.markdownColor
 import di.LocalSendingData
 import di.LocalUsageAPI
 import io.kamel.image.KamelImage
@@ -36,7 +37,7 @@ import presentation.model.UIBubbleMessage
 @Composable
 fun BubbleMessageCard(uiMessage: UIBubbleMessage) {
     val usageAPI = LocalUsageAPI.current
-    val secondary = MaterialTheme.colors.secondary
+    val secondary = MaterialTheme.colorScheme.secondary
     Box(
         modifier = Modifier
             .fillMaxWidth(),
@@ -52,7 +53,12 @@ fun BubbleMessageCard(uiMessage: UIBubbleMessage) {
                 .background(secondary)
                 .padding(12.dp),
         ) {
-            Markdown(uiMessage.body.message)
+            Markdown(
+                uiMessage.body.message,
+                colors = markdownColor(
+                    text = MaterialTheme.colorScheme.onPrimary
+                ),
+            )
             uiMessage
                 .body
                 .challenge
@@ -67,7 +73,7 @@ fun BubbleMessageCard(uiMessage: UIBubbleMessage) {
                         ),
                     ) {
                         Column {
-                            KamelImage(
+                            /*KamelImage(
                                 asyncPainterResource(challenge.image),
                                 contentDescription = null,
                                 modifier = Modifier
@@ -75,10 +81,10 @@ fun BubbleMessageCard(uiMessage: UIBubbleMessage) {
                                     .height(128.dp)
                                     .clip(RoundedCornerShape(8.dp)),
                                 contentScale = ContentScale.FillWidth
-                            )
+                            )*/
                             Text(
                                 challenge.name,
-                                style = MaterialTheme.typography.h6,
+                                style = MaterialTheme.typography.titleLarge,
                                 modifier = Modifier.padding(
                                     start = 8.dp,
                                     end = 8.dp,
@@ -88,7 +94,7 @@ fun BubbleMessageCard(uiMessage: UIBubbleMessage) {
                             )
                             Text(
                                 challenge.description,
-                                style = MaterialTheme.typography.body1,
+                                style = MaterialTheme.typography.bodyLarge,
                                 modifier = Modifier.padding(
                                     start = 8.dp,
                                     end = 8.dp,

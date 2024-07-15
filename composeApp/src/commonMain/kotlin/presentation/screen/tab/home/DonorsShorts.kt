@@ -10,10 +10,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Badge
-import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Badge
+import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,7 +45,7 @@ fun DonorsShorts() {
                     end = 8f,
                 )
             ),
-            style = TextNodeTypography.h6,
+            style = TextNodeTypography.TitleLarge,
         )
     )
     LazyRow {
@@ -97,7 +97,7 @@ fun DonorsShorts() {
                             )
                             Text(
                                 "Donador $it",
-                                style = MaterialTheme.typography.h6,
+                                style = MaterialTheme.typography.titleLarge,
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(8.dp)

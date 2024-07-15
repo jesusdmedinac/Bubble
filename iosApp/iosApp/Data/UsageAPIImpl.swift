@@ -10,6 +10,14 @@ import Foundation
 import ComposeApp
 
 class UsageAPIImpl : UsageAPI {
+  func hasPermission() -> Bool {
+    return false
+  }
+  
+  func requestUsageSettings() {
+    
+  }
+  
   func getUsageStats() -> [UsageStats] {
     return []
   }

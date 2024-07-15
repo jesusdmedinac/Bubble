@@ -8,9 +8,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -46,7 +46,7 @@ fun CardsSection(
                     end = 8f,
                 )
             ),
-            style = TextNodeTypography.h6,
+            style = TextNodeTypography.TitleLarge,
         )
     )
     LazyRow {
@@ -78,12 +78,12 @@ fun CardsSection(
                         )
                         Text(
                             card.name,
-                            style = MaterialTheme.typography.h6,
+                            style = MaterialTheme.typography.titleLarge,
                             modifier = Modifier.padding(8.dp)
                         )
                         Text(
                             card.description,
-                            style = MaterialTheme.typography.body1,
+                            style = MaterialTheme.typography.bodyLarge,
                             modifier = Modifier.padding(8.dp)
                         )
                     }

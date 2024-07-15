@@ -23,19 +23,23 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Card
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.ListItem
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -53,6 +57,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import bubble.composeapp.generated.resources.Res
@@ -67,7 +72,6 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import org.jetbrains.compose.resources.painterResource
 import presentation.model.UIAnnualPaymentPlan
 import presentation.model.UIBenefit
-import presentation.model.UIFreeBenefits
 import presentation.model.UIFreeChallenges
 import presentation.model.UIFreeChat
 import presentation.model.UIFreeRewards
@@ -80,7 +84,7 @@ import presentation.model.UIPremiumChat
 import presentation.model.UIPremiumRewards
 import presentation.model.UIPremiumStatistics
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 class PaywallScreen : Screen {
     @Composable
     override fun Content() {
@@ -100,8 +104,11 @@ class PaywallScreen : Screen {
                             )
                         }
                     },
-                    backgroundColor = Color.Transparent,
-                    elevation = 0.dp,
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color.Transparent,
+                        titleContentColor = MaterialTheme.colorScheme.onSurface,
+                        navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
+                    ),
                 )
             }
         ) {
@@ -113,7 +120,7 @@ class PaywallScreen : Screen {
                     Box(
                         modifier = Modifier.fillMaxWidth()
                             .height(256.dp)
-                            .background(MaterialTheme.colors.primary)
+                            .background(MaterialTheme.colorScheme.primary)
                     ) {
                         Image(
                             painterResource(Res.drawable.ic_bubble_paywall),
@@ -135,7 +142,7 @@ class PaywallScreen : Screen {
                                         bottomEnd = 0.dp
                                     )
                                 )
-                                .background(MaterialTheme.colors.background)
+                                .background(MaterialTheme.colorScheme.background)
                         ) { }
                     }
                 }
@@ -146,25 +153,26 @@ class PaywallScreen : Screen {
                     ) {
                         Text(
                             "Únete a Bubble Premium",
-                            style = MaterialTheme.typography.h4,
+                            style = MaterialTheme.typography.headlineLarge,
                             modifier = Modifier.fillMaxWidth(),
                             textAlign = TextAlign.Center,
-                            color = MaterialTheme.colors.primary
+                            color = MaterialTheme.colorScheme.primary,
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
                             "¡Aprovecha la promoción exclusiva para nuevos miembros!",
-                            style = MaterialTheme.typography.body1,
+                            style = MaterialTheme.typography.titleLarge,
                             modifier = Modifier.fillMaxWidth(),
                             textAlign = TextAlign.Center
                         )
+                        Spacer(modifier = Modifier.height(16.dp))
                         val animatedSpacerWidthFraction by animateFloatAsState(if (isPremiumChecked) 0f else 0.5f)
-                        val primary = MaterialTheme.colors.primary
+                        val primary = MaterialTheme.colorScheme.primary
                         Box(
                             modifier = Modifier.fillMaxWidth()
                                 .height(56.dp)
                                 .clip(CircleShape)
-                                .background(color = MaterialTheme.colors.secondary)
+                                .background(color = MaterialTheme.colorScheme.secondary)
                                 .clickable {
                                     isPremiumChecked = !isPremiumChecked
                                 }
@@ -195,20 +203,17 @@ class PaywallScreen : Screen {
                                 Text(
                                     "Premium",
                                     fontWeight = FontWeight.Bold,
-                                    color = if (isPremiumChecked) MaterialTheme.colors.onPrimary
-                                    else MaterialTheme.colors.onSecondary
+                                    color = if (isPremiumChecked) MaterialTheme.colorScheme.onPrimary
+                                    else MaterialTheme.colorScheme.onSecondary
                                 )
-                                val isOfferActive = false
-                                if (isOfferActive) {
-                                    Text(
-                                        "50% OFF",
-                                        modifier = Modifier
-                                            .clip(CircleShape)
-                                            .background(color = MaterialTheme.colors.primaryVariant)
-                                            .padding(horizontal = 8.dp, vertical = 4.dp),
-                                        color = MaterialTheme.colors.onPrimary
-                                    )
-                                }
+                                Text(
+                                    "50% OFF",
+                                    modifier = Modifier
+                                        .clip(CircleShape)
+                                        .background(color = MaterialTheme.colorScheme.primaryContainer)
+                                        .padding(horizontal = 8.dp, vertical = 4.dp),
+                                    color = MaterialTheme.colorScheme.onPrimary
+                                )
                             }
 
                             Row(
@@ -223,8 +228,8 @@ class PaywallScreen : Screen {
                                 Text(
                                     "Plan actual",
                                     fontWeight = FontWeight.Bold,
-                                    color = if (isPremiumChecked) MaterialTheme.colors.onSecondary
-                                    else MaterialTheme.colors.onPrimary
+                                    color = if (isPremiumChecked) MaterialTheme.colorScheme.onSecondary
+                                    else MaterialTheme.colorScheme.onPrimary
                                 )
                             }
                         }
@@ -287,7 +292,7 @@ class PaywallScreen : Screen {
                             appNavigator.pop()
                         },
                         colors = ButtonDefaults.buttonColors(
-                            backgroundColor = MaterialTheme.colors.secondary
+                            containerColor = MaterialTheme.colorScheme.secondary
                         ),
                         modifier = Modifier.fillMaxWidth()
                             .height(56.dp),
@@ -295,7 +300,7 @@ class PaywallScreen : Screen {
                     ) {
                         Text(
                             "Continuar con el plan gratuito",
-                            style = MaterialTheme.typography.subtitle1
+                            style = MaterialTheme.typography.bodyLarge
                         )
                     }
                     Spacer(modifier = Modifier.height(8.dp))
@@ -309,13 +314,13 @@ class PaywallScreen : Screen {
                     ) {
                         Text(
                             "Suscribirme a Bubble Premium",
-                            style = MaterialTheme.typography.subtitle1
+                            style = MaterialTheme.typography.bodyLarge
                         )
                     }
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         "Puedes cancelar en cualquier momento.",
-                        style = MaterialTheme.typography.caption,
+                        style = MaterialTheme.typography.bodySmall,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.fillMaxWidth(),
                     )
@@ -324,7 +329,7 @@ class PaywallScreen : Screen {
                         """
                             La suscripción se renueva de forma automática 24 horas antes de que el periodo de suscripción termine.
                         """.trimIndent(),
-                        style = MaterialTheme.typography.caption,
+                        style = MaterialTheme.typography.bodySmall,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.fillMaxWidth(),
                     )
@@ -352,8 +357,9 @@ class PaywallScreen : Screen {
                 Card(
                     modifier = Modifier
                         .fillMaxWidth(),
-                    backgroundColor = MaterialTheme.colors.secondary,
-                    elevation = 0.dp
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer
+                    )
                 ) {
                     Column(
                         modifier = Modifier
@@ -362,17 +368,19 @@ class PaywallScreen : Screen {
                         var isAnnualSelected by remember { mutableStateOf(true) }
                         PlanSelection(
                             isSelected = isAnnualSelected,
-                            onPlanSelected = {
-                                isAnnualSelected = true
-                            },
-                            paymentPlan = UIAnnualPaymentPlan
+                            paymentPlan = UIAnnualPaymentPlan,
+                            modifier = Modifier
+                                .clickable {
+                                    isAnnualSelected = true
+                                }
                         )
                         PlanSelection(
                             isSelected = !isAnnualSelected,
-                            onPlanSelected = {
-                                isAnnualSelected = false
-                            },
-                            paymentPlan = UIMonthlyPaymentPlan
+                            paymentPlan = UIMonthlyPaymentPlan,
+                            modifier = Modifier
+                                .clickable {
+                                    isAnnualSelected = false
+                                }
                         )
                     }
                 }
@@ -385,7 +393,7 @@ class PaywallScreen : Screen {
                 ) {
                     Text(
                         "Puedes cancelar en cualquier momento.",
-                        style = MaterialTheme.typography.caption,
+                        style = MaterialTheme.typography.bodySmall,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.fillMaxWidth(),
                     )
@@ -400,7 +408,7 @@ class PaywallScreen : Screen {
                     ) {
                         Text(
                             "Suscribirme a Bubble Premium",
-                            style = MaterialTheme.typography.subtitle1
+                            style = MaterialTheme.typography.bodyLarge
                         )
                     }
                     Spacer(modifier = Modifier.height(8.dp))
@@ -409,7 +417,7 @@ class PaywallScreen : Screen {
                             appNavigator.pop()
                         },
                         colors = ButtonDefaults.buttonColors(
-                            backgroundColor = MaterialTheme.colors.secondary
+                            containerColor = MaterialTheme.colorScheme.secondary
                         ),
                         modifier = Modifier.fillMaxWidth()
                             .height(56.dp),
@@ -417,7 +425,7 @@ class PaywallScreen : Screen {
                     ) {
                         Text(
                             "Continuar con el plan gratuito",
-                            style = MaterialTheme.typography.subtitle1
+                            style = MaterialTheme.typography.bodyLarge
                         )
                     }
                     Spacer(modifier = Modifier.height(16.dp))
@@ -425,7 +433,7 @@ class PaywallScreen : Screen {
                         """
                             La suscripción se renueva de forma automática 24 horas antes de que el periodo de suscripción termine.
                         """.trimIndent(),
-                        style = MaterialTheme.typography.caption,
+                        style = MaterialTheme.typography.bodySmall,
                         textAlign = TextAlign.Center,
                         modifier = Modifier.fillMaxWidth(),
                     )
@@ -437,14 +445,15 @@ class PaywallScreen : Screen {
     @Composable
     private fun PlanSelection(
         isSelected: Boolean,
-        onPlanSelected: () -> Unit = {},
-        paymentPlan: UIPaymentPlan
+        paymentPlan: UIPaymentPlan,
+        modifier: Modifier = Modifier,
     ) {
         ListItem(
-            modifier = Modifier.clickable {
-                onPlanSelected()
-            },
-            icon = {
+            colors = ListItemDefaults.colors(
+                containerColor = Color.Transparent
+            ),
+            modifier = modifier,
+            leadingContent = {
                 Box(
                     modifier = Modifier
                         .size(32.dp)
@@ -452,13 +461,13 @@ class PaywallScreen : Screen {
                         .let {
                             if (isSelected) {
                                 it.background(
-                                    MaterialTheme.colors.primary
+                                    MaterialTheme.colorScheme.primary
                                 )
                             } else it
                         }
                         .border(
                             width = 2.dp,
-                            color = MaterialTheme.colors.primary,
+                            color = MaterialTheme.colorScheme.primary,
                             shape = CircleShape,
                         ),
                     contentAlignment = Alignment.Center,
@@ -469,48 +478,56 @@ class PaywallScreen : Screen {
                             contentDescription = null,
                             modifier = Modifier
                                 .clip(CircleShape)
-                                .size(24.dp)
+                                .size(24.dp),
+                            tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
                 }
             },
-            text = {
+            headlineContent = {
                 Text(
                     paymentPlan.title,
                     color = if (isSelected) {
-                        MaterialTheme.colors.primaryVariant
+                        MaterialTheme.colorScheme.primaryContainer
                     } else {
-                        MaterialTheme.colors.onSurface
+                        MaterialTheme.colorScheme.onSurface
                     },
                     fontWeight = FontWeight.Bold
                 )
             },
-            secondaryText = {
+            supportingContent = {
                 Column {
+                    if (paymentPlan.hasDiscount) {
+                        Text(
+                            paymentPlan.formattedPriceWithDiscount(),
+                            color = MaterialTheme.colorScheme.tertiary,
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
+                    }
                     Text(
-                        paymentPlan.price,
-                        color = MaterialTheme.colors.primary
-                    )
-                    Text(
-                        paymentPlan.description,
-                        color = MaterialTheme.colors.primary
+                        paymentPlan.formattedPrice(),
+                        color = MaterialTheme.colorScheme.onSecondaryContainer,
+                        style = MaterialTheme.typography.bodyLarge.let {
+                            if (paymentPlan.hasDiscount) {
+                                it.copy(textDecoration = TextDecoration.LineThrough)
+                            } else it
+                        }
                     )
                 }
             },
-            trailing = {
+            trailingContent = {
                 if (paymentPlan is UIAnnualPaymentPlan) {
                     Text(
                         "Mejor valor",
                         modifier = Modifier
                             .clip(CircleShape)
-                            .background(MaterialTheme.colors.primary)
+                            .background(MaterialTheme.colorScheme.primary)
                             .padding(horizontal = 4.dp, vertical = 2.dp),
-                        style = MaterialTheme.typography.caption,
-                        fontSize = 10.sp
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onPrimary
                     )
                 }
             },
-            singleLineSecondaryText = true
         )
     }
 
@@ -528,7 +545,7 @@ class PaywallScreen : Screen {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp)
+                    .padding(horizontal = 16.dp),
             ) {
                 Column {
                     benefits.forEach { benefit ->
@@ -549,7 +566,10 @@ class PaywallScreen : Screen {
         benefit: UIBenefit
     ) {
         ListItem(
-            icon = {
+            colors = ListItemDefaults.colors(
+                containerColor = Color.Transparent
+            ),
+            leadingContent = {
                 Image(
                     painterResource(
                         when (benefit) {
@@ -571,8 +591,8 @@ class PaywallScreen : Screen {
                         .size(48.dp)
                         .clip(RoundedCornerShape(16.dp))
                         .background(
-                            if (benefit is UIPremiumBenefits) MaterialTheme.colors.primary
-                            else MaterialTheme.colors.secondary
+                            if (benefit is UIPremiumBenefits) MaterialTheme.colorScheme.primary
+                            else MaterialTheme.colorScheme.secondary
                         )
                         .padding(8.dp)
                         .alpha(
@@ -581,10 +601,10 @@ class PaywallScreen : Screen {
                         ),
                 )
             },
-            text = {
+            headlineContent = {
                 Text(benefit.title)
             },
-            secondaryText = {
+            supportingContent = {
                 Text(benefit.description)
             }
         )

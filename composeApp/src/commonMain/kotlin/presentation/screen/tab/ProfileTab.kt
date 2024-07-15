@@ -2,9 +2,15 @@ package presentation.screen.tab
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.AnchoredDraggableState
+import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.anchoredDraggable
+import androidx.compose.foundation.gestures.animateTo
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,26 +25,18 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.Card
-import androidx.compose.material.Divider
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.FractionalThreshold
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.rememberSwipeableState
-import androidx.compose.material.swipeable
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -66,9 +64,6 @@ import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
-import presentation.screen.mainscreen.BubbleTopAppBar
-import presentation.screen.tab.bubble.BubbleTabActions
-import presentation.screen.tab.bubble.BubbleTabTitle
 import kotlin.math.roundToInt
 
 object ProfileTab : Tab {
@@ -112,11 +107,11 @@ object ProfileTab : Tab {
                         Column {
                             Text(
                                 "Nombre del usuario",
-                                style = MaterialTheme.typography.subtitle1,
+                                style = MaterialTheme.typography.headlineLarge,
                             )
                             Text(
                                 "Correo electrónico",
-                                style = MaterialTheme.typography.subtitle2,
+                                style = MaterialTheme.typography.headlineLarge,
                             )
                         }
                     }
@@ -124,7 +119,7 @@ object ProfileTab : Tab {
                 item {
                     Text(
                         text = "Tiempo en pantalla",
-                        style = MaterialTheme.typography.caption,
+                        style = MaterialTheme.typography.headlineLarge,
                         modifier = Modifier
                             .padding(horizontal = 16.dp, vertical = 4.dp)
                     )
@@ -140,15 +135,15 @@ object ProfileTab : Tab {
                         ) {
                             Text(
                                 text = "Hoy, 10 de junio",
-                                style = MaterialTheme.typography.subtitle2,
+                                style = MaterialTheme.typography.headlineLarge,
                             )
                             Text(
                                 text = "1 h 39 min",
-                                style = MaterialTheme.typography.h4,
+                                style = MaterialTheme.typography.titleLarge,
                             )
                             val pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
                             val textMeasurer = rememberTextMeasurer()
-                            val textStyle = MaterialTheme.typography.caption
+                            val textStyle = MaterialTheme.typography.headlineLarge
                             Box(
                                 modifier = Modifier
                                     .fillMaxWidth()
@@ -224,7 +219,7 @@ object ProfileTab : Tab {
                 item {
                     Text(
                         "Desafíos guardados",
-                        style = MaterialTheme.typography.h6,
+                        style = MaterialTheme.typography.titleLarge,
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                     )
                 }
@@ -244,7 +239,7 @@ object ProfileTab : Tab {
                     ) {
                         Text(
                             "Desafíos completados",
-                            style = MaterialTheme.typography.h6,
+                            style = MaterialTheme.typography.titleLarge,
                             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                         )
                         Spacer(modifier = Modifier.weight(1f))
@@ -279,7 +274,7 @@ object ProfileTab : Tab {
                     modifier = it,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    val primary = MaterialTheme.colors.primary
+                    val primary = MaterialTheme.colorScheme.primary
                     Box(
                         modifier = Modifier
                             .padding(end = 8.dp)
@@ -293,15 +288,15 @@ object ProfileTab : Tab {
                     Column {
                         Text(
                             text = "Challenge",
-                            style = MaterialTheme.typography.h6,
+                            style = MaterialTheme.typography.titleLarge,
                         )
                         Text(
                             text = "Description",
-                            style = MaterialTheme.typography.subtitle1,
+                            style = MaterialTheme.typography.headlineLarge,
                         )
                         Text(
                             text = "Status",
-                            style = MaterialTheme.typography.subtitle2,
+                            style = MaterialTheme.typography.headlineLarge,
                         )
                     }
                 }
@@ -311,8 +306,8 @@ object ProfileTab : Tab {
                     onClick = {},
                     modifier = Modifier.fillMaxSize(),
                     colors = ButtonDefaults.textButtonColors(
-                        contentColor = MaterialTheme.colors.onSecondary,
-                        backgroundColor = MaterialTheme.colors.secondary
+                        contentColor = MaterialTheme.colorScheme.onSecondary,
+                        containerColor = MaterialTheme.colorScheme.secondary
                     )
                 ) {
                     Text("Completar")
@@ -323,8 +318,8 @@ object ProfileTab : Tab {
                     onClick = {},
                     modifier = Modifier.fillMaxSize(),
                     colors = ButtonDefaults.textButtonColors(
-                        contentColor = MaterialTheme.colors.onError,
-                        backgroundColor = MaterialTheme.colors.error
+                        contentColor = MaterialTheme.colorScheme.onError,
+                        containerColor = MaterialTheme.colorScheme.error
                     )
                 ) {
                     Text("Cancelar")
@@ -334,7 +329,12 @@ object ProfileTab : Tab {
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
+enum class DragAnchors {
+    Start,
+    End,
+}
+
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Swipeable(
     onClink: () -> Unit,
@@ -343,14 +343,36 @@ fun Swipeable(
     trailingActions: @Composable RowScope.() -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
+    val density = LocalDensity.current
     var width by remember { mutableStateOf(1) }
-    val swipeableState = rememberSwipeableState(width)
+    //val swipeableState = rememberSwipeableState(width)
+    val anchoredDraggableState = remember {
+        AnchoredDraggableState(
+            // 2
+            initialValue = DragAnchors.Start,
+            // 3
+            positionalThreshold = { distance: Float -> distance * 0.5f },
+            // 4
+            velocityThreshold = { with(density) { 100.dp.toPx() } },
+            // 5
+            animationSpec = tween(),
+        ).apply {
+            // 6
+            updateAnchors(
+                // 7
+                DraggableAnchors {
+                    DragAnchors.Start at 0f
+                    DragAnchors.End at 400f
+                }
+            )
+        }
+    }
     val coroutineScope = rememberCoroutineScope()
     Box(
         modifier = modifier
             .clickable {
                 coroutineScope.launch {
-                    swipeableState.animateTo(1)
+                    anchoredDraggableState.animateTo(DragAnchors.End)
                 }
                 onClink()
             }
@@ -358,12 +380,20 @@ fun Swipeable(
                 width = it.size.width
             }
             .width(width.dp)
-            .swipeable(
+            .offset {
+                IntOffset(
+                    // 2
+                    x = anchoredDraggableState.requireOffset().roundToInt(),
+                    y = 0,
+                )
+            }
+            .anchoredDraggable(anchoredDraggableState, Orientation.Horizontal)
+            /*.swipeable(
                 state = swipeableState,
                 anchors = mapOf(0f - (width / 3) to 0, 0f to 1, (width / 3f) to 2),
                 thresholds = { _, _ -> FractionalThreshold(0.3f) },
                 orientation = Orientation.Horizontal
-            )
+            )*/
     ) {
         Row(
             Modifier
@@ -383,9 +413,9 @@ fun Swipeable(
         }
         content(
             Modifier
-                .offset { IntOffset(swipeableState.offset.value.roundToInt(), 0) }
+                .offset { IntOffset(anchoredDraggableState.offset.roundToInt(), 0) }
                 .width(width.dp)
-                .background(MaterialTheme.colors.background)
+                .background(MaterialTheme.colorScheme.background)
                 .padding(8.dp)
         )
     }

@@ -1,40 +1,21 @@
 package presentation.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.darkColors
-import androidx.compose.material.lightColors
+import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-
-private val DarkColorPalette = darkColors(
-    primary = Green500,
-    primaryVariant = Green700,
-    secondary = Teal200,
-    secondaryVariant = Teal500,
-)
-
-private val LightColorPalette = lightColors(
-    primary = Green500,
-    primaryVariant = Green700,
-    secondary = Teal200,
-    secondaryVariant = Teal500,
-)
+import com.materialkolor.PaletteStyle
+import com.materialkolor.dynamicColorScheme
 
 @Composable
 fun BubbleTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    val colors = if (darkTheme) {
-        DarkColorPalette
-    } else {
-        LightColorPalette
-    }
-
+    val colorScheme: ColorScheme =
+        dynamicColorScheme(AzulMedio2, darkTheme, isAmoled = false, style = PaletteStyle.Fidelity)
     MaterialTheme(
-        colors = colors,
-        typography = Typography,
-        shapes = Shapes,
+        colorScheme = colorScheme,
         content = content
     )
 }

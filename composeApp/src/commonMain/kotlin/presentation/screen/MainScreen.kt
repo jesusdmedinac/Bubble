@@ -3,10 +3,10 @@ package presentation.screen
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.BottomNavigation
-import androidx.compose.material.BottomNavigationItem
-import androidx.compose.material.Icon
-import androidx.compose.material.Scaffold
+import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -33,7 +33,7 @@ class MainScreen : Screen {
                     BubbleTopAppBar()
                 },
                 bottomBar = {
-                    BottomNavigation {
+                    NavigationBar {
                         //TabNavigationItem(HomeTab)
                         TabNavigationItem(bubbleTab)
                         TabNavigationItem(ProfileTab)
@@ -54,12 +54,12 @@ class MainScreen : Screen {
     private fun RowScope.TabNavigationItem(tab: Tab) {
         val tabNavigator = LocalTabNavigator.current
 
-        BottomNavigationItem(
+        NavigationBarItem(
             selected = tabNavigator.current == tab,
             onClick = { tabNavigator.current = tab },
             icon = {
                 Icon(
-                    painter = tab.options.icon ?: return@BottomNavigationItem,
+                    painter = tab.options.icon ?: return@NavigationBarItem,
                     contentDescription = tab.options.title,
                 )
             },

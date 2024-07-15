@@ -1,6 +1,5 @@
 package generativeui
 
-
 sealed interface Node {
     val nodeModifiers: List<NodeModifier>
 }
@@ -20,12 +19,21 @@ data class ColumnLayout(
 ) : Layout
 
 enum class TextNodeTypography {
-    h1, h2, h3, h4, h5, h6,
-    subtitle1, subtitle2,
-    body1, body2,
-    button,
-    caption,
-    overline
+    DisplayLarge,
+    DisplayMedium,
+    DisplaySmall,
+    HeadlineLarge,
+    HeadlineMedium,
+    HeadlineSmall,
+    TitleLarge,
+    TitleMedium,
+    TitleSmall,
+    BodyLarge,
+    BodyMedium,
+    BodySmall,
+    LabelLarge,
+    LabelMedium,
+    LabelSmall,
 }
 
 data class TextNode(

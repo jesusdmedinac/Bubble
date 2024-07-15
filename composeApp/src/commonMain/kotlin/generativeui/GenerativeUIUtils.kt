@@ -1,6 +1,6 @@
 package generativeui
 
-import androidx.compose.material.MaterialTheme
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -30,19 +30,21 @@ fun List<NodeModifier>.toModifier(): Modifier {
 
 @Composable
 fun TextNodeTypography.toStyle(): TextStyle = when (this) {
-    TextNodeTypography.h1 -> MaterialTheme.typography.h1
-    TextNodeTypography.h2 -> MaterialTheme.typography.h2
-    TextNodeTypography.h3 -> MaterialTheme.typography.h3
-    TextNodeTypography.h4 -> MaterialTheme.typography.h4
-    TextNodeTypography.h5 -> MaterialTheme.typography.h5
-    TextNodeTypography.h6 -> MaterialTheme.typography.h6
-    TextNodeTypography.subtitle1 -> MaterialTheme.typography.subtitle1
-    TextNodeTypography.subtitle2 -> MaterialTheme.typography.subtitle2
-    TextNodeTypography.body1 -> MaterialTheme.typography.body1
-    TextNodeTypography.body2 -> MaterialTheme.typography.body2
-    TextNodeTypography.button -> MaterialTheme.typography.button
-    TextNodeTypography.caption -> MaterialTheme.typography.caption
-    TextNodeTypography.overline -> MaterialTheme.typography.overline
+    TextNodeTypography.DisplayLarge -> MaterialTheme.typography.displayLarge
+    TextNodeTypography.DisplayMedium -> MaterialTheme.typography.displayMedium
+    TextNodeTypography.DisplaySmall -> MaterialTheme.typography.displaySmall
+    TextNodeTypography.HeadlineLarge -> MaterialTheme.typography.headlineLarge
+    TextNodeTypography.HeadlineMedium -> MaterialTheme.typography.headlineMedium
+    TextNodeTypography.HeadlineSmall -> MaterialTheme.typography.headlineSmall
+    TextNodeTypography.TitleLarge -> MaterialTheme.typography.titleLarge
+    TextNodeTypography.TitleMedium -> MaterialTheme.typography.titleMedium
+    TextNodeTypography.TitleSmall -> MaterialTheme.typography.titleSmall
+    TextNodeTypography.BodyLarge -> MaterialTheme.typography.bodyLarge
+    TextNodeTypography.BodyMedium -> MaterialTheme.typography.bodyMedium
+    TextNodeTypography.BodySmall -> MaterialTheme.typography.bodySmall
+    TextNodeTypography.LabelLarge -> MaterialTheme.typography.labelLarge
+    TextNodeTypography.LabelMedium -> MaterialTheme.typography.labelMedium
+    TextNodeTypography.LabelSmall -> MaterialTheme.typography.labelSmall
 }
 
 @Composable

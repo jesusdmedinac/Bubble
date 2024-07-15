@@ -56,6 +56,7 @@ kotlin {
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material)
+            implementation(compose.material3)
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
@@ -79,6 +80,8 @@ kotlin {
             implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0")
 
             implementation(libs.multiplatform.markdown.renderer.m2)
+
+            implementation("com.materialkolor:material-kolor:1.7.0")
         }
     }
 }

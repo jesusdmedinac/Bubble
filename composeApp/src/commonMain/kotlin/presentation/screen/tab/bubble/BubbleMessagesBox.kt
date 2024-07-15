@@ -1,6 +1,5 @@
 package presentation.screen.tab.bubble
 
-import di.LocalAppNavigator
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.clickable
@@ -12,11 +11,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -34,7 +32,7 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.koin.getNavigatorScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import data.TimeUtils
+import di.LocalAppNavigator
 import di.LocalNetworkAPI
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -151,7 +149,6 @@ fun BubbleMessagesBox(
                         lazyListState.animateScrollToItem(0)
                     }
                 }, modifier = Modifier
-                    .padding(16.dp)
                     .clip(CircleShape)
             ) {
                 Icon(

@@ -12,19 +12,21 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Button
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.Button
+import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -56,6 +58,7 @@ class ChallengeScreen(
 ) : Screen {
     override val key: ScreenKey = uniqueScreenKey
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
         val navigator = LocalAppNavigator.currentOrThrow
@@ -70,8 +73,11 @@ class ChallengeScreen(
                             Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                         }
                     },
-                    backgroundColor = Color.Transparent,
-                    elevation = 0.dp
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color.Transparent,
+                        titleContentColor = MaterialTheme.colorScheme.onSurface,
+                        navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
+                    ),
                 )
             }
         ) {
@@ -100,11 +106,11 @@ class ChallengeScreen(
                         Column {
                             Text(
                                 challenge.name,
-                                style = MaterialTheme.typography.subtitle1,
+                                style = MaterialTheme.typography.headlineSmall,
                             )
                             Text(
                                 challenge.description,
-                                style = MaterialTheme.typography.subtitle2,
+                                style = MaterialTheme.typography.headlineSmall,
                             )
                         }
                     }
@@ -131,14 +137,14 @@ class ChallengeScreen(
                         ) {
                             Text(
                                 "2k calificaciones",
-                                style = MaterialTheme.typography.caption,
+                                style = MaterialTheme.typography.displaySmall,
                             )
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 Text(
                                     "4.5",
-                                    style = MaterialTheme.typography.h5,
+                                    style = MaterialTheme.typography.titleLarge,
                                 )
                                 Icon(
                                     Icons.Default.Star,
@@ -158,14 +164,14 @@ class ChallengeScreen(
                         ) {
                             Text(
                                 "2k completadas",
-                                style = MaterialTheme.typography.caption,
+                                style = MaterialTheme.typography.headlineSmall,
                             )
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 Text(
                                     "4/5",
-                                    style = MaterialTheme.typography.h5,
+                                    style = MaterialTheme.typography.titleLarge,
                                 )
                                 Icon(
                                     Icons.Default.Person,
@@ -174,7 +180,7 @@ class ChallengeScreen(
                             }
                             Text(
                                 "Personas completan el reto",
-                                style = MaterialTheme.typography.caption,
+                                style = MaterialTheme.typography.headlineSmall,
                             )
                         }
                     }
@@ -210,7 +216,7 @@ class ChallengeScreen(
                                     end = 8f,
                                 )
                             ),
-                            style = TextNodeTypography.h6,
+                            style = TextNodeTypography.TitleLarge,
                         )
                     )
                     Row {
@@ -224,9 +230,9 @@ class ChallengeScreen(
                                     Icons.Default.Star,
                                     contentDescription = null,
                                     tint = if (rate < currentRate) {
-                                        MaterialTheme.colors.primary
+                                        MaterialTheme.colorScheme.primary
                                     } else {
-                                        MaterialTheme.colors.onSurface.copy(alpha = 0.2f)
+                                        MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
                                     }
                                 )
                             }

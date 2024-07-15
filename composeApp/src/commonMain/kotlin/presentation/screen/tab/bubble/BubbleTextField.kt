@@ -6,8 +6,10 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -15,13 +17,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.Button
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
-import androidx.compose.material.minimumInteractiveComponentSize
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -69,11 +72,14 @@ fun BubbleTextField(
                 modifier = Modifier
                     .size(56.dp)
                     .clip(CircleShape),
-                enabled = !noMoreMessages
+                enabled = !noMoreMessages,
+                contentPadding = PaddingValues(0.dp),
             ) {
                 Icon(
                     painterResource(Res.drawable.ic_message),
-                    contentDescription = null
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(20.dp)
                 )
             }
         }
@@ -95,7 +101,7 @@ fun BubbleTextField(
                             bottomEnd = 40.dp
                         )
                     )
-                    .background(MaterialTheme.colors.secondary)
+                    .background(MaterialTheme.colorScheme.secondary)
                     .padding(horizontal = 8.dp, vertical = 2.dp)
             ) {
                 Row(
@@ -103,13 +109,14 @@ fun BubbleTextField(
                 ) {
                     Text(
                         "Tienes $remainingFreeMessages mensajes restantes con Bubble",
-                        style = MaterialTheme.typography.caption,
-                        color = MaterialTheme.colors.onSecondary
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSecondary
                     )
                     Icon(
                         painterResource(Res.drawable.ic_chat_bubble),
                         contentDescription = null,
-                        modifier = Modifier.size(12.dp)
+                        modifier = Modifier.size(12.dp),
+                        tint = MaterialTheme.colorScheme.onSecondary
                     )
                 }
             }
@@ -119,9 +126,9 @@ fun BubbleTextField(
                     .height(56.dp)
                     .clip(CircleShape)
                     .background(
-                        if (!noMoreMessages) MaterialTheme.colors.primary else
-                            MaterialTheme.colors.onSurface.copy(alpha = 0.12f)
-                                .compositeOver(MaterialTheme.colors.surface)
+                        if (!noMoreMessages) MaterialTheme.colorScheme.primary else
+                            MaterialTheme.colorScheme.onSurface.copy(alpha = 0.12f)
+                                .compositeOver(MaterialTheme.colorScheme.surface)
                     )
                     .padding(horizontal = 16.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -131,8 +138,8 @@ fun BubbleTextField(
                         .weight(1f)
                 ) {
                     if (value.text.isEmpty()) {
-                        val style = MaterialTheme.typography.body1.copy(
-                            color = MaterialTheme.colors.onPrimary.copy(
+                        val style = MaterialTheme.typography.bodyLarge.copy(
+                            color = MaterialTheme.colorScheme.onPrimary.copy(
                                 alpha = 0.7f
                             ),
                         )
@@ -146,8 +153,8 @@ fun BubbleTextField(
                         onValueChange = onValueChange,
                         modifier = Modifier
                             .fillMaxWidth(),
-                        textStyle = MaterialTheme.typography.body1.copy(
-                            color = MaterialTheme.colors.onPrimary,
+                        textStyle = MaterialTheme.typography.bodyLarge.copy(
+                            color = MaterialTheme.colorScheme.onPrimary,
                         ),
                         enabled = !noMoreMessages
                     )
@@ -175,7 +182,7 @@ fun BubbleTextField(
                             modifier = Modifier
                                 .minimumInteractiveComponentSize()
                                 .size(24.dp),
-                            color = MaterialTheme.colors.onPrimary
+                            color = MaterialTheme.colorScheme.onPrimary
                         )
                     }
                     AnimatedVisibility(
@@ -186,7 +193,7 @@ fun BubbleTextField(
                         Icon(
                             painterResource(Res.drawable.ic_send),
                             contentDescription = null,
-                            tint = MaterialTheme.colors.onPrimary
+                            tint = MaterialTheme.colorScheme.onPrimary
                         )
                     }
                 }
