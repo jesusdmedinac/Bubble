@@ -1,9 +1,9 @@
+import com.codingfeline.buildkonfig.compiler.FieldSpec
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.io.FileInputStream
 import java.io.InputStreamReader
 import java.util.Properties
-
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -13,6 +13,7 @@ plugins {
     alias(libs.plugins.kotlinxSerialization)
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
+    id("com.codingfeline.buildkonfig")
 }
 
 kotlin {
@@ -98,8 +99,8 @@ android {
         applicationId = "com.jesusdmedinac.bubble"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 9
-        versionName = "0.1.1"
+        versionCode = libs.versions.version.code.get().toInt()
+        versionName = libs.versions.version.name.get()
     }
     packaging {
         resources {
@@ -116,10 +117,10 @@ android {
                 "proguard-rules.pro"
             )
 
-            buildConfigField("String", "apiKey", getLocalProperty("apiKey"))
+            buildConfigField("String", "apiKey", getPropertiesFile("apiKey"))
         }
         getByName("debug") {
-            buildConfigField("String", "apiKey", getLocalProperty("apiKey"))
+            buildConfigField("String", "apiKey", getPropertiesFile("apiKey"))
         }
     }
     compileOptions {
@@ -135,7 +136,16 @@ android {
     }
 }
 
-fun Project.getLocalProperty(key: String, file: String = "local.properties"): String {
+buildkonfig {
+    packageName = "com.jesusdmedinac.bubble"
+
+    defaultConfigs {
+        buildConfigField(FieldSpec.Type.INT, "versionCode", libs.versions.version.code.get())
+        buildConfigField(FieldSpec.Type.STRING, "versionName", libs.versions.version.name.get())
+    }
+}
+
+fun Project.getPropertiesFile(key: String, file: String = "local.properties"): String {
     val properties = Properties()
     val localProperties = File(file)
     if (localProperties.isFile) {

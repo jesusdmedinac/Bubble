@@ -1,7 +1,6 @@
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.window.ComposeUIViewController
 import data.remote.Analytics
-import data.local.BuildConfig
 import data.local.NetworkAPI
 import data.remote.ChatAPI
 import data.remote.Event
@@ -12,7 +11,6 @@ import di.LocalUsageAPI
 import di.LocalChatAPI
 import di.LocalSendingData
 import di.LocalAnalytics
-import di.LocalBuildConfig
 import di.LocalNetworkAPI
 import platform.UIKit.UIActivity
 import platform.UIKit.UIActivityViewController
@@ -50,13 +48,7 @@ fun MainViewController(
                         }
                     }
                     CompositionLocalProvider(LocalAnalytics provides analytics) {
-                        val buildConfig = object : BuildConfig {
-                            override val versionName: String
-                                get() = "0.0.3"
-                        }
-                        CompositionLocalProvider(LocalBuildConfig provides buildConfig) {
-                            App()
-                        }
+                        App()
                     }
                 }
             }

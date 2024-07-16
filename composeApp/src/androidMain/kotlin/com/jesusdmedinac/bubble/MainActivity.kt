@@ -30,14 +30,11 @@ import com.google.firebase.analytics.logEvent
 import com.jesusdmedinac.bubble.data.ChatAPIImpl
 import com.jesusdmedinac.bubble.data.NetworkAPIImpl
 import com.jesusdmedinac.bubble.data.UsageAPIImpl
-import data.local.BuildConfig
 import data.local.SendingData
 import data.remote.Analytics
 import data.remote.Event
 import di.KoinDI
 import di.LocalAnalytics
-import di.LocalAppNavigator
-import di.LocalBuildConfig
 import di.LocalChatAPI
 import di.LocalNetworkAPI
 import di.LocalSendingData
@@ -215,19 +212,6 @@ class MainActivity : ComponentActivity() {
             }
         }
         CompositionLocalProvider(LocalKamelConfig provides androidConfig) {
-            BuildConfigCompositionProvider()
-        }
-    }
-
-    @Composable
-    private fun BuildConfigCompositionProvider() {
-        val buildConfig = remember {
-            object : BuildConfig {
-                override val versionName: String
-                    get() = com.jesusdmedinac.bubble.BuildConfig.VERSION_NAME
-            }
-        }
-        CompositionLocalProvider(LocalBuildConfig provides buildConfig) {
             App()
         }
     }
