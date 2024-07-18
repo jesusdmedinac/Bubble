@@ -12,6 +12,7 @@ import kotlinx.datetime.isoDayNumber
 import kotlinx.datetime.minus
 import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.todayIn
 
 fun Long.formattedDuration(
     includeDays: Boolean = true,
@@ -34,10 +35,11 @@ fun Long.formattedDuration(
     else "")
 }
 
+fun today(): LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
+
 fun startOfWeek(): LocalDate {
-    val today = Clock.System.now()
-        .toLocalDateTime(TimeZone.currentSystemDefault())
-    return today.date.minus(today.dayOfWeek.ordinal, DateTimeUnit.DAY)
+    val today = today()
+    return today.minus(today.dayOfWeek.ordinal, DateTimeUnit.DAY)
 }
 
 fun startOfWeekInMillis(): Long {

@@ -9,4 +9,5 @@ data class UsageStats(
     val lastTimeStamp: Long,
     val lastTimeUsed: Long,
     val totalTimeInForeground: Long,
+    val totalTimeVisible: Long,
 )

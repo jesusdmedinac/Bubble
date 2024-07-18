@@ -5,6 +5,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
@@ -248,64 +249,51 @@ object ProfileTab : Tab {
                 Column(
                     modifier = Modifier.padding(16.dp)
                 ) {
-                    emptyList<UIUsageStats>().forEach {
-                        Row {
-                            Text(
-                                text = it.packageName.split(".").last(),
-                                style = MaterialTheme.typography.titleMedium,
-                            )
-                            Spacer(modifier = Modifier.weight(1f))
-                            Text(
-                                text = it.totalTimeInForeground.formattedDuration(),
-                                style = MaterialTheme.typography.titleMedium,
-                            )
-                        }
-                    }
-                    Text(
-                        text = LocalDateTime.Format {
-                            val dayOfWeekList = listOf(
-                                "Lunes",
-                                "Martes",
-                                "Miércoles",
-                                "Jueves",
-                                "Viernes",
-                                "Sábado",
-                                "Domingo"
-                            )
-                            dayOfWeek(DayOfWeekNames(dayOfWeekList))
-                        }.format(
-                            Instant.fromEpochMilliseconds(startOfWeekInMillis())
-                                .toLocalDateTime(TimeZone.currentSystemDefault())
-                        ),
-                        style = MaterialTheme.typography.titleLarge,
-                    )
                     state.dailyUsageStats.forEach {
-                        Row {
-                            Text(
-                                text = it.packageName.split(".").last(),
-                                style = MaterialTheme.typography.titleMedium,
-                            )
-                            Spacer(modifier = Modifier.weight(1f))
-                            Text(
-                                text = LocalDateTime.Format {
-                                    val dayOfWeekList = listOf(
-                                        "Lunes",
-                                        "Martes",
-                                        "Miércoles",
-                                        "Jueves",
-                                        "Viernes",
-                                        "Sábado",
-                                        "Domingo"
+                        Text(
+                            text = LocalDate.Format {
+                                val dayOfWeekList = listOf(
+                                    "Lunes",
+                                    "Martes",
+                                    "Miércoles",
+                                    "Jueves",
+                                    "Viernes",
+                                    "Sábado",
+                                    "Domingo"
+                                )
+                                dayOfWeek(DayOfWeekNames(dayOfWeekList))
+                            }
+                                .format(it.date),
+                            style = MaterialTheme.typography.titleLarge,
+                        )
+                        Column {
+                            it.usageStats.forEach { usageStats ->
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                ) {
+                                    Text(
+                                        text = usageStats.packageName,
+                                        style = MaterialTheme.typography.titleMedium,
+                                        modifier = Modifier.weight(1f)
+                                            .border(
+                                                width = 1.dp,
+                                                color = Color.LightGray,
+                                                shape = RoundedCornerShape(8.dp)
+                                            )
                                     )
-                                    dayOfWeek(DayOfWeekNames(dayOfWeekList))
+                                    Text(
+                                        text = usageStats.totalTimeInForeground.formattedDuration(),
+                                        style = MaterialTheme.typography.titleMedium,
+                                        modifier = Modifier.weight(1f)
+                                            .border(
+                                                width = 1.dp,
+                                                color = Color.LightGray,
+                                                shape = RoundedCornerShape(8.dp)
+                                            )
+                                    )
                                 }
-                                    .format(it.dateAsLocalDateTime),
-                                style = MaterialTheme.typography.titleMedium,
-                            )
-                            Text(
-                                text = it.totalTimeInForeground.formattedDuration(),
-                                style = MaterialTheme.typography.titleMedium,
-                            )
+                            }
                         }
                     }
                     Text(

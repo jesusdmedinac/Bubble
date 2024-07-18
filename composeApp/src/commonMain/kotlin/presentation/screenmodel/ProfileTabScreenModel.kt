@@ -5,9 +5,12 @@ import cafe.adriel.voyager.core.model.screenModelScope
 import data.formattedDuration
 import data.local.DailyUsageStats
 import data.local.UsageAPI
+import data.startOfWeekInMillis
 import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.format.DayOfWeekNames
 import kotlinx.datetime.format.MonthNames
 import kotlinx.datetime.toLocalDateTime
 import org.orbitmvi.orbit.Container
@@ -34,14 +37,22 @@ class ProfileTabScreenModel(
                 hasUsagePermission = hasPermission,
             )
         }
-        val usageStats = usageAPI.queryUsageStats()
+        val usageStats = usageAPI.queryUsageStats(
+            beginTime = startOfWeekInMillis(),
+            endTime = Clock.System.now().toEpochMilliseconds()
+        )
             .filterNot { usageStats ->
                 usageAPI.packagesToFilter().any { usageStats.packageName.startsWith(it) }
             }
         reduce {
             state.copy(
                 usageStats = usageStats
-                    .map { UIUsageStats(it.packageName, it.totalTimeInForeground) }
+                    .map {
+                        UIUsageStats(
+                            it.packageName,
+                            it.totalTimeInForeground,
+                        )
+                    }
             )
         }
         val dailyUsageStats = usageAPI.getDailyUsageStatsForWeek()
@@ -50,9 +61,14 @@ class ProfileTabScreenModel(
                 dailyUsageStats = dailyUsageStats
                     .map {
                         UIDailyUsageStats(
-                            it.packageName,
-                            it.date,
-                            it.totalTimeInForeground
+                            usageStats = it.usageStats
+                                .map { stats ->
+                                    UIUsageStats(
+                                        stats.packageName,
+                                        stats.totalTimeInForeground,
+                                    )
+                                },
+                            date = it.date,
                         )
                     }
             )
@@ -80,6 +96,17 @@ data class ProfileTabState(
     fun formattedTodayDate(): String = todayDate?.let {
         LocalDateTime.Format {
             chars("Hoy, ")
+            val dayOfWeekList = listOf(
+                "Lun",
+                "Mar",
+                "Mie",
+                "Jue",
+                "Vie",
+                "Sab",
+                "Dom"
+            )
+            dayOfWeek(DayOfWeekNames(dayOfWeekList))
+            chars(" ")
             dayOfMonth()
             chars(" de ")
             val monthListInSpanish = listOf(

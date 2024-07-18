@@ -26,7 +26,7 @@ object MainScreen : Screen {
 
     @Composable
     override fun Content() {
-        TabNavigator(BubbleTab) { tabNavigator: TabNavigator ->
+        TabNavigator(ProfileTab) { tabNavigator: TabNavigator ->
             Scaffold(
                 topBar = {
                     BubbleTopAppBar()

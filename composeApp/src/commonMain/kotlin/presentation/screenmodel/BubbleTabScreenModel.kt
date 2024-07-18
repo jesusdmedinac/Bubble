@@ -9,6 +9,12 @@ import data.remote.Challenge
 import data.remote.ChatAPI
 import data.remote.Message
 import data.local.UsageAPI
+import data.startOfWeekInMillis
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
@@ -61,14 +67,22 @@ class BubbleTabScreenModel(
     }
 
     private suspend fun SimpleSyntax<BubbleTabState, BubbleTabSideEffect>.sendBubblerIntroductionMessage() {
-        val usageStats = usageAPI.queryUsageStats()
+        val usageStats = usageAPI.queryUsageStats(
+            beginTime = startOfWeekInMillis(),
+            endTime = Clock.System.now().toEpochMilliseconds()
+        )
             .filterNot { usageStats ->
                 usageAPI.packagesToFilter().any { usageStats.packageName.startsWith(it) }
             }
         reduce {
             state.copy(
                 usageStats = usageStats
-                    .map { UIUsageStats(it.packageName, it.totalTimeInForeground) }
+                    .map {
+                        UIUsageStats(
+                            it.packageName,
+                            it.totalTimeInForeground,
+                        )
+                    }
             )
         }
         val bubblerIntroductionMessage = if (state.usageStats.isNotEmpty()) {

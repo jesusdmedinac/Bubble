@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.AppOpsManager
 import android.app.usage.UsageStatsManager
 import android.content.Intent
+import android.os.Build
 import android.os.Process
 import android.provider.Settings
 import data.startOfWeekInMillis
@@ -33,25 +34,37 @@ class UsageAPIImpl(
         return mode == AppOpsManager.MODE_ALLOWED
     }
 
-    override fun queryUsageStats(): List<UsageStats> {
-        val startOfWeekInMillis = startOfWeekInMillis()
-        val currentTimeInMillis = System.currentTimeMillis()
+    override fun queryUsageStats(
+        beginTime: Long,
+        endTime: Long
+    ): List<UsageStats> {
         return usageStatsManager
-            ?.queryUsageStats(
-                UsageStatsManager.INTERVAL_DAILY,
-                startOfWeekInMillis,
-                currentTimeInMillis
+            ?.queryAndAggregateUsageStats(
+                beginTime,
+                endTime
             )
-            ?.filter { it.totalTimeInForeground > 0 }
-            ?.filter { it.packageName != activity.packageName }
+            ?.filter { it.value.totalTimeInForeground > 0 }
+            //?.filter { it.packageName != activity.packageName }
             ?.map {
-                UsageStats(
-                    it.packageName,
-                    it.firstTimeStamp,
-                    it.lastTimeStamp,
-                    it.lastTimeUsed,
-                    it.totalTimeInForeground,
-                )
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    UsageStats(
+                        it.key,
+                        it.value.firstTimeStamp,
+                        it.value.lastTimeStamp,
+                        it.value.lastTimeUsed,
+                        it.value.totalTimeInForeground,
+                        it.value.totalTimeVisible
+                    )
+                } else {
+                    UsageStats(
+                        it.key,
+                        it.value.firstTimeStamp,
+                        it.value.lastTimeStamp,
+                        it.value.lastTimeUsed,
+                        it.value.totalTimeInForeground,
+                        it.value.totalTimeInForeground,
+                    )
+                }
             }
             ?.sortedByDescending { it.totalTimeInForeground }
             ?: emptyList()

@@ -1,16 +1,8 @@
 package presentation.model
 
-import kotlinx.datetime.Instant
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.LocalDate
 
 data class UIDailyUsageStats(
-    val packageName: String,
-    val date: Long,
-    val totalTimeInForeground: Long
-) {
-    val dateAsLocalDateTime: LocalDateTime
-        get() = Instant.fromEpochMilliseconds(date)
-            .toLocalDateTime(TimeZone.currentSystemDefault())
-}
+    val usageStats: List<UIUsageStats>,
+    val date: LocalDate,
+)

@@ -132,7 +132,6 @@ class MainActivity : ComponentActivity() {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 usageAPIImpl.usageStatsManager
                 usageAPIImpl.hasPermission()
-                usageAPIImpl.queryUsageStats()
             }
         }
         CompositionLocalProvider(LocalUsageAPI provides usageAPIImpl) {
