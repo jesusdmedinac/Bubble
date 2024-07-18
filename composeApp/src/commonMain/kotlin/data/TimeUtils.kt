@@ -18,7 +18,8 @@ fun Long.formattedDuration(
     includeDays: Boolean = true,
     includeHours: Boolean = true,
     includeMinutes: Boolean = true,
-    includeSeconds: Boolean = true
+    includeSeconds: Boolean = true,
+    shortenFormat: Boolean = false,
 ): String {
     var remainingSeconds = this / 1000
     val days = remainingSeconds / 86_400
@@ -28,12 +29,26 @@ fun Long.formattedDuration(
     val minutes = remainingSeconds / 60
     remainingSeconds -= minutes * 60
     val seconds = remainingSeconds
-    return (if (includeDays && days > 0) "$days día${if (days > 1) "s" else ""} "
-    else "") + (if (includeHours && hours > 0) "$hours hora${if (hours > 1) "s" else ""} "
-    else "") + (if (includeMinutes && minutes > 0) "$minutes minuto${if (minutes > 1) "s" else ""} "
-    else "") + (if (includeSeconds && seconds > 0) "$seconds segundo${if (seconds > 1) "s" else ""} "
-    else "")
+    return if (shortenFormat) {
+        (if (includeDays && days > 0) "${days}d "
+        else "") + (if (includeHours && hours > 0) "${hours}h "
+        else "") + (if (includeMinutes && minutes > 0) "${minutes}m "
+        else "") + (if (includeSeconds && seconds > 0) "${seconds}s "
+        else "")
+    } else {
+        (if (includeDays && days > 0) "$days día${if (days > 1) "s" else ""} "
+        else "") + (if (includeHours && hours > 0) "$hours hora${if (hours > 1) "s" else ""} "
+        else "") + (if (includeMinutes && minutes > 0) "$minutes minuto${if (minutes > 1) "s" else ""} "
+        else "") + (if (includeSeconds && seconds > 0) "$seconds segundo${if (seconds > 1) "s" else ""} "
+        else "")
+    }
+        .let {
+            if (it.isNotEmpty() && it.last() == ' ') {
+                it.substring(0, it.length - 1)
+            } else it
+        }
 }
+
 
 fun today(): LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault())
 

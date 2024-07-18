@@ -26,9 +26,11 @@ import presentation.model.UIBubbleMessage
 import presentation.model.UIBubblerMessage
 import presentation.model.UICallToActionType
 import presentation.model.UIChallenge
+import presentation.model.UIDailyUsageStats
 import presentation.model.UIMessage
 import presentation.model.UIMessageBody
 import presentation.model.UIUsageStats
+import kotlin.math.max
 
 class BubbleTabScreenModel(
     private val chatAPI: ChatAPI,
@@ -85,11 +87,26 @@ class BubbleTabScreenModel(
                     }
             )
         }
+        val dailyUsageStats = usageAPI.getDailyUsageStatsForWeek()
+        reduce {
+            state.copy(
+                dailyUsageStats = dailyUsageStats
+                    .map {
+                        UIDailyUsageStats(
+                            usageStats = it.usageEvents
+                                .map { stats ->
+                                    UIUsageStats(
+                                        stats.key,
+                                        stats.value,
+                                    )
+                                },
+                            date = it.date,
+                        )
+                    }
+            )
+        }
         val bubblerIntroductionMessage = if (state.usageStats.isNotEmpty()) {
-            val averageTimeInForeground = state.usageStats
-                .map { it.totalTimeInForeground }
-                .average()
-                .toLong()
+            val averageTimeInForeground = state.averageTimeInForeground()
             """
                 Hola Bubble, mi tiempo en pantalla es de ${averageTimeInForeground.formattedDuration()}
             """.trimIndent()
@@ -202,7 +219,12 @@ data class BubbleTabState(
     val messagesLimit: Int = 10,
     val messages: List<UIMessage> = emptyList(),
     val usageStats: List<UIUsageStats> = emptyList(),
+    val dailyUsageStats: List<UIDailyUsageStats> = emptyList(),
 ) {
+    fun averageTimeInForeground(): Long = dailyUsageStats
+        .sumOf { it.usageStats.sumOf { it.totalTimeInForeground } } /
+            max(dailyUsageStats.size, 1)
+
     val remainingFreeMessages: Int
         get() = messagesLimit - messages
             .count { !it.isFree }

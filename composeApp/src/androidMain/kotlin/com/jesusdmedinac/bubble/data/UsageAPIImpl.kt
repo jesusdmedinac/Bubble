@@ -2,12 +2,11 @@ package com.jesusdmedinac.bubble.data
 
 import android.app.Activity
 import android.app.AppOpsManager
+import android.app.usage.UsageEvents
 import android.app.usage.UsageStatsManager
 import android.content.Intent
-import android.os.Build
 import android.os.Process
 import android.provider.Settings
-import data.startOfWeekInMillis
 import data.local.UsageAPI
 import data.local.UsageStats
 
@@ -34,6 +33,60 @@ class UsageAPIImpl(
         return mode == AppOpsManager.MODE_ALLOWED
     }
 
+    override fun getUsageEvents(
+        beginTime: Long,
+        endTime: Long
+    ): MutableMap<String, Long> {
+        val events = mutableListOf<UsageEvents.Event>()
+        usageStatsManager
+            ?.queryEvents(beginTime, endTime)
+            ?.also {
+                do {
+                    val event = UsageEvents.Event()
+                    it.getNextEvent(event)
+                    events.add(event)
+                } while (it.hasNextEvent())
+            }
+
+        val stats = mutableMapOf<String, MutableList<UsageEvents.Event>>()
+        events.forEach { event ->
+            if (stats.containsKey(event.packageName)) {
+                stats[event.packageName] = stats[event.packageName]!!.apply {
+                    add(event)
+                }
+            } else {
+                stats[event.packageName] = mutableListOf(event)
+            }
+        }
+        val curatedStats = mutableMapOf<String, Long>()
+        stats.forEach { (key, value) ->
+            var startTimeStamp = 0L
+            var endTimeStamp = 0L
+            value.forEach { event ->
+                when (event.eventType) {
+                    UsageEvents.Event.ACTIVITY_RESUMED -> {
+                        startTimeStamp = event.timeStamp
+                    }
+
+                    UsageEvents.Event.ACTIVITY_PAUSED -> {
+                        endTimeStamp = event.timeStamp
+                    }
+
+                    else -> Unit
+                }
+
+                if (endTimeStamp != 0L && startTimeStamp != 0L) {
+                    val totalTimeInForeground = endTimeStamp - startTimeStamp
+                    curatedStats[key] = curatedStats[key]?.let { it + totalTimeInForeground }
+                        ?: totalTimeInForeground
+                    startTimeStamp = 0L
+                    endTimeStamp = 0L
+                }
+            }
+        }
+        return curatedStats
+    }
+
     override fun queryUsageStats(
         beginTime: Long,
         endTime: Long
@@ -43,28 +96,16 @@ class UsageAPIImpl(
                 beginTime,
                 endTime
             )
-            ?.filter { it.value.totalTimeInForeground > 0 }
-            //?.filter { it.packageName != activity.packageName }
+            //?.filter { it.value.totalTimeInForeground > 0 }
+            ?.filterNot { it.key == activity.packageName }
             ?.map {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    UsageStats(
-                        it.key,
-                        it.value.firstTimeStamp,
-                        it.value.lastTimeStamp,
-                        it.value.lastTimeUsed,
-                        it.value.totalTimeInForeground,
-                        it.value.totalTimeVisible
-                    )
-                } else {
-                    UsageStats(
-                        it.key,
-                        it.value.firstTimeStamp,
-                        it.value.lastTimeStamp,
-                        it.value.lastTimeUsed,
-                        it.value.totalTimeInForeground,
-                        it.value.totalTimeInForeground,
-                    )
-                }
+                UsageStats(
+                    it.key,
+                    it.value.firstTimeStamp,
+                    it.value.lastTimeStamp,
+                    it.value.lastTimeUsed,
+                    it.value.totalTimeInForeground,
+                )
             }
             ?.sortedByDescending { it.totalTimeInForeground }
             ?: emptyList()

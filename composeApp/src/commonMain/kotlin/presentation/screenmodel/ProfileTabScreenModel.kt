@@ -3,11 +3,9 @@ package presentation.screenmodel
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import data.formattedDuration
-import data.local.DailyUsageStats
 import data.local.UsageAPI
 import data.startOfWeekInMillis
 import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.format.DayOfWeekNames
@@ -21,6 +19,7 @@ import org.orbitmvi.orbit.syntax.simple.reduce
 import presentation.model.UIChallenge
 import presentation.model.UIDailyUsageStats
 import presentation.model.UIUsageStats
+import kotlin.math.max
 
 class ProfileTabScreenModel(
     private val usageAPI: UsageAPI,
@@ -61,11 +60,11 @@ class ProfileTabScreenModel(
                 dailyUsageStats = dailyUsageStats
                     .map {
                         UIDailyUsageStats(
-                            usageStats = it.usageStats
+                            usageStats = it.usageEvents
                                 .map { stats ->
                                     UIUsageStats(
-                                        stats.packageName,
-                                        stats.totalTimeInForeground,
+                                        stats.key,
+                                        stats.value,
                                     )
                                 },
                             date = it.date,
@@ -87,11 +86,11 @@ data class ProfileTabState(
         .toLocalDateTime(TimeZone.currentSystemDefault()),
     val dailyUsageStats: List<UIDailyUsageStats> = emptyList(),
 ) {
-    fun formattedTotalTimeInForeground(): String = usageStats
-        .sumOf { it.totalTimeInForeground }
-        .formattedDuration(
-            includeSeconds = false
-        )
+    fun averageTimeInForeground(): Long = dailyUsageStats
+        .sumOf { it.usageStats.sumOf { it.totalTimeInForeground } } /
+            max(dailyUsageStats.size, 1)
+    fun formattedAverageTimeInForeground(): String = averageTimeInForeground()
+        .formattedDuration(includeSeconds = false)
 
     fun formattedTodayDate(): String = todayDate?.let {
         LocalDateTime.Format {

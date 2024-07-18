@@ -5,7 +5,6 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
@@ -54,7 +53,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
@@ -68,28 +69,20 @@ import bubble.composeapp.generated.resources.Res
 import bubble.composeapp.generated.resources.ic_chat_bubble
 import bubble.composeapp.generated.resources.tab_title_profile
 import cafe.adriel.voyager.koin.getNavigatorScreenModel
-import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import data.formattedDuration
-import data.local.UsageAPI
-import data.startOfWeekInMillis
+import data.today
 import di.LocalAppNavigator
 import di.LocalUsageAPI
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Instant
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalDateTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.format.DayOfWeekNames
-import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import presentation.model.UIUsageStats
 import presentation.screenmodel.ProfileTabScreenModel
 import presentation.screenmodel.ProfileTabState
+import kotlin.math.max
 import kotlin.math.roundToInt
 
 object ProfileTab : Tab {
@@ -249,65 +242,41 @@ object ProfileTab : Tab {
                 Column(
                     modifier = Modifier.padding(16.dp)
                 ) {
-                    state.dailyUsageStats.forEach {
-                        Text(
-                            text = LocalDate.Format {
-                                val dayOfWeekList = listOf(
-                                    "Lunes",
-                                    "Martes",
-                                    "Miércoles",
-                                    "Jueves",
-                                    "Viernes",
-                                    "Sábado",
-                                    "Domingo"
-                                )
-                                dayOfWeek(DayOfWeekNames(dayOfWeekList))
-                            }
-                                .format(it.date),
-                            style = MaterialTheme.typography.titleLarge,
-                        )
-                        Column {
-                            it.usageStats.forEach { usageStats ->
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                ) {
-                                    Text(
-                                        text = usageStats.packageName,
-                                        style = MaterialTheme.typography.titleMedium,
-                                        modifier = Modifier.weight(1f)
-                                            .border(
-                                                width = 1.dp,
-                                                color = Color.LightGray,
-                                                shape = RoundedCornerShape(8.dp)
-                                            )
-                                    )
-                                    Text(
-                                        text = usageStats.totalTimeInForeground.formattedDuration(),
-                                        style = MaterialTheme.typography.titleMedium,
-                                        modifier = Modifier.weight(1f)
-                                            .border(
-                                                width = 1.dp,
-                                                color = Color.LightGray,
-                                                shape = RoundedCornerShape(8.dp)
-                                            )
-                                    )
-                                }
-                            }
-                        }
-                    }
                     Text(
                         text = state.formattedTodayDate(),
                         style = MaterialTheme.typography.titleSmall,
                     )
                     Text(
-                        text = state.formattedTotalTimeInForeground(),
+                        text = state.formattedAverageTimeInForeground(),
                         style = MaterialTheme.typography.titleLarge,
                     )
                     val pathEffect =
                         PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
                     val textMeasurer = rememberTextMeasurer()
-                    val textStyle = MaterialTheme.typography.bodySmall
+                    val typography = MaterialTheme.typography
+                    val colorScheme = MaterialTheme.colorScheme
+                    val dailyUsageStats = state.dailyUsageStats
+                    val maxTimeInForeground = dailyUsageStats
+                        .maxOfOrNull {
+                            it.usageStats.maxOfOrNull { stats -> stats.totalTimeInForeground } ?: 0
+                        }
+                        ?: 0
+                    val averageTimeInForeground = state.averageTimeInForeground()
+                    val timeRanges = listOf(
+                        UITimeRange((0..(30 * 1000)), 3),
+                        UITimeRange(((30 * 1000)..(60 * 1000)), 3),
+                        UITimeRange(((60 * 1000)..(2 * 60 * 1000)), 2),
+                        UITimeRange((2 * 60 * 1000..10 * 60 * 1000), 2),
+                        UITimeRange((10 * 60 * 1000..30 * 60 * 1000), 3),
+                        UITimeRange((30 * 60 * 1000..60 * 60 * 1000), 3),
+                        UITimeRange((60 * 60 * 1000..3 * 60 * 60 * 1000), 3),
+                        UITimeRange((3 * 60 * 60 * 1000..10 * 60 * 60 * 1000), 2),
+                        UITimeRange((10 * 60 * 60 * 1000..24 * 60 * 60 * 1000), 3),
+                    )
+                    val timeRange = timeRanges
+                        .first { maxTimeInForeground in it.range }
+                    val range = timeRange.range
+                    val divisions = timeRange.divisions
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -318,50 +287,58 @@ object ProfileTab : Tab {
                                     topLeft = Offset(0f, 0f),
                                     size = size,
                                 )
-                                repeat(7) { index ->
-                                    if (index != 0) {
-                                        drawLine(
-                                            color = Color.LightGray,
-                                            start = Offset(
-                                                0f,
-                                                (size.height / 7) * index
+                                val maxBarHeight =
+                                    (size.height / (divisions + 2)) * divisions
+                                val averageLineYPosition = maxBarHeight +
+                                        (size.height / (divisions + 2)) -
+                                        (maxBarHeight / range.last.toLong() * averageTimeInForeground)
+
+                                for (index in divisions downTo 0) {
+                                    val topYOffset = size.height -
+                                            (size.height / (divisions + 2)) -
+                                            ((size.height / (divisions + 2)) * index)
+                                    drawLine(
+                                        color = Color.LightGray,
+                                        start = Offset(
+                                            0f,
+                                            topYOffset
+                                        ),
+                                        end = Offset(
+                                            size.width - (size.width / 8),
+                                            topYOffset
+                                        ),
+                                        strokeWidth = 2f
+                                    )
+                                    val label = (range.last.toLong() / divisions * index)
+                                        .formattedDuration(
+                                            shortenFormat = true,
+                                        )
+                                        .ifEmpty {
+                                            val last = (range.last.toLong() / divisions)
+                                                .formattedDuration(shortenFormat = true)
+                                                .last()
+                                            "0$last"
+                                        }
+                                    if (index == 0 || index == divisions) {
+                                        drawText(
+                                            textMeasurer = textMeasurer,
+                                            text = label,
+                                            topLeft = Offset(
+                                                size.width - (size.width / 8) + 2.dp.toPx(),
+                                                topYOffset - 8.dp.toPx()
                                             ),
-                                            end = Offset(
-                                                size.width - (size.width / 8),
-                                                (size.height / 7) * index
-                                            ),
-                                            strokeWidth = 2f
+                                            style = typography.bodySmall
                                         )
                                     }
                                 }
-                                drawText(
-                                    textMeasurer = textMeasurer,
-                                    text = "10",
-                                    topLeft = Offset(
-                                        size.width - (size.width / 8) + 2.dp.toPx(),
-                                        (size.height / 7) - 6.dp.toPx()
-                                    ),
-                                    style = textStyle
-                                )
-                                drawText(
-                                    textMeasurer = textMeasurer,
-                                    text = "0",
-                                    topLeft = Offset(
-                                        size.width - (size.width / 8) + 2.dp.toPx(),
-                                        size.height - (size.height / 7) - 6.dp.toPx()
-                                    ),
-                                    style = textStyle.copy(
-                                        color = Color.LightGray
-                                    ),
-                                )
                                 listOf(
-                                    "D",
                                     "L",
                                     "M",
                                     "M",
                                     "J",
                                     "V",
                                     "S",
+                                    "D",
                                     ""
                                 ).forEachIndexed { index, dayOfTheWeekFirstLetter ->
                                     drawLine(
@@ -385,13 +362,57 @@ object ProfileTab : Tab {
                                                 ((size.width / 8) * index) + 2.dp.toPx(),
                                                 size.height - 16.dp.toPx()
                                             ),
-                                            style = textStyle.copy(
-                                                color = if (index == 2) Color.Black
+                                            style = typography.bodySmall.copy(
+                                                color = if (index == today().dayOfWeek.ordinal) Color.Black
                                                 else Color.LightGray,
                                             )
                                         )
                                     }
                                 }
+
+                                dailyUsageStats.forEachIndexed { index, uiDailyUsageStats ->
+                                    val barHeight = max(
+                                        maxBarHeight /
+                                                range.last.toLong() *
+                                                uiDailyUsageStats
+                                                    .usageStats
+                                                    .sumOf { it.totalTimeInForeground },
+                                        2.dp.toPx()
+                                    )
+                                    drawRoundRect(
+                                        color = colorScheme.primary,
+                                        topLeft = Offset(
+                                            (size.width / 8) * index,
+                                            (size.height / (divisions + 2)) + maxBarHeight - barHeight
+                                        ),
+                                        size = Size(
+                                            size.width / 8 - 16.dp.toPx(),
+                                            barHeight
+                                        ),
+                                        cornerRadius = CornerRadius(1.dp.toPx(), 1.dp.toPx())
+                                    )
+                                }
+                                drawLine(
+                                    color = Color(0xFF00C853),
+                                    start = Offset(0f, averageLineYPosition),
+                                    end = Offset(
+                                        size.width - (size.width / 8),
+                                        averageLineYPosition
+                                    ),
+                                    strokeWidth = 2f,
+                                    pathEffect = pathEffect
+                                )
+                                drawText(
+                                    textMeasurer = textMeasurer,
+                                    text = "prom.",
+                                    topLeft = Offset(
+                                        size.width - (size.width / 8),
+                                        averageLineYPosition - 8.dp.toPx()
+                                    ),
+                                    style = typography.bodySmall.copy(
+                                        color = Color(0xFF00C853),
+                                    )
+                                )
                             }
                     ) {
                     }
@@ -583,3 +604,8 @@ fun Swipeable(
         )
     }
 }
+
+data class UITimeRange(
+    val range: IntRange,
+    val divisions: Int,
+)

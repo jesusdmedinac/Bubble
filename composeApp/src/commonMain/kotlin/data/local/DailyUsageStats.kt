@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class DailyUsageStats(
-    val usageStats: List<UsageStats>,
+    val usageEvents: MutableMap<String, Long>,
     val date: LocalDate,
 )
