@@ -9,7 +9,6 @@ import data.remote.Challenge
 import data.remote.ChatAPI
 import data.remote.Message
 import data.local.UsageAPI
-import data.startOfWeekInMillis
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
@@ -62,7 +61,7 @@ class BubbleTabScreenModel(
     }
 
     private suspend fun SimpleSyntax<BubbleTabState, BubbleTabSideEffect>.sendBubblerIntroductionMessage() {
-        val usageStats = usageAPI.getUsageStats()
+        val usageStats = usageAPI.queryUsageStats()
             .filterNot { usageStats ->
                 usageAPI.packagesToFilter().any { usageStats.packageName.startsWith(it) }
             }

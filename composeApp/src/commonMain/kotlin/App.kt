@@ -9,6 +9,7 @@ import di.appModules
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.KoinApplication
 import presentation.screen.MainScreen
+import presentation.screen.tab.ProfileTab
 import presentation.ui.theme.BubbleTheme
 
 

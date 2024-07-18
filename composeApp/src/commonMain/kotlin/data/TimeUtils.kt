@@ -3,12 +3,22 @@ package data
 import data.local.UsageStats
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
+import kotlinx.datetime.format.DayOfWeekNames
 import kotlinx.datetime.isoDayNumber
 import kotlinx.datetime.minus
+import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
 
-fun Long.formattedDuration(): String {
+fun Long.formattedDuration(
+    includeDays: Boolean = true,
+    includeHours: Boolean = true,
+    includeMinutes: Boolean = true,
+    includeSeconds: Boolean = true
+): String {
     var remainingSeconds = this / 1000
     val days = remainingSeconds / 86_400
     remainingSeconds -= days * 86_400
@@ -17,18 +27,25 @@ fun Long.formattedDuration(): String {
     val minutes = remainingSeconds / 60
     remainingSeconds -= minutes * 60
     val seconds = remainingSeconds
-    return (if (days > 0) "$days día${if (days > 1) "s" else ""} "
-    else "") + (if (hours > 0) "$hours hora${if (hours > 1) "s" else ""} "
-    else "") + (if (minutes > 0) "$minutes minuto${if (minutes > 1) "s" else ""} "
-    else "") + (if (seconds > 0) "$seconds segundo${if (seconds > 1) "s" else ""} "
+    return (if (includeDays && days > 0) "$days día${if (days > 1) "s" else ""} "
+    else "") + (if (includeHours && hours > 0) "$hours hora${if (hours > 1) "s" else ""} "
+    else "") + (if (includeMinutes && minutes > 0) "$minutes minuto${if (minutes > 1) "s" else ""} "
+    else "") + (if (includeSeconds && seconds > 0) "$seconds segundo${if (seconds > 1) "s" else ""} "
     else "")
 }
 
-fun startOfWeekInMillis(): Long {
+fun startOfWeek(): LocalDate {
     val today = Clock.System.now()
         .toLocalDateTime(TimeZone.currentSystemDefault())
-    val startOfWeek = today.date.minus(today.dayOfWeek.ordinal, DateTimeUnit.DAY)
-    return startOfWeek.toEpochDays() * 86_400_000L
+    return today.date.minus(today.dayOfWeek.ordinal, DateTimeUnit.DAY)
+}
+
+fun startOfWeekInMillis(): Long {
+    val startOfWeek = startOfWeek()
+    val startOfWeekInMillis = startOfWeek
+        .atStartOfDayIn(TimeZone.currentSystemDefault())
+        .toEpochMilliseconds()
+    return startOfWeekInMillis
 }
 
 fun getDayOfTheWeek(): Int {

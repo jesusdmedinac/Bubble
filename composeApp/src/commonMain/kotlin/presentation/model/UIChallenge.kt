@@ -4,12 +4,12 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class UIChallenge(
-    override val id: Int,
-    override val name: String,
-    override val description: String,
-    override val image: String,
-    val challengeCategory: ChallengeCategory,
-    val rewards: List<UIReward> = emptyList()
+    override val id: Int = 0,
+    override val name: String = "",
+    override val description: String = "",
+    override val image: String = "",
+    val challengeCategory: ChallengeCategory = ChallengeCategory.TODO,
+    val rewards: List<UIReward> = emptyList(),
 ) : UICard {
     val shareText: String
         get() {

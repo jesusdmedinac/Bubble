@@ -28,7 +28,7 @@ fun MainViewController(
             override fun hasPermission(): Boolean =
                 false
 
-            override fun getUsageStats(): List<UsageStats> =
+            override fun queryUsageStats(): List<UsageStats> =
                 emptyList()
 
             override fun packagesToFilter(): List<String> =

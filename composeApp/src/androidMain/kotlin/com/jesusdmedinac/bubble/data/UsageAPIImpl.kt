@@ -33,18 +33,26 @@ class UsageAPIImpl(
         return mode == AppOpsManager.MODE_ALLOWED
     }
 
-    override fun getUsageStats(): List<UsageStats> {
+    override fun queryUsageStats(): List<UsageStats> {
         val startOfWeekInMillis = startOfWeekInMillis()
         val currentTimeInMillis = System.currentTimeMillis()
         return usageStatsManager
             ?.queryUsageStats(
-                UsageStatsManager.INTERVAL_WEEKLY,
+                UsageStatsManager.INTERVAL_DAILY,
                 startOfWeekInMillis,
                 currentTimeInMillis
             )
             ?.filter { it.totalTimeInForeground > 0 }
             ?.filter { it.packageName != activity.packageName }
-            ?.map { UsageStats(it.packageName, it.totalTimeInForeground) }
+            ?.map {
+                UsageStats(
+                    it.packageName,
+                    it.firstTimeStamp,
+                    it.lastTimeStamp,
+                    it.lastTimeUsed,
+                    it.totalTimeInForeground,
+                )
+            }
             ?.sortedByDescending { it.totalTimeInForeground }
             ?: emptyList()
     }

@@ -26,18 +26,23 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
+import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -59,11 +64,31 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import bubble.composeapp.generated.resources.Res
+import bubble.composeapp.generated.resources.ic_chat_bubble
 import bubble.composeapp.generated.resources.tab_title_profile
+import cafe.adriel.voyager.koin.getNavigatorScreenModel
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
+import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
+import data.formattedDuration
+import data.local.UsageAPI
+import data.startOfWeekInMillis
+import di.LocalAppNavigator
+import di.LocalUsageAPI
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.format.DayOfWeekNames
+import kotlinx.datetime.toLocalDateTime
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import presentation.model.UIUsageStats
+import presentation.screenmodel.ProfileTabScreenModel
+import presentation.screenmodel.ProfileTabState
 import kotlin.math.roundToInt
 
 object ProfileTab : Tab {
@@ -84,138 +109,59 @@ object ProfileTab : Tab {
 
     @Composable
     override fun Content() {
-        Column {
-            var completedChallengesIsVisible by remember { mutableStateOf(false) }
-            val animatedChallengesIconRotation: Float by animateFloatAsState(if (completedChallengesIsVisible) 180f else 0f)
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
+        val tabNavigator = LocalTabNavigator.current
+        val appNavigator = LocalAppNavigator.currentOrThrow
+        val usageAPI = LocalUsageAPI.current
+        val screenModel = appNavigator.getNavigatorScreenModel<ProfileTabScreenModel>()
+        val state by screenModel.container.stateFlow.collectAsState()
+        LaunchedEffect(Unit) {
+            screenModel.loadUsageStats()
+        }
+        var completedChallengesIsVisible by remember { mutableStateOf(false) }
+        val animatedChallengesIconRotation: Float by animateFloatAsState(if (completedChallengesIsVisible) 180f else 0f)
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            if (state.isUserLoggedIn) {
                 item {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .padding(8.dp)
-                                .size(64.dp)
-                                .clip(CircleShape)
-                                .background(Color.Gray)
-                        ) {
+                    UserProfileCard()
+                }
+            }
 
-                        }
-                        Column {
-                            Text(
-                                "Nombre del usuario",
-                                style = MaterialTheme.typography.headlineLarge,
-                            )
-                            Text(
-                                "Correo electrónico",
-                                style = MaterialTheme.typography.headlineLarge,
-                            )
-                        }
+            item {
+                if (state.hasUsagePermission) {
+                    UsageStatsGraph(state)
+                } else {
+                    UsagePermissionRequest {
+                        usageAPI.requestUsageSettings()
                     }
                 }
+            }
+
+            if (state.savedChallenges.isEmpty()) {
                 item {
-                    Text(
-                        text = "Tiempo en pantalla",
-                        style = MaterialTheme.typography.headlineLarge,
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp, vertical = 4.dp)
-                    )
-                }
-                item {
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 4.dp)
+                    Column(
+                        modifier = Modifier.padding(16.dp)
                     ) {
-                        Column(
-                            modifier = Modifier.padding(16.dp)
-                        ) {
-                            Text(
-                                text = "Hoy, 10 de junio",
-                                style = MaterialTheme.typography.headlineLarge,
+                        Text(
+                            """
+                                Veo que aún no has guardado ningún reto. ¿Te gustaría que te sugiera algunos retos personalizados para empezar? 😊
+                            """.trimIndent()
+                        )
+                        Button(onClick = {
+                            tabNavigator.current = BubbleTab
+                        }) {
+                            Text("Platicar con Bubble")
+                            Icon(
+                                painterResource(Res.drawable.ic_chat_bubble),
+                                contentDescription = null,
+                                modifier = Modifier.size(32.dp)
                             )
-                            Text(
-                                text = "1 h 39 min",
-                                style = MaterialTheme.typography.titleLarge,
-                            )
-                            val pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
-                            val textMeasurer = rememberTextMeasurer()
-                            val textStyle = MaterialTheme.typography.headlineLarge
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .height(128.dp)
-                                    .drawBehind {
-                                        drawRect(
-                                            color = Color.White,
-                                            topLeft = Offset(0f, 0f),
-                                            size = size,
-                                        )
-                                        repeat(7) { index ->
-                                            if (index != 0) {
-                                                drawLine(
-                                                    color = Color.LightGray,
-                                                    start = Offset(0f, (size.height / 7) * index),
-                                                    end = Offset(
-                                                        size.width - (size.width / 8),
-                                                        (size.height / 7) * index
-                                                    ),
-                                                    strokeWidth = 2f
-                                                )
-                                            }
-                                        }
-                                        drawText(
-                                            textMeasurer = textMeasurer,
-                                            text = "10",
-                                            topLeft = Offset(
-                                                size.width - (size.width / 8) + 2.dp.toPx(),
-                                                (size.height / 7) - 6.dp.toPx()
-                                            ),
-                                            style = textStyle
-                                        )
-                                        drawText(
-                                            textMeasurer = textMeasurer,
-                                            text = "0",
-                                            topLeft = Offset(
-                                                size.width - (size.width / 8) + 2.dp.toPx(),
-                                                size.height - (size.height / 7) - 6.dp.toPx()
-                                            ),
-                                            style = textStyle.copy(
-                                                color = Color.LightGray
-                                            ),
-                                        )
-                                        listOf("D", "L", "M", "M", "J", "V", "S", "").forEachIndexed { index, dayOfTheWeekFirstLetter ->
-                                            drawLine(
-                                                color = Color.LightGray,
-                                                start = Offset((size.width / 8) * index, size.height / 7),
-                                                end = Offset((size.width / 8) * index, size.height),
-                                                strokeWidth = 2f,
-                                                pathEffect = pathEffect
-                                            )
-                                            if (dayOfTheWeekFirstLetter != "") {
-                                                drawText(
-                                                    textMeasurer = textMeasurer,
-                                                    text = dayOfTheWeekFirstLetter,
-                                                    topLeft = Offset(
-                                                        ((size.width / 8) * index) + 2.dp.toPx(),
-                                                        size.height - 16.dp.toPx()
-                                                    ),
-                                                    style = textStyle.copy(
-                                                        color = if (index == 2) Color.Black
-                                                        else Color.LightGray,
-                                                    )
-                                                )
-                                            }
-                                        }
-                                    }
-                            ) {
-                            }
                         }
                     }
                 }
+            } else {
                 item {
                     Text(
                         "Desafíos guardados",
@@ -223,11 +169,13 @@ object ProfileTab : Tab {
                         modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
                     )
                 }
+            }
 
-                items(5) {
-                    ChallengeSwipeableItem()
-                }
+            items(state.savedChallenges) {
+                ChallengeSwipeableItem()
+            }
 
+            if (state.completedChallenges.isNotEmpty()) {
                 item {
                     Row(
                         modifier = Modifier
@@ -251,14 +199,241 @@ object ProfileTab : Tab {
                         )
                     }
                 }
+            }
 
-                items(5) {
-                    AnimatedVisibility(completedChallengesIsVisible) {
-                        ChallengeSwipeableItem()
+            items(state.completedChallenges) {
+                AnimatedVisibility(completedChallengesIsVisible) {
+                    ChallengeSwipeableItem()
+                }
+            }
+        }
+    }
+
+    @Composable
+    private fun UsagePermissionRequest(
+        onPermissionRequestClick: () -> Unit,
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp)
+        ) {
+            Text(
+                """
+                    ¡Ups! parece que no tengo permiso de revisar tu tiempo en pantalla. Puedes activar esta función en "Acceso al uso"
+                """.trimIndent()
+            )
+            Button(onClick = {
+                onPermissionRequestClick()
+            }) {
+                Text("Acceso al uso")
+            }
+        }
+    }
+
+    @Composable
+    private fun UsageStatsGraph(
+        state: ProfileTabState,
+    ) {
+        Column {
+            Text(
+                text = "Tiempo en pantalla",
+                style = MaterialTheme.typography.titleSmall,
+                modifier = Modifier
+                    .padding(horizontal = 16.dp, vertical = 4.dp)
+            )
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 4.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    emptyList<UIUsageStats>().forEach {
+                        Row {
+                            Text(
+                                text = it.packageName.split(".").last(),
+                                style = MaterialTheme.typography.titleMedium,
+                            )
+                            Spacer(modifier = Modifier.weight(1f))
+                            Text(
+                                text = it.totalTimeInForeground.formattedDuration(),
+                                style = MaterialTheme.typography.titleMedium,
+                            )
+                        }
+                    }
+                    Text(
+                        text = LocalDateTime.Format {
+                            val dayOfWeekList = listOf(
+                                "Lunes",
+                                "Martes",
+                                "Miércoles",
+                                "Jueves",
+                                "Viernes",
+                                "Sábado",
+                                "Domingo"
+                            )
+                            dayOfWeek(DayOfWeekNames(dayOfWeekList))
+                        }.format(
+                            Instant.fromEpochMilliseconds(startOfWeekInMillis())
+                                .toLocalDateTime(TimeZone.currentSystemDefault())
+                        ),
+                        style = MaterialTheme.typography.titleLarge,
+                    )
+                    state.dailyUsageStats.forEach {
+                        Row {
+                            Text(
+                                text = it.packageName.split(".").last(),
+                                style = MaterialTheme.typography.titleMedium,
+                            )
+                            Spacer(modifier = Modifier.weight(1f))
+                            Text(
+                                text = LocalDateTime.Format {
+                                    val dayOfWeekList = listOf(
+                                        "Lunes",
+                                        "Martes",
+                                        "Miércoles",
+                                        "Jueves",
+                                        "Viernes",
+                                        "Sábado",
+                                        "Domingo"
+                                    )
+                                    dayOfWeek(DayOfWeekNames(dayOfWeekList))
+                                }
+                                    .format(it.dateAsLocalDateTime),
+                                style = MaterialTheme.typography.titleMedium,
+                            )
+                            Text(
+                                text = it.totalTimeInForeground.formattedDuration(),
+                                style = MaterialTheme.typography.titleMedium,
+                            )
+                        }
+                    }
+                    Text(
+                        text = state.formattedTodayDate(),
+                        style = MaterialTheme.typography.titleSmall,
+                    )
+                    Text(
+                        text = state.formattedTotalTimeInForeground(),
+                        style = MaterialTheme.typography.titleLarge,
+                    )
+                    val pathEffect =
+                        PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
+                    val textMeasurer = rememberTextMeasurer()
+                    val textStyle = MaterialTheme.typography.bodySmall
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(128.dp)
+                            .drawBehind {
+                                drawRect(
+                                    color = Color.White,
+                                    topLeft = Offset(0f, 0f),
+                                    size = size,
+                                )
+                                repeat(7) { index ->
+                                    if (index != 0) {
+                                        drawLine(
+                                            color = Color.LightGray,
+                                            start = Offset(
+                                                0f,
+                                                (size.height / 7) * index
+                                            ),
+                                            end = Offset(
+                                                size.width - (size.width / 8),
+                                                (size.height / 7) * index
+                                            ),
+                                            strokeWidth = 2f
+                                        )
+                                    }
+                                }
+                                drawText(
+                                    textMeasurer = textMeasurer,
+                                    text = "10",
+                                    topLeft = Offset(
+                                        size.width - (size.width / 8) + 2.dp.toPx(),
+                                        (size.height / 7) - 6.dp.toPx()
+                                    ),
+                                    style = textStyle
+                                )
+                                drawText(
+                                    textMeasurer = textMeasurer,
+                                    text = "0",
+                                    topLeft = Offset(
+                                        size.width - (size.width / 8) + 2.dp.toPx(),
+                                        size.height - (size.height / 7) - 6.dp.toPx()
+                                    ),
+                                    style = textStyle.copy(
+                                        color = Color.LightGray
+                                    ),
+                                )
+                                listOf(
+                                    "D",
+                                    "L",
+                                    "M",
+                                    "M",
+                                    "J",
+                                    "V",
+                                    "S",
+                                    ""
+                                ).forEachIndexed { index, dayOfTheWeekFirstLetter ->
+                                    drawLine(
+                                        color = Color.LightGray,
+                                        start = Offset(
+                                            (size.width / 8) * index,
+                                            size.height / 7
+                                        ),
+                                        end = Offset(
+                                            (size.width / 8) * index,
+                                            size.height
+                                        ),
+                                        strokeWidth = 2f,
+                                        pathEffect = pathEffect
+                                    )
+                                    if (dayOfTheWeekFirstLetter != "") {
+                                        drawText(
+                                            textMeasurer = textMeasurer,
+                                            text = dayOfTheWeekFirstLetter,
+                                            topLeft = Offset(
+                                                ((size.width / 8) * index) + 2.dp.toPx(),
+                                                size.height - 16.dp.toPx()
+                                            ),
+                                            style = textStyle.copy(
+                                                color = if (index == 2) Color.Black
+                                                else Color.LightGray,
+                                            )
+                                        )
+                                    }
+                                }
+                            }
+                    ) {
                     }
                 }
             }
         }
+    }
+
+    @Composable
+    private fun UserProfileCard() {
+        ListItem(
+            leadingContent = {
+                Box(
+                    modifier = Modifier
+                        .size(64.dp)
+                        .clip(CircleShape)
+                        .background(Color.Gray)
+                ) {}
+            },
+            headlineContent = {
+                Text(
+                    "Nombre del usuario",
+                )
+            },
+            supportingContent = {
+                Text(
+                    "Correo electrónico",
+                )
+            }
+        )
     }
 
     @Composable
@@ -388,12 +563,12 @@ fun Swipeable(
                 )
             }
             .anchoredDraggable(anchoredDraggableState, Orientation.Horizontal)
-            /*.swipeable(
-                state = swipeableState,
-                anchors = mapOf(0f - (width / 3) to 0, 0f to 1, (width / 3f) to 2),
-                thresholds = { _, _ -> FractionalThreshold(0.3f) },
-                orientation = Orientation.Horizontal
-            )*/
+        /*.swipeable(
+            state = swipeableState,
+            anchors = mapOf(0f - (width / 3) to 0, 0f to 1, (width / 3f) to 2),
+            thresholds = { _, _ -> FractionalThreshold(0.3f) },
+            orientation = Orientation.Horizontal
+        )*/
     ) {
         Row(
             Modifier

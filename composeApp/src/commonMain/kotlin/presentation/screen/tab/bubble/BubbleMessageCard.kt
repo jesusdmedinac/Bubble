@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -21,7 +20,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import bubble.composeapp.generated.resources.Res
 import bubble.composeapp.generated.resources.ic_message_corner
@@ -29,8 +27,6 @@ import com.mikepenz.markdown.m2.Markdown
 import com.mikepenz.markdown.m2.markdownColor
 import di.LocalSendingData
 import di.LocalUsageAPI
-import io.kamel.image.KamelImage
-import io.kamel.image.asyncPainterResource
 import org.jetbrains.compose.resources.painterResource
 import presentation.model.UIBubbleMessage
 

@@ -26,8 +26,7 @@ object MainScreen : Screen {
 
     @Composable
     override fun Content() {
-        val bubbleTab = remember { BubbleTab }
-        TabNavigator(bubbleTab) { tabNavigator: TabNavigator ->
+        TabNavigator(BubbleTab) { tabNavigator: TabNavigator ->
             Scaffold(
                 topBar = {
                     BubbleTopAppBar()
@@ -35,7 +34,7 @@ object MainScreen : Screen {
                 bottomBar = {
                     NavigationBar {
                         //TabNavigationItem(HomeTab)
-                        TabNavigationItem(bubbleTab)
+                        TabNavigationItem(BubbleTab)
                         TabNavigationItem(ProfileTab)
                     }
                 },
