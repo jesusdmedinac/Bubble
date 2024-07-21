@@ -3,6 +3,9 @@ package presentation.screenmodel
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import data.formattedDuration
+import data.local.ConnectionState
+import data.local.HasUsagePermissionState
+import data.local.NetworkAPI
 import data.remote.Analytics
 import data.remote.Body
 import data.remote.Challenge
@@ -10,17 +13,19 @@ import data.remote.ChatAPI
 import data.remote.Message
 import data.local.UsageAPI
 import data.startOfWeekInMillis
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
-import kotlinx.datetime.Instant
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.syntax.simple.SimpleSyntax
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
+import org.orbitmvi.orbit.syntax.simple.runOn
+import org.orbitmvi.orbit.syntax.simple.subIntent
 import presentation.model.ChallengeCategory
 import presentation.model.UIBubbleMessage
 import presentation.model.UIBubblerMessage
@@ -36,93 +41,82 @@ class BubbleTabScreenModel(
     private val chatAPI: ChatAPI,
     private val analytics: Analytics,
     private val usageAPI: UsageAPI,
+    private val networkAPI: NetworkAPI,
 ) : ScreenModel, ContainerHost<BubbleTabState, BubbleTabSideEffect> {
+    private val connectionFlow = channelFlow {
+        networkAPI.onConnectionStateChange { trySend(it) }
+    }
+
+    private val hasUsagePermissionFlow = channelFlow {
+        usageAPI.onHasUsagePermissionStateChange { trySend(it) }
+    }
+
     override val container: Container<BubbleTabState, BubbleTabSideEffect> =
         screenModelScope.container(BubbleTabState()) {
-            loadUsageStats()
-        }
-
-    fun loadUsageStats() = intent {
-        val hasPermission = usageAPI.hasPermission()
-        if (!hasPermission) {
-            sendBubbleRequestPermissionMessage()
-        } else if (!state.bubblerHasBeenIntroduced) {
-            sendBubblerIntroductionMessage()
-        }
-    }
-
-    private suspend fun SimpleSyntax<BubbleTabState, BubbleTabSideEffect>.sendBubbleRequestPermissionMessage() {
-        reduce {
-            state.copy(
-                messages = state.messages + UIBubbleMessage(
-                    id = state.messages.size + 1,
-                    author = "model",
-                    body = UIMessageBody(
-                        message = """
-                            ¡Ups! parece que no tengo permiso de revisar tu tiempo en pantalla. Puedes activar esta función en "Acceso al uso" 
-                        """.trimIndent(),
-                        callToAction = UICallToActionType.REQUEST_USAGE_ACCESS_SETTINGS
-                    )
-                )
-            )
-        }
-    }
-
-    private suspend fun SimpleSyntax<BubbleTabState, BubbleTabSideEffect>.sendBubblerIntroductionMessage() {
-        val usageStats = usageAPI.queryUsageStats(
-            beginTime = startOfWeekInMillis(),
-            endTime = Clock.System.now().toEpochMilliseconds()
-        )
-            .filterNot { usageStats ->
-                usageAPI.packagesToFilter().any { usageStats.packageName.startsWith(it) }
+            coroutineScope {
+                launch {
+                    connectionFlow
+                        .collect { connectionState ->
+                            reduce {
+                                state.copy(connectionState = connectionState)
+                            }
+                            sendBubblerIntroductionMessage()
+                        }
+                }
+                launch {
+                    hasUsagePermissionFlow
+                        .collect { hasUsagePermissionState ->
+                            reduce {
+                                state.copy(hasUsagePermissionState = hasUsagePermissionState)
+                            }
+                            sendBubblerIntroductionMessage()
+                        }
+                }
             }
-        reduce {
-            state.copy(
-                usageStats = usageStats
-                    .map {
-                        UIUsageStats(
-                            it.packageName,
-                            it.totalTimeInForeground,
-                        )
-                    }
-            )
         }
-        val dailyUsageStats = usageAPI.getDailyUsageStatsForWeek()
-        reduce {
-            state.copy(
-                dailyUsageStats = dailyUsageStats
-                    .map {
-                        UIDailyUsageStats(
-                            usageStats = it.usageEvents
-                                .map { stats ->
-                                    UIUsageStats(
-                                        stats.key,
-                                        stats.value,
-                                    )
-                                },
-                            date = it.date,
-                        )
-                    }
-            )
-        }
-        val bubblerIntroductionMessage = if (state.usageStats.isNotEmpty()) {
-            val averageTimeInForeground = state.averageTimeInForeground()
-            """
+
+    private suspend fun sendBubblerIntroductionMessage() = subIntent {
+        if (!state.bubblerHasBeenIntroduced
+            && state.connectionState == ConnectionState.Connected
+            && state.hasUsagePermissionState == HasUsagePermissionState.Granted
+        ) {
+            val dailyUsageStats = usageAPI.getDailyUsageStatsForWeek()
+            reduce {
+                state.copy(
+                    dailyUsageStats = dailyUsageStats
+                        .map {
+                            UIDailyUsageStats(
+                                usageStats = it.usageEvents
+                                    .map { stats ->
+                                        UIUsageStats(
+                                            stats.key,
+                                            stats.value,
+                                        )
+                                    },
+                                date = it.date,
+                            )
+                        }
+                )
+            }
+            val bubblerIntroductionMessage = if (state.dailyUsageStats.isNotEmpty()) {
+                val averageTimeInForeground = state.averageTimeInForeground()
+                """
                 Hola Bubble, mi tiempo en pantalla es de ${averageTimeInForeground.formattedDuration()}
             """.trimIndent()
-        } else {
-            """
+            } else {
+                """
                 Hola Bubble
             """.trimIndent()
-        }
-        sendMessage(
-            bubblerIntroductionMessage,
-            isFree = true
-        )
-        reduce {
-            state.copy(
-                bubblerHasBeenIntroduced = true
+            }
+            sendMessage(
+                bubblerIntroductionMessage,
+                isFree = true
             )
+            reduce {
+                state.copy(
+                    bubblerHasBeenIntroduced = true
+                )
+            }
         }
     }
 
@@ -218,8 +212,9 @@ data class BubbleTabState(
     val bubblerHasBeenIntroduced: Boolean = false,
     val messagesLimit: Int = 10,
     val messages: List<UIMessage> = emptyList(),
-    val usageStats: List<UIUsageStats> = emptyList(),
     val dailyUsageStats: List<UIDailyUsageStats> = emptyList(),
+    val hasUsagePermissionState: HasUsagePermissionState = data.local.HasUsagePermissionState.Idle,
+    val connectionState: ConnectionState = ConnectionState.Idle,
 ) {
     fun averageTimeInForeground(): Long = dailyUsageStats
         .sumOf { it.usageStats.sumOf { it.totalTimeInForeground } } /

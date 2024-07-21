@@ -1,5 +1,6 @@
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.window.ComposeUIViewController
+import data.local.HasUsagePermissionState
 import data.remote.Analytics
 import data.local.NetworkAPI
 import data.remote.ChatAPI
@@ -23,7 +24,11 @@ fun MainViewController(
 ) = ComposeUIViewController {
     CompositionLocalProvider(LocalNetworkAPI provides networkAPI) {
         val usageAPIImpl = object : UsageAPI {
-            override fun requestUsageSettings() {}
+            override suspend fun onHasUsagePermissionStateChange(onChange: (HasUsagePermissionState) -> Unit) {
+            }
+
+            override fun requestUsagePermission() {
+            }
 
             override fun hasPermission(): Boolean =
                 false
@@ -33,6 +38,9 @@ fun MainViewController(
 
             override fun packagesToFilter(): List<String> =
                 emptyList()
+
+            override fun getUsageEvents(beginTime: Long, endTime: Long): MutableMap<String, Long> =
+                mutableMapOf()
         }
         CompositionLocalProvider(LocalUsageAPI provides usageAPIImpl) {
             CompositionLocalProvider(LocalChatAPI provides chatAPI) {

@@ -1,6 +1,9 @@
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import cafe.adriel.voyager.koin.getNavigatorScreenModel
+import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.transitions.SlideTransition
 import di.KoinDI
 import di.LocalAppNavigator
@@ -10,6 +13,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.KoinApplication
 import presentation.screen.MainScreen
 import presentation.screen.tab.ProfileTab
+import presentation.screenmodel.BubbleTabScreenModel
 import presentation.ui.theme.BubbleTheme
 
 

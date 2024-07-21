@@ -5,42 +5,42 @@
     
     
       
-      <testcase classname="fastlane.lanes" name="0: default_platform" time="0.000328">
+      <testcase classname="fastlane.lanes" name="0: default_platform" time="0.000274">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="1: clean" time="2.436506">
+      <testcase classname="fastlane.lanes" name="1: clean" time="1.689332">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="2: Switch to android bundleRelease lane" time="0.000534">
+      <testcase classname="fastlane.lanes" name="2: Switch to android bundleRelease lane" time="0.000485">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="3: bundleRelease" time="130.574468">
+      <testcase classname="fastlane.lanes" name="3: bundleRelease" time="136.202884">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="4: Switch to android distribution lane" time="0.00023">
+      <testcase classname="fastlane.lanes" name="4: Switch to android distribution lane" time="0.000222">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="5: firebase_app_distribution" time="19.114834">
+      <testcase classname="fastlane.lanes" name="5: firebase_app_distribution" time="19.306285">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="6: Switch to android internal lane" time="0.000524">
+      <testcase classname="fastlane.lanes" name="6: Switch to android internal lane" time="0.00058">
         
       </testcase>
     
       
-      <testcase classname="fastlane.lanes" name="7: upload_to_play_store" time="30.187419">
+      <testcase classname="fastlane.lanes" name="7: upload_to_play_store" time="31.926788">
         
       </testcase>
     

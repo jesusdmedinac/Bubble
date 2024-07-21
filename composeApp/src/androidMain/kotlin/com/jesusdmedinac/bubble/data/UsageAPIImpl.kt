@@ -7,18 +7,29 @@ import android.app.usage.UsageStatsManager
 import android.content.Intent
 import android.os.Process
 import android.provider.Settings
+import data.local.HasUsagePermissionState
 import data.local.UsageAPI
 import data.local.UsageStats
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collect
 
 class UsageAPIImpl(
     private val activity: Activity
 ) : UsageAPI {
+    val hasUsagePermissionState = MutableStateFlow(HasUsagePermissionState.Idle)
+
     val usageStatsManager: UsageStatsManager?
         get() = if (hasPermission()) {
             activity.getSystemService(Activity.USAGE_STATS_SERVICE) as? UsageStatsManager
         } else null
 
-    override fun requestUsageSettings() {
+    override suspend fun onHasUsagePermissionStateChange(onChange: (HasUsagePermissionState) -> Unit) {
+        hasUsagePermissionState.collect {
+            onChange(it)
+        }
+    }
+
+    override fun requestUsagePermission() {
         activity.startActivity(Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS))
     }
 

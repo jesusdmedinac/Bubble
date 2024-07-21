@@ -25,6 +25,8 @@ import com.google.firebase.analytics.logEvent
 import com.jesusdmedinac.bubble.data.ChatAPIImpl
 import com.jesusdmedinac.bubble.data.NetworkAPIImpl
 import com.jesusdmedinac.bubble.data.UsageAPIImpl
+import data.local.ConnectionState
+import data.local.HasUsagePermissionState
 import data.local.SendingData
 import data.remote.Analytics
 import data.remote.Event
@@ -47,6 +49,7 @@ import presentation.screenmodel.BubbleTabScreenModel
 
 class MainActivity : ComponentActivity() {
     private val networkAPIImpl: NetworkAPIImpl by lazy { NetworkAPIImpl() }
+    private val usageAPIImpl: UsageAPIImpl by lazy { UsageAPIImpl(this) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,16 +69,14 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        runCatching {
-            KoinDI
-                .get<BubbleTabScreenModel>()
-                .loadUsageStats()
-        }
+        val hasPermission = usageAPIImpl.hasPermission()
+        usageAPIImpl
+            .hasUsagePermissionState
+            .update { if (hasPermission) HasUsagePermissionState.Granted else HasUsagePermissionState.Denied }
     }
 
     private fun setupNetworkCallback() {
         val networkRequest = NetworkRequest.Builder()
-            .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
             .addTransportType(NetworkCapabilities.TRANSPORT_WIFI)
             .addTransportType(NetworkCapabilities.TRANSPORT_CELLULAR)
             .build()
@@ -84,7 +85,6 @@ class MainActivity : ComponentActivity() {
             override fun onAvailable(network: Network) {
                 super.onAvailable(network)
                 println("Network available")
-                networkAPIImpl.isConnected.update { true }
             }
 
             override fun onCapabilitiesChanged(
@@ -93,8 +93,15 @@ class MainActivity : ComponentActivity() {
             ) {
                 super.onCapabilitiesChanged(network, networkCapabilities)
                 println("Network capabilities changed")
-                println("dani Network: $network")
-                println("dani Network capabilities: $networkCapabilities")
+                networkAPIImpl
+                    .connectionState
+                    .update {
+                        if (networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                            && networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
+                        )
+                            ConnectionState.Connected
+                        else ConnectionState.Disconnected
+                    }
                 networkAPIImpl
                     .upstreamBandWidthKbps
                     .update { networkCapabilities.linkUpstreamBandwidthKbps }
@@ -106,7 +113,9 @@ class MainActivity : ComponentActivity() {
             override fun onLost(network: Network) {
                 super.onLost(network)
                 println("Network lost")
-                networkAPIImpl.isConnected.update { false }
+                networkAPIImpl
+                    .connectionState
+                    .update { ConnectionState.Disconnected }
             }
         }
 
@@ -125,9 +134,6 @@ class MainActivity : ComponentActivity() {
 
     @Composable
     private fun UsageAPICompositionProvider() {
-        val usageAPIImpl = remember {
-            UsageAPIImpl(this@MainActivity)
-        }
         LaunchedEffect(usageAPIImpl) {
             repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 usageAPIImpl.usageStatsManager

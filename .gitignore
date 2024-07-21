@@ -49,8 +49,7 @@ app.*.map.json
 /composeApp/build/
 
 # KMP Project
-.kotlin/metadata/kotlinTransformedMetadataLibraries
-.kotlin/metadata/kotlinTransformedCInteropMetadataLibraries
+.kotlin
 local.properties
 
 # Firebase

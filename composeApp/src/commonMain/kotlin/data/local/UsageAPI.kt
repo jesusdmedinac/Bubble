@@ -7,8 +7,16 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.plus
 
+enum class HasUsagePermissionState {
+    Idle,
+    Granted,
+    Denied
+}
+
 interface UsageAPI {
-    fun requestUsageSettings()
+    suspend fun onHasUsagePermissionStateChange(onChange: (HasUsagePermissionState) -> Unit)
+
+    fun requestUsagePermission()
     fun hasPermission(): Boolean
     fun queryUsageStats(beginTime: Long, endTime: Long): List<UsageStats>
     fun packagesToFilter(): List<String>
@@ -47,8 +55,12 @@ interface UsageAPI {
 
     companion object {
         val Default = object : UsageAPI {
-            override fun requestUsageSettings() {
-                TODO("requestUsageSettings on UsageAPI is not yet implemented")
+            override suspend fun onHasUsagePermissionStateChange(onChange: (HasUsagePermissionState) -> Unit) {
+                TODO("onHasUsagePermissionStateChange on UsageAPI is not yet implemented")
+            }
+
+            override fun requestUsagePermission() {
+                TODO("requestUsagePermission on UsageAPI is not yet implemented")
             }
 
             override fun hasPermission(): Boolean {

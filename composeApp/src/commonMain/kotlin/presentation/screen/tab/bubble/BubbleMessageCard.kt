@@ -120,7 +120,7 @@ fun BubbleMessageCard(uiMessage: UIBubbleMessage) {
                 .callToAction
                 ?.let {
                     Button(onClick = {
-                        usageAPI.requestUsageSettings()
+                        usageAPI.requestUsagePermission()
                     }) {
                         Text("Acceso al uso")
                     }

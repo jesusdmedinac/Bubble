@@ -33,12 +33,12 @@ import cafe.adriel.voyager.koin.getNavigatorScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import data.local.ConnectionState
+import data.local.HasUsagePermissionState
 import di.LocalAppNavigator
-import di.LocalNetworkAPI
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import presentation.model.UIBubbleMessage
 import presentation.model.UIBubblerMessage
+import presentation.model.UICallToActionType
 import presentation.model.UIMessageBody
 import presentation.screen.PaywallScreen
 import presentation.screenmodel.BubbleTabScreenModel
@@ -46,7 +46,6 @@ import presentation.screenmodel.BubbleTabState
 
 @Composable
 fun BubbleMessagesBox(
-    connectionState: ConnectionState,
     modifier: Modifier = Modifier
 ) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -55,12 +54,12 @@ fun BubbleMessagesBox(
     val navigator = LocalNavigator.currentOrThrow
     val screenModel = navigator.getNavigatorScreenModel<BubbleTabScreenModel>()
     val state: BubbleTabState by screenModel.container.stateFlow.collectAsState()
-
     val lazyListState = rememberLazyListState()
     val messages = state.messages
     val remainingFreeMessages = state.remainingFreeMessages
     var currentTextFieldValue by remember { mutableStateOf(TextFieldValue("")) }
     val coroutineScope = rememberCoroutineScope()
+
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -83,7 +82,7 @@ fun BubbleMessagesBox(
             state = lazyListState,
             reverseLayout = true,
         ) {
-            when (connectionState) {
+            when (state.connectionState) {
                 ConnectionState.Idle -> Unit
                 ConnectionState.Connected -> item {
                     BubbleTextField(
@@ -117,11 +116,32 @@ fun BubbleMessagesBox(
                             author = "model",
                             body = UIMessageBody(
                                 """
-                                ¡Ups! parece que no hay conexión a internet. Actívalo para poder seguir nuestra conversación
-                            """.trimIndent()
+                                    ¡Ups! parece que no hay conexión a internet. Actívalo para poder seguir nuestra conversación
+                                """.trimIndent()
                             )
                         )
                     )
+                }
+            }
+
+            when (state.hasUsagePermissionState) {
+                HasUsagePermissionState.Idle -> Unit
+                HasUsagePermissionState.Granted -> Unit
+                HasUsagePermissionState.Denied -> {
+                    item {
+                        BubbleMessageCard(
+                            UIBubbleMessage(
+                                id = 0,
+                                author = "model",
+                                body = UIMessageBody(
+                                    """
+                                    ¡Ups! parece que no tengo permiso de revisar tu tiempo en pantalla. Puedes activar esta función en "Acceso al uso"
+                                """.trimIndent(),
+                                    callToAction = UICallToActionType.REQUEST_USAGE_ACCESS_SETTINGS
+                                )
+                            )
+                        )
+                    }
                 }
             }
 

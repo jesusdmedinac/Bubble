@@ -1,17 +1,16 @@
 package com.jesusdmedinac.bubble.data
 
+import data.local.ConnectionState
 import data.local.NetworkAPI
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.collect
 
 class NetworkAPIImpl : NetworkAPI {
-    val isConnected = MutableStateFlow(false)
+    val connectionState = MutableStateFlow(ConnectionState.Idle)
     val upstreamBandWidthKbps = MutableStateFlow(0)
     val downstreamBandWidthKbps = MutableStateFlow(0)
 
-    override suspend fun isConnected(onChange: (Boolean) -> Unit) {
-        isConnected.collect {
+    override suspend fun onConnectionStateChange(onChange: (ConnectionState) -> Unit) {
+        connectionState.collect {
             onChange(it)
         }
     }

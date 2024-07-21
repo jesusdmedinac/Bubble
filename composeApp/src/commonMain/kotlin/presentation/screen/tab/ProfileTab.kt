@@ -128,7 +128,7 @@ object ProfileTab : Tab {
                     UsageStatsGraph(state)
                 } else {
                     UsagePermissionRequest {
-                        usageAPI.requestUsageSettings()
+                        usageAPI.requestUsagePermission()
                     }
                 }
             }
