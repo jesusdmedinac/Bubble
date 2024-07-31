@@ -9,27 +9,21 @@ import data.local.NetworkAPI
 import data.remote.Analytics
 import data.remote.Body
 import data.remote.Challenge
-import data.remote.ChatAPI
+import data.remote.ChatAIAPI
 import data.remote.Message
 import data.local.UsageAPI
-import data.startOfWeekInMillis
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
-import org.orbitmvi.orbit.syntax.simple.SimpleSyntax
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
-import org.orbitmvi.orbit.syntax.simple.runOn
 import org.orbitmvi.orbit.syntax.simple.subIntent
 import presentation.model.ChallengeCategory
 import presentation.model.UIBubbleMessage
 import presentation.model.UIBubblerMessage
-import presentation.model.UICallToActionType
 import presentation.model.UIChallenge
 import presentation.model.UIDailyUsageStats
 import presentation.model.UIMessage
@@ -38,7 +32,7 @@ import presentation.model.UIUsageStats
 import kotlin.math.max
 
 class BubbleTabScreenModel(
-    private val chatAPI: ChatAPI,
+    private val chatAIAPI: ChatAIAPI,
     private val analytics: Analytics,
     private val usageAPI: UsageAPI,
     private val networkAPI: NetworkAPI,
@@ -54,6 +48,7 @@ class BubbleTabScreenModel(
     override val container: Container<BubbleTabState, BubbleTabSideEffect> =
         screenModelScope.container(BubbleTabState()) {
             coroutineScope {
+                chatAIAPI.initModel()
                 launch {
                     connectionFlow
                         .collect { connectionState ->
@@ -139,7 +134,7 @@ class BubbleTabScreenModel(
                 messages = updatedMessages
             )
         }
-        val bubbleMessage = chatAPI.sendMessage(
+        val bubbleMessage = chatAIAPI.sendMessage(
             state.messages.map { uiMessage ->
                 Message(
                     author = uiMessage.author,

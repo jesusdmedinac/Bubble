@@ -3,13 +3,13 @@ import androidx.compose.ui.window.ComposeUIViewController
 import data.local.HasUsagePermissionState
 import data.remote.Analytics
 import data.local.NetworkAPI
-import data.remote.ChatAPI
+import data.remote.ChatAIAPI
 import data.remote.Event
 import data.local.SendingData
 import data.local.UsageAPI
 import data.local.UsageStats
 import di.LocalUsageAPI
-import di.LocalChatAPI
+import di.LocalChatAIAPI
 import di.LocalSendingData
 import di.LocalAnalytics
 import di.LocalNetworkAPI
@@ -19,7 +19,7 @@ import platform.UIKit.UIApplication
 import platform.UIKit.UIViewController
 
 fun MainViewController(
-    chatAPI: ChatAPI,
+    chatAIAPI: ChatAIAPI,
     networkAPI: NetworkAPI,
 ) = ComposeUIViewController {
     CompositionLocalProvider(LocalNetworkAPI provides networkAPI) {
@@ -43,7 +43,7 @@ fun MainViewController(
                 mutableMapOf()
         }
         CompositionLocalProvider(LocalUsageAPI provides usageAPIImpl) {
-            CompositionLocalProvider(LocalChatAPI provides chatAPI) {
+            CompositionLocalProvider(LocalChatAIAPI provides chatAIAPI) {
                 val sendingData = object : SendingData {
                     override fun sendPlainText(data: String) {
                         shareText(data)

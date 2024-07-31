@@ -11,11 +11,12 @@ import SwiftUI
 import ComposeApp
 
 class NetworkAPIImpl : NetworkAPI, ObservableObject {
+  
   static let shared = NetworkAPIImpl()
 
   private let monitor: NWPathMonitor
   
-  @Published var isConnectedPublished = false
+  @Published var isConnectedPublished: ConnectionState = ConnectionState.idle
   @Published var upstreamBandWidthKbpsPublished = 0
   @Published var downstreamBandWidthKbpsPublished = 0
 
@@ -24,16 +25,18 @@ class NetworkAPIImpl : NetworkAPI, ObservableObject {
   
     monitor.pathUpdateHandler = { [weak self] path in
       let isConnected = path.status != .unsatisfied
-      self?.isConnectedPublished = isConnected
+      self?.isConnectedPublished = isConnected 
+      ? ConnectionState.connected
+      : ConnectionState.disconnected
     }
     
     let queue = DispatchQueue(label: "NetworkConnectivityMonitor")
     monitor.start(queue: queue)
   }
   
-  func isConnected(onChange: @escaping (KotlinBoolean) -> Void) async throws {
+  func onConnectionStateChange(onChange: @escaping (ConnectionState) -> Void) async throws {
     $isConnectedPublished
-      .sink { onChange(KotlinBoolean(bool: $0)) }
+      .sink { onChange($0) }
   }
   
   func upstreamBandWidthKbps(onChange: @escaping (KotlinInt) -> Void) async throws {

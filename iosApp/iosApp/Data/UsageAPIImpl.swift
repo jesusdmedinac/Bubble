@@ -10,19 +10,30 @@ import Foundation
 import ComposeApp
 
 class UsageAPIImpl : UsageAPI {
+  func getDailyUsageStatsForWeek() -> [DailyUsageStats] {
+    return []
+  }
+  
+  func getUsageEvents(beginTime: Int64, endTime: Int64) -> KotlinMutableDictionary<NSString, KotlinLong> {
+    return KotlinMutableDictionary()
+  }
+  
   func hasPermission() -> Bool {
     return false
   }
   
-  func requestUsageSettings() {
-    
-  }
-  
-  func getUsageStats() -> [UsageStats] {
-    return []
+  func onHasUsagePermissionStateChange(onChange: @escaping (HasUsagePermissionState) -> Void) async throws {
   }
   
   func packagesToFilter() -> [String] {
     return []
   }
+  
+  func queryUsageStats(beginTime: Int64, endTime: Int64) -> [UsageStats] {
+    return []
+  }
+  
+  func requestUsagePermission() {
+  }
+  
 }

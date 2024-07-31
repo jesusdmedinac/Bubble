@@ -5,7 +5,7 @@ import ComposeApp
 struct ComposeView: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
         MainViewControllerKt.MainViewController(
-          chatAPI: ChatAPIImpl(),
+          chatAIAPI: ChatAIAPIImpl(),
           networkAPI: NetworkAPIImpl.shared
         )
     }
@@ -15,7 +15,7 @@ struct ComposeView: UIViewControllerRepresentable {
 
 struct ContentView: View {
     var body: some View {
-        ComposeView()
+      ComposeView()
                 .ignoresSafeArea(.keyboard) // Compose has own keyboard handler
     }
 }

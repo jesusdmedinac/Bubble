@@ -9,6 +9,8 @@
 import Foundation
 import ComposeApp
 import GoogleGenerativeAI
+import FirebaseCore
+import FirebaseDatabase
 
 struct ChatReward : Decodable  {
   let id: Int
@@ -31,16 +33,20 @@ struct ChatBody : Decodable {
   let challenge: ChatChallenge?
 }
 
-class ChatAPIImpl : ChatAPI {
-  var challenges: [Challenge] = []
+class ChatAIAPIImpl : ChatAIAPI {
   var json: JSONDecoder = JSONDecoder()
   
   // Access your API key from your on-demand resource .plist file (see "Set up your API key" above)
-  let generativeModel = GenerativeModel(
-    name: "gemini-1.5-flash", 
-    apiKey: APIKey.default,
-    systemInstruction: ModelContent(role: "model", parts: [.text(ChatAPIKt.systemInstructions())])
-  )
+  var generativeModel: GenerativeModel? = nil
+  
+  func doInitModel() async throws {
+    let systemInstructions = ChatAIAPIKt.systemInstructions()
+    generativeModel = GenerativeModel(
+      name: "gemini-1.5-flash",
+      apiKey: APIKey.default,
+      systemInstruction: ModelContent(role: "model", parts: [.text(systemInstructions)])
+    )
+  }
   
   func sendMessage(messages: [Message]) async -> Message {
     let reversedMessages = messages
@@ -50,15 +56,15 @@ class ChatAPIImpl : ChatAPI {
         ModelContent(role: message.author, parts: [.text(message.body.message ?? "")])
       })
       .dropLast(1)
-    let chat = generativeModel.startChat(
+    let chat = generativeModel?.startChat(
       history: history
     )
     var message = Message(author: "model", body: Body(message: "No tengo respuesta", challenge: nil))
     do {
-      let response = try await chat.sendMessage(
+      let response = try await chat?.sendMessage(
         reversedMessages.last?.body.message ?? "Empty message"
       )
-      let jsonAsString = ChatAPIKt.toJsonAsString(response.text ?? """
+      let jsonAsString = ChatAIAPIKt.toJsonAsString(response?.text ?? """
 {
   "message": "No tengo respuesta",
   "challenge": null

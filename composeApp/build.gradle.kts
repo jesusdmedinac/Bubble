@@ -50,6 +50,7 @@ kotlin {
             implementation(project.dependencies.platform("com.google.firebase:firebase-bom:33.1.1"))
             implementation("com.google.firebase:firebase-crashlytics")
             implementation("com.google.firebase:firebase-analytics")
+            implementation("com.google.firebase:firebase-database")
 
             implementation("com.android.billingclient:billing-ktx:7.0.0")
         }
@@ -83,6 +84,8 @@ kotlin {
             implementation(libs.multiplatform.markdown.renderer.m2)
 
             implementation("com.materialkolor:material-kolor:1.7.0")
+
+            implementation("dev.gitlive:firebase-database:1.13.0")
         }
     }
 }

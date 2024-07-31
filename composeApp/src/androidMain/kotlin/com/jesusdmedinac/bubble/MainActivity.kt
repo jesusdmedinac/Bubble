@@ -20,9 +20,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
+import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
-import com.jesusdmedinac.bubble.data.ChatAPIImpl
+import com.google.firebase.database.database
+import com.jesusdmedinac.bubble.data.ChatAIAPIImpl
 import com.jesusdmedinac.bubble.data.NetworkAPIImpl
 import com.jesusdmedinac.bubble.data.UsageAPIImpl
 import data.local.ConnectionState
@@ -30,9 +32,8 @@ import data.local.HasUsagePermissionState
 import data.local.SendingData
 import data.remote.Analytics
 import data.remote.Event
-import di.KoinDI
 import di.LocalAnalytics
-import di.LocalChatAPI
+import di.LocalChatAIAPI
 import di.LocalNetworkAPI
 import di.LocalSendingData
 import di.LocalUsageAPI
@@ -45,7 +46,6 @@ import io.kamel.image.config.LocalKamelConfig
 import io.kamel.image.config.resourcesFetcher
 import kotlinx.coroutines.flow.update
 import kotlinx.serialization.json.Json
-import presentation.screenmodel.BubbleTabScreenModel
 
 class MainActivity : ComponentActivity() {
     private val networkAPIImpl: NetworkAPIImpl by lazy { NetworkAPIImpl() }
@@ -148,12 +148,14 @@ class MainActivity : ComponentActivity() {
     @Composable
     private fun ChatAPICompositionProvider() {
         val chatAPIImpl = remember {
-            ChatAPIImpl(Json {
+            ChatAIAPIImpl(
+                database = Firebase.database,
+                json = Json {
                 ignoreUnknownKeys = true
                 prettyPrint = true
             })
         }
-        CompositionLocalProvider(LocalChatAPI provides chatAPIImpl) {
+        CompositionLocalProvider(LocalChatAIAPI provides chatAPIImpl) {
             SendingDataCompositionProvider()
         }
     }

@@ -1,6 +1,9 @@
 # Gemini
 GenerativeAI-Info.plist
 
+# Firebase
+GoogleService-Info.plist
+
 # Xcode
 DerivedData/
 build/

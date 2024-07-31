@@ -8,15 +8,15 @@ import data.local.NetworkAPI
 import data.local.SendingData
 import data.local.UsageAPI
 import data.remote.Analytics
-import data.remote.ChatAPI
+import data.remote.ChatAIAPI
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
 val LocalAppNavigator: ProvidableCompositionLocal<Navigator?> =
     staticCompositionLocalOf { null }
 
-val LocalChatAPI: ProvidableCompositionLocal<ChatAPI> =
-    staticCompositionLocalOf { ChatAPI.Default }
+val LocalChatAIAPI: ProvidableCompositionLocal<ChatAIAPI> =
+    staticCompositionLocalOf { ChatAIAPI.Default }
 
 val LocalAnalytics: ProvidableCompositionLocal<Analytics> =
     staticCompositionLocalOf { Analytics.Default }
@@ -32,13 +32,13 @@ val LocalNetworkAPI: ProvidableCompositionLocal<NetworkAPI> =
 
 @Composable
 fun LocalAppProvidablesModule(): Module {
-    val chatAPI = LocalChatAPI.current
+    val chatAPI = LocalChatAIAPI.current
     val analytics = LocalAnalytics.current
     val sendingData = LocalSendingData.current
     val usageAPI = LocalUsageAPI.current
     val networkAPI = LocalNetworkAPI.current
     return module {
-        single<ChatAPI> { chatAPI }
+        single<ChatAIAPI> { chatAPI }
         single<Analytics> { analytics }
         single<SendingData> { sendingData }
         single<UsageAPI> { usageAPI }
