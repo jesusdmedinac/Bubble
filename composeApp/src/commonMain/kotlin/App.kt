@@ -1,9 +1,6 @@
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import cafe.adriel.voyager.koin.getNavigatorScreenModel
-import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.transitions.SlideTransition
 import di.KoinDI
 import di.LocalAppNavigator
@@ -11,20 +8,22 @@ import di.LocalAppProvidablesModule
 import di.appModules
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.KoinApplication
+import org.koin.core.module.Module
+import org.koin.dsl.module
 import presentation.screen.MainScreen
-import presentation.screen.tab.ProfileTab
-import presentation.screenmodel.BubbleTabScreenModel
 import presentation.ui.theme.BubbleTheme
-
-
 
 @Composable
 @Preview
-fun App() {
+fun App(
+    chatModule: Module = module {  }
+) {
     val localAppProvidablesModule = LocalAppProvidablesModule()
     KoinApplication(application = {
         modules(
-            localAppProvidablesModule + appModules()
+            chatModule +
+                    localAppProvidablesModule +
+                    appModules()
         )
         KoinDI.init(this)
     }) {

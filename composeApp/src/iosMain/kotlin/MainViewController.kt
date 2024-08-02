@@ -9,7 +9,6 @@ import data.local.SendingData
 import data.local.UsageAPI
 import data.local.UsageStats
 import di.LocalUsageAPI
-import di.LocalChatAIAPI
 import di.LocalSendingData
 import di.LocalAnalytics
 import di.LocalNetworkAPI
@@ -43,21 +42,19 @@ fun MainViewController(
                 mutableMapOf()
         }
         CompositionLocalProvider(LocalUsageAPI provides usageAPIImpl) {
-            CompositionLocalProvider(LocalChatAIAPI provides chatAIAPI) {
-                val sendingData = object : SendingData {
-                    override fun sendPlainText(data: String) {
-                        shareText(data)
+            val sendingData = object : SendingData {
+                override fun sendPlainText(data: String) {
+                    shareText(data)
+                }
+            }
+            CompositionLocalProvider(LocalSendingData provides sendingData) {
+                val analytics = object : Analytics {
+                    override fun sendEvent(event: Event) {
+                        // TODO implement send event to Firebase
                     }
                 }
-                CompositionLocalProvider(LocalSendingData provides sendingData) {
-                    val analytics = object : Analytics {
-                        override fun sendEvent(event: Event) {
-                            // TODO implement send event to Firebase
-                        }
-                    }
-                    CompositionLocalProvider(LocalAnalytics provides analytics) {
-                        App()
-                    }
+                CompositionLocalProvider(LocalAnalytics provides analytics) {
+                    App()
                 }
             }
         }

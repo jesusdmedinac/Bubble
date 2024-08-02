@@ -3,21 +3,19 @@ package com.jesusdmedinac.bubble.data
 import android.util.Log
 import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.content
-import com.google.firebase.Firebase
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.database
 import com.jesusdmedinac.bubble.BuildConfig
 import data.remote.Body
 import data.remote.ChatAIAPI
 import data.remote.Message
 import data.remote.toJsonAsString
-import kotlinx.coroutines.suspendCancellableCoroutine
+import dev.gitlive.firebase.database.DataSnapshot
+import dev.gitlive.firebase.database.FirebaseDatabase
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.serialization.json.Json
 
 class ChatAIAPIImpl(
-    private val database: FirebaseDatabase = Firebase.database,
-    private val json: Json = Json
+    private val database: FirebaseDatabase,
+    private val json: Json = Json,
 ) : ChatAIAPI {
     private lateinit var generativeModel: GenerativeModel
 
@@ -32,19 +30,15 @@ class ChatAIAPIImpl(
         )
     }
 
-    override suspend fun systemInstructions(): String = suspendCancellableCoroutine { continuation ->
-        database
-            .reference
-            .child("systemInstructions")
-            .get()
-            .addOnSuccessListener { dataSnapshot: DataSnapshot ->
-                val systemInstructions = dataSnapshot.value.toString()
-                continuation.resumeWith(runCatching { systemInstructions })
-            }
-            .addOnFailureListener { exception ->
-                continuation.resumeWith(runCatching { "Actúa como un gato que dice " + exception.message })
-            }
-    }
+    override suspend fun systemInstructions(): String = database
+        .reference()
+        .child("systemInstructions")
+        .valueEvents
+        .firstOrNull()
+        ?.let { dataSnapshot: DataSnapshot ->
+            dataSnapshot.value.toString()
+        }
+        ?: ""
 
     override suspend fun sendMessage(messages: List<Message>): Message = runCatching {
         val reversedMessages = messages
@@ -52,9 +46,7 @@ class ChatAIAPIImpl(
         val history = reversedMessages
             .map { message -> content(role = message.author) { text(message.body.message ?: "") } }
             .dropLast(1)
-        val chat = generativeModel.startChat(
-            history = history
-        )
+        val chat = generativeModel.startChat(history = history)
         val response = chat.sendMessage(
             reversedMessages.lastOrNull()?.body?.message ?: "Empty message"
         )
@@ -81,15 +73,18 @@ class ChatAIAPIImpl(
                     }
                 }
             )
-        return Message(
+        val newAIMessage = Message(
+            id = messages.size + 1,
             author = "model",
             body = body
         )
+        return newAIMessage
     }
         .fold(
             onSuccess = { it },
             onFailure = {
                 Message(
+                    id = messages.size + 1,
                     author = "model",
                     body = Body(
                         message = it.message.toString()

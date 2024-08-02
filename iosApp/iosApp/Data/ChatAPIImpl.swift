@@ -34,10 +34,21 @@ struct ChatBody : Decodable {
 }
 
 class ChatAIAPIImpl : ChatAIAPI {
+  var database = Database.database().reference()
   var json: JSONDecoder = JSONDecoder()
   
   // Access your API key from your on-demand resource .plist file (see "Set up your API key" above)
   var generativeModel: GenerativeModel? = nil
+  
+  func systemInstructions() async throws -> String {
+    do {
+      let snapshot = try await database.child("systemInstructions").getData()
+      return snapshot.value as? String ?? "Unknown"
+    } catch {
+      print(error)
+      return ""
+    }
+  }
   
   func doInitModel() async throws {
     let systemInstructions = ChatAIAPIKt.systemInstructions()
@@ -59,7 +70,7 @@ class ChatAIAPIImpl : ChatAIAPI {
     let chat = generativeModel?.startChat(
       history: history
     )
-    var message = Message(author: "model", body: Body(message: "No tengo respuesta", challenge: nil))
+    var message = Message(id: Int32(messages.count + 1), author: "model", body: Body(message: "No tengo respuesta", challenge: nil))
     do {
       let response = try await chat?.sendMessage(
         reversedMessages.last?.body.message ?? "Empty message"
@@ -81,9 +92,9 @@ class ChatAIAPIImpl : ChatAIAPI {
         }))
         body = Body(message: chatBody.message, challenge: challenge)
       }
-      message = Message(author: "model", body: body)
+      message = Message(id: Int32(messages.count) + 1, author: "model", body: body)
     } catch {
-      message = Message(author: "model", body: Body(message: "\(error)", challenge: nil))
+      message = Message(id: Int32(messages.count) + 1, author: "model", body: Body(message: "\(error)", challenge: nil))
     }
     return message
   }

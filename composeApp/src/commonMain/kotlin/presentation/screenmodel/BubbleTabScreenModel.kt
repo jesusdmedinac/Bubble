@@ -12,8 +12,10 @@ import data.remote.Challenge
 import data.remote.ChatAIAPI
 import data.remote.Message
 import data.local.UsageAPI
+import domain.ChatRepository
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
@@ -21,6 +23,7 @@ import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.syntax.simple.subIntent
+import presentation.mapper.toUIMessage
 import presentation.model.ChallengeCategory
 import presentation.model.UIBubbleMessage
 import presentation.model.UIBubblerMessage
@@ -32,8 +35,7 @@ import presentation.model.UIUsageStats
 import kotlin.math.max
 
 class BubbleTabScreenModel(
-    private val chatAIAPI: ChatAIAPI,
-    private val analytics: Analytics,
+    private val chatRepository: ChatRepository,
     private val usageAPI: UsageAPI,
     private val networkAPI: NetworkAPI,
 ) : ScreenModel, ContainerHost<BubbleTabState, BubbleTabSideEffect> {
@@ -48,7 +50,7 @@ class BubbleTabScreenModel(
     override val container: Container<BubbleTabState, BubbleTabSideEffect> =
         screenModelScope.container(BubbleTabState()) {
             coroutineScope {
-                chatAIAPI.initModel()
+                chatRepository.initChat()
                 launch {
                     connectionFlow
                         .collect { connectionState ->
@@ -63,6 +65,24 @@ class BubbleTabScreenModel(
                         .collect { hasUsagePermissionState ->
                             reduce {
                                 state.copy(hasUsagePermissionState = hasUsagePermissionState)
+                            }
+                            sendBubblerIntroductionMessage()
+                        }
+                }
+                launch {
+                    chatRepository
+                        .getMessages()
+                        .collect { messages ->
+                            messages
+                                .map { it.toUIMessage() }
+                                .also { reduce { state.copy(messages = it) } }
+                            reduce {
+                                state.copy(
+                                    bubblerHasBeenIntroduced = state
+                                        .messages
+                                        .map { it.body.message }
+                                        .any { it.startsWith("Hola Bubble") }
+                                )
                             }
                             sendBubblerIntroductionMessage()
                         }
@@ -105,95 +125,23 @@ class BubbleTabScreenModel(
             }
             sendMessage(
                 bubblerIntroductionMessage,
-                isFree = true
             )
-            reduce {
-                state.copy(
-                    bubblerHasBeenIntroduced = true
-                )
-            }
         }
     }
 
-    fun sendMessage(textMessage: String, isFree: Boolean = false) = intent {
+    fun sendMessage(textMessage: String) = intent {
         reduce {
             state.copy(
                 loading = true
             )
         }
-        reduce {
-            val updatedMessages = listOf(
-                UIBubblerMessage(
-                    id = state.messages.size + 1,
-                    author = "user",
-                    body = UIMessageBody(message = textMessage),
-                    isFree = isFree
-                )
-            ) + state.messages
-            state.copy(
-                messages = updatedMessages
+        chatRepository.sendMessage(
+            Message(
+                id = state.messages.size + 1,
+                author = "user",
+                body = Body(message = textMessage)
             )
-        }
-        val bubbleMessage = chatAIAPI.sendMessage(
-            state.messages.map { uiMessage ->
-                Message(
-                    author = uiMessage.author,
-                    body = if (uiMessage.author == "user") {
-                        val uiBubblerMessage = uiMessage as UIBubblerMessage
-                        Body(
-                            message = uiBubblerMessage.body.message,
-                            challenge = uiBubblerMessage.body.challenge?.let { challenge ->
-                                Challenge(
-                                    id = challenge.id,
-                                    title = challenge.name,
-                                    description = challenge.description,
-                                    image = challenge.image,
-                                )
-                            }
-                        )
-                    } else {
-                        val uiBubbleMessage = uiMessage as UIBubbleMessage
-                        Body(
-                            message = uiBubbleMessage.body.message,
-                            challenge = uiBubbleMessage.body.challenge?.let { challenge ->
-                                Challenge(
-                                    id = challenge.id,
-                                    title = challenge.name,
-                                    description = challenge.description,
-                                    image = challenge.image
-                                )
-                            }
-                        )
-                    }
-                )
-            }
         )
-        analytics.sendChatResponseEvent(bubbleMessage)
-        reduce {
-            val updatedMessages = listOf(
-                UIBubbleMessage(
-                    id = state.messages.size + 1,
-                    author = bubbleMessage.author,
-                    body = bubbleMessage.body.let { body ->
-                        UIMessageBody(
-                            message = body.message ?: "",
-                            challenge = body.challenge?.let { challenge ->
-                                UIChallenge(
-                                    id = challenge.id,
-                                    name = challenge.title,
-                                    description = challenge.description,
-                                    image = challenge.image,
-                                    challengeCategory = ChallengeCategory.TODO
-                                )
-                            }
-                        )
-                    }
-                )
-            ) + state.messages
-            state.copy(
-                messages = updatedMessages
-            )
-        }
         reduce {
             state.copy(
                 loading = false
@@ -204,7 +152,7 @@ class BubbleTabScreenModel(
 
 data class BubbleTabState(
     val loading: Boolean = false,
-    val bubblerHasBeenIntroduced: Boolean = false,
+    val bubblerHasBeenIntroduced: Boolean = true,
     val messagesLimit: Int = 10,
     val messages: List<UIMessage> = emptyList(),
     val dailyUsageStats: List<UIDailyUsageStats> = emptyList(),

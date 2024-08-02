@@ -3,7 +3,16 @@ package data.remote
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Message(val author: String, val body: Body)
+data class Chat(
+    val messages: List<Message>,
+)
+
+@Serializable
+data class Message(
+    val id: Int,
+    val author: String,
+    val body: Body,
+)
 
 @Serializable
 data class Body(

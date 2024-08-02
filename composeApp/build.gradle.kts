@@ -86,6 +86,7 @@ kotlin {
             implementation("com.materialkolor:material-kolor:1.7.0")
 
             implementation("dev.gitlive:firebase-database:1.13.0")
+            implementation("dev.gitlive:firebase-auth:1.13.0")
         }
     }
 }

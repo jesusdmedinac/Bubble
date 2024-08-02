@@ -20,10 +20,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
-import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
-import com.google.firebase.database.database
 import com.jesusdmedinac.bubble.data.ChatAIAPIImpl
 import com.jesusdmedinac.bubble.data.NetworkAPIImpl
 import com.jesusdmedinac.bubble.data.UsageAPIImpl
@@ -31,9 +29,9 @@ import data.local.ConnectionState
 import data.local.HasUsagePermissionState
 import data.local.SendingData
 import data.remote.Analytics
+import data.remote.ChatAIAPI
 import data.remote.Event
 import di.LocalAnalytics
-import di.LocalChatAIAPI
 import di.LocalNetworkAPI
 import di.LocalSendingData
 import di.LocalUsageAPI
@@ -46,6 +44,7 @@ import io.kamel.image.config.LocalKamelConfig
 import io.kamel.image.config.resourcesFetcher
 import kotlinx.coroutines.flow.update
 import kotlinx.serialization.json.Json
+import org.koin.dsl.module
 
 class MainActivity : ComponentActivity() {
     private val networkAPIImpl: NetworkAPIImpl by lazy { NetworkAPIImpl() }
@@ -122,7 +121,18 @@ class MainActivity : ComponentActivity() {
         val connectivityManager =
             getSystemService(ConnectivityManager::class.java) as ConnectivityManager
         connectivityManager.requestNetwork(networkRequest, networkCallback)
-        connectivityManager.activeNetworkInfo
+        val networkCapabilities = connectivityManager
+            .getNetworkCapabilities(connectivityManager.activeNetwork)
+        networkAPIImpl
+            .connectionState
+            .update {
+                if (networkCapabilities !== null
+                    && networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+                    && networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
+                )
+                    ConnectionState.Connected
+                else ConnectionState.Disconnected
+            }
     }
 
     @Composable
@@ -141,21 +151,6 @@ class MainActivity : ComponentActivity() {
             }
         }
         CompositionLocalProvider(LocalUsageAPI provides usageAPIImpl) {
-            ChatAPICompositionProvider()
-        }
-    }
-
-    @Composable
-    private fun ChatAPICompositionProvider() {
-        val chatAPIImpl = remember {
-            ChatAIAPIImpl(
-                database = Firebase.database,
-                json = Json {
-                ignoreUnknownKeys = true
-                prettyPrint = true
-            })
-        }
-        CompositionLocalProvider(LocalChatAIAPI provides chatAPIImpl) {
             SendingDataCompositionProvider()
         }
     }
@@ -214,7 +209,18 @@ class MainActivity : ComponentActivity() {
             }
         }
         CompositionLocalProvider(LocalKamelConfig provides androidConfig) {
-            App()
+            App(
+                chatModule = module {
+                    single<ChatAIAPI> {
+                        ChatAIAPIImpl(
+                            database = get(),
+                            json = Json {
+                                ignoreUnknownKeys = true
+                                prettyPrint = true
+                            })
+                    }
+                }
+            )
         }
     }
 
