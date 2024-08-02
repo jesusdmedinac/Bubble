@@ -2,7 +2,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.transitions.SlideTransition
+import data.remote.ChatAIAPI
+import dev.gitlive.firebase.database.FirebaseDatabase
 import di.KoinDI
+import di.KoinDI.get
 import di.LocalAppNavigator
 import di.LocalAppProvidablesModule
 import di.appModules
@@ -16,12 +19,12 @@ import presentation.ui.theme.BubbleTheme
 @Composable
 @Preview
 fun App(
-    chatModule: Module = module {  }
+    chatModuleBlock: (FirebaseDatabase) -> ChatAIAPI = { ChatAIAPI.Default }
 ) {
     val localAppProvidablesModule = LocalAppProvidablesModule()
     KoinApplication(application = {
         modules(
-            chatModule +
+            module { single<ChatAIAPI> { chatModuleBlock(get()) } } +
                     localAppProvidablesModule +
                     appModules()
         )

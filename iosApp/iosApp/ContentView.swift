@@ -5,7 +5,9 @@ import ComposeApp
 struct ComposeView: UIViewControllerRepresentable {
     func makeUIViewController(context: Context) -> UIViewController {
         MainViewControllerKt.MainViewController(
-          chatAIAPI: ChatAIAPIImpl(),
+          chatModuleBlock: { Firebase_databaseFirebaseDatabase in
+            return ChatAIAPIImpl()
+          },
           networkAPI: NetworkAPIImpl.shared
         )
     }

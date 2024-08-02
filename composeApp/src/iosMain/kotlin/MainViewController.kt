@@ -8,6 +8,7 @@ import data.remote.Event
 import data.local.SendingData
 import data.local.UsageAPI
 import data.local.UsageStats
+import dev.gitlive.firebase.database.FirebaseDatabase
 import di.LocalUsageAPI
 import di.LocalSendingData
 import di.LocalAnalytics
@@ -18,7 +19,7 @@ import platform.UIKit.UIApplication
 import platform.UIKit.UIViewController
 
 fun MainViewController(
-    chatAIAPI: ChatAIAPI,
+    chatModuleBlock: (FirebaseDatabase) -> ChatAIAPI = { ChatAIAPI.Default },
     networkAPI: NetworkAPI,
 ) = ComposeUIViewController {
     CompositionLocalProvider(LocalNetworkAPI provides networkAPI) {
@@ -54,7 +55,7 @@ fun MainViewController(
                     }
                 }
                 CompositionLocalProvider(LocalAnalytics provides analytics) {
-                    App()
+                    App(chatModuleBlock = chatModuleBlock)
                 }
             }
         }

@@ -210,15 +210,13 @@ class MainActivity : ComponentActivity() {
         }
         CompositionLocalProvider(LocalKamelConfig provides androidConfig) {
             App(
-                chatModule = module {
-                    single<ChatAIAPI> {
-                        ChatAIAPIImpl(
-                            database = get(),
-                            json = Json {
-                                ignoreUnknownKeys = true
-                                prettyPrint = true
-                            })
-                    }
+                chatModuleBlock = { database ->
+                    ChatAIAPIImpl(
+                        database = database,
+                        json = Json {
+                            ignoreUnknownKeys = true
+                            prettyPrint = true
+                        })
                 }
             )
         }
