@@ -1,6 +1,9 @@
 import com.codingfeline.buildkonfig.compiler.FieldSpec
+import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import java.io.FileInputStream
 import java.io.InputStreamReader
 import java.util.Properties
@@ -17,12 +20,32 @@ plugins {
 }
 
 kotlin {
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        moduleName = "composeApp"
+        browser {
+            val projectDirPath = project.projectDir.path
+            commonWebpackConfig {
+                outputFileName = "composeApp.js"
+                devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
+                    static = (static ?: mutableListOf()).apply {
+                        // Serve sources to debug inside browser
+                        add(projectDirPath)
+                    }
+                }
+            }
+        }
+        binaries.executable()
+    }
+
     androidTarget {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
             jvmTarget.set(JvmTarget.JVM_11)
         }
     }
+
+    jvm("desktop")
 
     listOf(
         iosX64(),
@@ -36,8 +59,47 @@ kotlin {
     }
 
     sourceSets {
+        val commonDependenciesExceptWasm: org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler.() -> Unit = {
+            implementation(libs.voyager.koin)
+
+            implementation(libs.kamel.image)
+
+            implementation(libs.ktor.client.core)
+            implementation(libs.ktor.serialization.kotlinx.json)
+
+            implementation("io.insert-koin:koin-core:3.5.6")
+            implementation("io.insert-koin:koin-compose:1.1.5")
+
+            implementation("dev.gitlive:firebase-database:1.13.0")
+            implementation("dev.gitlive:firebase-auth:1.13.0")
+
+            implementation(libs.orbit.mvi)
+        }
+        commonMain.dependencies {
+            implementation(compose.runtime)
+            implementation(compose.foundation)
+            implementation(compose.material)
+            implementation(compose.material3)
+            implementation(compose.ui)
+            implementation(compose.components.resources)
+            implementation(compose.components.uiToolingPreview)
+
+            implementation(libs.voyager.navigator)
+            implementation(libs.voyager.screenmodel)
+            implementation(libs.voyager.tab.navigator)
+            implementation(libs.voyager.transitions)
+
+            implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0")
+
+            implementation(libs.multiplatform.markdown.renderer.m2)
+
+            implementation("com.materialkolor:material-kolor:1.7.0")
+        }
+
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
+
+            commonDependenciesExceptWasm()
         }
         androidMain.dependencies {
             implementation(compose.preview)
@@ -53,41 +115,15 @@ kotlin {
             implementation("com.google.firebase:firebase-database")
 
             implementation("com.android.billingclient:billing-ktx:7.0.0")
+
+            commonDependenciesExceptWasm()
         }
-        commonMain.dependencies {
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material)
-            implementation(compose.material3)
-            implementation(compose.ui)
-            implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
-
-            implementation(libs.voyager.navigator)
-            implementation(libs.voyager.screenmodel)
-            implementation(libs.voyager.tab.navigator)
-            implementation(libs.voyager.transitions)
-            implementation(libs.voyager.koin)
-
-            implementation(libs.kamel.image)
-
-            implementation(libs.ktor.client.core)
-            implementation(libs.ktor.serialization.kotlinx.json)
-
-            implementation("io.insert-koin:koin-core:3.5.6")
-            implementation("io.insert-koin:koin-compose:1.1.5")
-
-            implementation(libs.orbit.mvi)
-
-            implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0")
-
-            implementation(libs.multiplatform.markdown.renderer.m2)
-
-            implementation("com.materialkolor:material-kolor:1.7.0")
-
-            implementation("dev.gitlive:firebase-database:1.13.0")
-            implementation("dev.gitlive:firebase-auth:1.13.0")
+        val desktopMain by getting {
+            dependencies {
+                commonDependenciesExceptWasm()
+            }
         }
+        val wasmJsMain by getting
     }
 }
 
@@ -137,6 +173,18 @@ android {
     }
     dependencies {
         debugImplementation(compose.uiTooling)
+    }
+}
+
+compose.desktop {
+    application {
+        mainClass = "MainKt"
+
+        nativeDistributions {
+            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
+            packageName = "com.jesusdmedinac.bubble"
+            packageVersion = "1.0.0"
+        }
     }
 }
 
