@@ -47,7 +47,7 @@ object HomeTab : Tab {
                                 name = "Reto $it",
                                 description = "Descripción del reto $it",
                                 image = "https://picsum.photos/id/${it}/200/300",
-                                challengeCategory = ChallengeCategory
+                                category = ChallengeCategory
                                     .entries
                                     .toTypedArray()
                                     .random()
@@ -72,7 +72,7 @@ object HomeTab : Tab {
                                 name = "Reto $it",
                                 description = "Descripción del reto $it",
                                 image = "https://picsum.photos/id/${it}/200/300",
-                                challengeCategory = ChallengeCategory
+                                category = ChallengeCategory
                                     .entries
                                     .toTypedArray()
                                     .random()

@@ -1,5 +1,7 @@
 package presentation.model
 
+import data.remote.Challenge
+import data.remote.Reward
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -8,8 +10,10 @@ data class UIChallenge(
     override val name: String = "",
     override val description: String = "",
     override val image: String = "",
-    val challengeCategory: ChallengeCategory = ChallengeCategory.TODO,
+    val category: ChallengeCategory = ChallengeCategory.TODO,
     val rewards: List<UIReward> = emptyList(),
+    val rejected: Boolean = false,
+    val status: ChallengeStatus = ChallengeStatus.SUGGESTED,
 ) : UICard {
     val shareText: String
         get() {
@@ -34,6 +38,67 @@ data class UIChallenge(
                 @JesusDMedinaC 
             """.trimIndent()
         }
+
+    fun toDataChallenge() = Challenge(
+        id = id,
+        title = name,
+        description = description,
+        image = image,
+        category = when (category) {
+            ChallengeCategory.TODO -> data.remote.ChallengeCategory.TODO
+            ChallengeCategory.LECTURA -> data.remote.ChallengeCategory.LECTURA
+            ChallengeCategory.AIRE_LIBRE -> data.remote.ChallengeCategory.AIRE_LIBRE
+            ChallengeCategory.ARTE -> data.remote.ChallengeCategory.ARTE
+            ChallengeCategory.EJERCICIO_Y_BIENESTAR_FISICO -> data.remote.ChallengeCategory.EJERCICIO_Y_BIENESTAR_FISICO
+            ChallengeCategory.MANUALIDADES_Y_PROYECTOS_DIY -> data.remote.ChallengeCategory.MANUALIDADES_Y_PROYECTOS_DIY
+            ChallengeCategory.COCINA_Y_COMIDA -> data.remote.ChallengeCategory.COCINA_Y_COMIDA
+            ChallengeCategory.VOLUNTARIADO_Y_COMUNIDAD -> data.remote.ChallengeCategory.VOLUNTARIADO_Y_COMUNIDAD
+            ChallengeCategory.DESARROLLO_PERSONAL_Y_APRENDIZAJE -> data.remote.ChallengeCategory.DESARROLLO_PERSONAL_Y_APRENDIZAJE
+            ChallengeCategory.SALUD_Y_BIENESTAR -> data.remote.ChallengeCategory.SALUD_Y_BIENESTAR
+            ChallengeCategory.DESAFIOS_RIDICULOS -> data.remote.ChallengeCategory.DESAFIOS_RIDICULOS
+            ChallengeCategory.MUSICA_Y_ENTRETENIMIENTO -> data.remote.ChallengeCategory.MUSICA_Y_ENTRETENIMIENTO
+        },
+        rejected = rejected,
+        status = when (status) {
+            ChallengeStatus.SUGGESTED -> data.remote.ChallengeStatus.SUGGESTED
+            ChallengeStatus.ACCEPTED -> data.remote.ChallengeStatus.ACCEPTED
+            ChallengeStatus.COMPLETED -> data.remote.ChallengeStatus.COMPLETED
+            ChallengeStatus.IN_PROGRESS -> data.remote.ChallengeStatus.IN_PROGRESS
+            ChallengeStatus.EXPIRED -> data.remote.ChallengeStatus.EXPIRED
+            ChallengeStatus.CANCELLED -> data.remote.ChallengeStatus.CANCELLED
+        }
+    )
+
+    fun toChallenge(): Challenge = Challenge(
+        id = id,
+        title = name,
+        description = description,
+        image = image,
+        rewards = rewards.map { it.toReward() },
+        category = when (category) {
+            ChallengeCategory.TODO -> data.remote.ChallengeCategory.TODO
+            ChallengeCategory.LECTURA -> data.remote.ChallengeCategory.LECTURA
+            ChallengeCategory.AIRE_LIBRE -> data.remote.ChallengeCategory.AIRE_LIBRE
+            ChallengeCategory.ARTE -> data.remote.ChallengeCategory.ARTE
+            ChallengeCategory.EJERCICIO_Y_BIENESTAR_FISICO -> data.remote.ChallengeCategory.EJERCICIO_Y_BIENESTAR_FISICO
+            ChallengeCategory.MANUALIDADES_Y_PROYECTOS_DIY -> data.remote.ChallengeCategory.MANUALIDADES_Y_PROYECTOS_DIY
+            ChallengeCategory.COCINA_Y_COMIDA -> data.remote.ChallengeCategory.COCINA_Y_COMIDA
+            ChallengeCategory.VOLUNTARIADO_Y_COMUNIDAD -> data.remote.ChallengeCategory.VOLUNTARIADO_Y_COMUNIDAD
+            ChallengeCategory.DESARROLLO_PERSONAL_Y_APRENDIZAJE -> data.remote.ChallengeCategory.DESARROLLO_PERSONAL_Y_APRENDIZAJE
+            ChallengeCategory.SALUD_Y_BIENESTAR -> data.remote.ChallengeCategory.SALUD_Y_BIENESTAR
+            ChallengeCategory.DESAFIOS_RIDICULOS -> data.remote.ChallengeCategory.DESAFIOS_RIDICULOS
+            ChallengeCategory.MUSICA_Y_ENTRETENIMIENTO -> data.remote.ChallengeCategory.MUSICA_Y_ENTRETENIMIENTO
+        },
+        rejected = rejected,
+        status = when (status) {
+            ChallengeStatus.SUGGESTED -> data.remote.ChallengeStatus.SUGGESTED
+            ChallengeStatus.ACCEPTED -> data.remote.ChallengeStatus.ACCEPTED
+            ChallengeStatus.COMPLETED -> data.remote.ChallengeStatus.COMPLETED
+            ChallengeStatus.IN_PROGRESS -> data.remote.ChallengeStatus.IN_PROGRESS
+            ChallengeStatus.EXPIRED -> data.remote.ChallengeStatus.EXPIRED
+            ChallengeStatus.CANCELLED -> data.remote.ChallengeStatus.CANCELLED
+        }
+    )
 }
 
 @Serializable
@@ -43,7 +108,15 @@ data class UIReward(
     val description: String = "",
     val image: String = "",
     val points: Int = 0,
-)
+) {
+    fun toReward(): Reward = Reward(
+        id = id,
+        title = title,
+        description = description,
+        image = image,
+        points = points,
+    )
+}
 
 @Serializable
 enum class ChallengeCategory(
@@ -61,4 +134,14 @@ enum class ChallengeCategory(
     SALUD_Y_BIENESTAR("Salud y bienestar"),
     DESAFIOS_RIDICULOS("Desafíos y ridiculos"),
     MUSICA_Y_ENTRETENIMIENTO("Música y entretenimiento"),
+}
+
+@Serializable
+enum class ChallengeStatus {
+    SUGGESTED,
+    ACCEPTED,
+    COMPLETED,
+    IN_PROGRESS,
+    EXPIRED,
+    CANCELLED,
 }

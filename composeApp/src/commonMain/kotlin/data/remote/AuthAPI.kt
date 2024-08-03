@@ -5,13 +5,13 @@ import dev.gitlive.firebase.auth.FirebaseAuth
 import dev.gitlive.firebase.auth.auth
 
 interface AuthAPI {
-    suspend fun initAuth()
+    suspend fun initAuth(): Result<Unit>
 }
 
 class AuthAPIImpl(
     private val auth: FirebaseAuth = Firebase.auth
 ) : AuthAPI {
-    override suspend fun initAuth() {
+    override suspend fun initAuth(): Result<Unit> = runCatching {
         auth.signInAnonymously()
     }
 }

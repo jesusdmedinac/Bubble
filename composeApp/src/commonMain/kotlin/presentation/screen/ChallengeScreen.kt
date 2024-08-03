@@ -242,7 +242,7 @@ class ChallengeScreen(
 
                 item {
                     CardsSection(
-                        title = "Retos de ${challenge.challengeCategory.title}",
+                        title = "Retos de ${challenge.category.title}",
                         cards = (0..10)
                             .toList()
                             .map {

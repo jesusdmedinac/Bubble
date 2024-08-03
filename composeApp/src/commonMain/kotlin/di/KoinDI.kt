@@ -2,9 +2,14 @@ package di
 
 import data.remote.AuthAPI
 import data.remote.AuthAPIImpl
+import data.remote.ChallengesAPI
+import data.remote.ChallengesAPIImpl
 import data.remote.ChatAIAPI
 import data.remote.ChatMessagesAPI
 import data.remote.ChatMessagesAPIImpl
+import data.remote.UserAPI
+import data.remote.UserAPIImpl
+import data.utils.FirebaseUtils
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.FirebaseAuth
 import dev.gitlive.firebase.auth.auth
@@ -13,6 +18,8 @@ import dev.gitlive.firebase.database.database
 import di.KoinDI.get
 import domain.ChatRepository
 import domain.ChatRepositoryImpl
+import domain.UserRepository
+import domain.UserRepositoryImpl
 import org.koin.core.KoinApplication
 import org.koin.core.parameter.ParametersDefinition
 import org.koin.core.qualifier.Qualifier
@@ -28,19 +35,23 @@ fun firebaseModule() = module {
         }
     }
     single<FirebaseAuth> { Firebase.auth }
+    single { FirebaseUtils(get(), get()) }
 }
 
 fun dataModule() = module {
-    single<ChatMessagesAPI> { ChatMessagesAPIImpl(get(), get()) }
+    single<ChatMessagesAPI> { ChatMessagesAPIImpl(get()) }
     single<AuthAPI> { AuthAPIImpl() }
+    single<ChallengesAPI> { ChallengesAPIImpl(get()) }
+    single<UserAPI> { UserAPIImpl(get()) }
 }
 
 fun domainModule() = module {
     single<ChatRepository> { ChatRepositoryImpl(get(), get(), get(), get()) }
+    single<UserRepository> { UserRepositoryImpl(get(), get()) }
 }
 
 fun presentationModule() = module {
-    single { BubbleTabScreenModel(get(), get(), get()) }
+    single { BubbleTabScreenModel(get(), get(), get(), get()) }
     single { ProfileTabScreenModel(get()) }
 }
 

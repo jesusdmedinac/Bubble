@@ -6,31 +6,27 @@ import data.formattedDuration
 import data.local.ConnectionState
 import data.local.HasUsagePermissionState
 import data.local.NetworkAPI
-import data.remote.Analytics
 import data.remote.Body
-import data.remote.Challenge
-import data.remote.ChatAIAPI
 import data.remote.Message
 import data.local.UsageAPI
+import data.remote.ChallengeStatus
+import data.remote.ChallengesAPI
 import domain.ChatRepository
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.channelFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import org.orbitmvi.orbit.Container
 import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.syntax.simple.intent
+import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.syntax.simple.subIntent
+import presentation.mapper.toUIChallenge
 import presentation.mapper.toUIMessage
-import presentation.model.ChallengeCategory
-import presentation.model.UIBubbleMessage
-import presentation.model.UIBubblerMessage
 import presentation.model.UIChallenge
 import presentation.model.UIDailyUsageStats
 import presentation.model.UIMessage
-import presentation.model.UIMessageBody
 import presentation.model.UIUsageStats
 import kotlin.math.max
 
@@ -38,6 +34,7 @@ class BubbleTabScreenModel(
     private val chatRepository: ChatRepository,
     private val usageAPI: UsageAPI,
     private val networkAPI: NetworkAPI,
+    private val challengesAPI: ChallengesAPI,
 ) : ScreenModel, ContainerHost<BubbleTabState, BubbleTabSideEffect> {
     private val connectionFlow = channelFlow {
         networkAPI.onConnectionStateChange { trySend(it) }
@@ -72,19 +69,48 @@ class BubbleTabScreenModel(
                 launch {
                     chatRepository
                         .getMessages()
-                        .collect { messages ->
-                            messages
-                                .map { it.toUIMessage() }
-                                .also { reduce { state.copy(messages = it) } }
-                            reduce {
-                                state.copy(
-                                    bubblerHasBeenIntroduced = state
+                        .onSuccess { messagesFlow ->
+                            messagesFlow
+                                .collect { messages ->
+                                    messages
+                                        .map { it.toUIMessage() }
+                                        .also { reduce { state.copy(messages = it) } }
+                                    reduce {
+                                        state.copy(
+                                            bubblerHasBeenIntroduced = state
+                                                .messages
+                                                .map { it.body.message }
+                                                .any { it.startsWith("Hola Bubble") }
+                                        )
+                                    }
+                                    sendBubblerIntroductionMessage()
+                                }
+                        }
+                }
+                launch {
+                    challengesAPI
+                        .getChallenges()
+                        .onSuccess { challengesFlow ->
+                            challengesFlow
+                                .collect { challenges ->
+                                    challenges
+                                        .map { it.toUIChallenge() }
+                                        .also { reduce { state.copy(challenges = it) } }
+                                    state
                                         .messages
-                                        .map { it.body.message }
-                                        .any { it.startsWith("Hola Bubble") }
-                                )
-                            }
-                            sendBubblerIntroductionMessage()
+                                        .filter { it.body.challenge != null }
+                                        .forEach { uiMessage ->
+                                            val challenge = state
+                                                .challenges
+                                                .firstOrNull { it.id == uiMessage.body.challenge?.id }
+                                                ?.toChallenge()
+                                            if (challenge != null) {
+                                                val message = uiMessage.toMessage()
+                                                    .let { it.copy(body = it.body.copy(challenge = challenge)) }
+                                                chatRepository.saveMessage(message)
+                                            }
+                                        }
+                                }
                         }
                 }
             }
@@ -148,16 +174,45 @@ class BubbleTabScreenModel(
             )
         }
     }
+
+    fun addChallenge(challenge: UIChallenge) = intent {
+        reduce {
+            state.copy(
+                addingChallenge = true
+            )
+        }
+        val dataChallenge = challenge.toDataChallenge()
+            .copy(status = ChallengeStatus.ACCEPTED)
+        challengesAPI.saveChallenge(dataChallenge)
+        reduce {
+            state.copy(
+                addingChallenge = false
+            )
+        }
+    }
+
+    fun rejectChallenge(challenge: UIChallenge) = intent {
+        val dataChallenge = challenge.toDataChallenge()
+            .copy(rejected = !challenge.rejected)
+        challengesAPI.saveChallenge(dataChallenge)
+    }
+
+    fun goToChallenge(challenge: UIChallenge) = intent {
+        postSideEffect(BubbleTabSideEffect.GoToChallenge(challenge))
+    }
 }
 
 data class BubbleTabState(
     val loading: Boolean = false,
+    val addingChallenge: Boolean = false,
+    val rejectingChallenge: Boolean = false,
     val bubblerHasBeenIntroduced: Boolean = true,
     val messagesLimit: Int = 10,
     val messages: List<UIMessage> = emptyList(),
     val dailyUsageStats: List<UIDailyUsageStats> = emptyList(),
-    val hasUsagePermissionState: HasUsagePermissionState = data.local.HasUsagePermissionState.Idle,
+    val hasUsagePermissionState: HasUsagePermissionState = HasUsagePermissionState.Idle,
     val connectionState: ConnectionState = ConnectionState.Idle,
+    val challenges: List<UIChallenge> = emptyList(),
 ) {
     fun averageTimeInForeground(): Long = dailyUsageStats
         .sumOf { it.usageStats.sumOf { it.totalTimeInForeground } } /
@@ -166,6 +221,10 @@ data class BubbleTabState(
     val remainingFreeMessages: Int
         get() = messagesLimit - messages
             .count { !it.isFree }
+
 }
 
-sealed class BubbleTabSideEffect
+sealed class BubbleTabSideEffect {
+    data object Idle : BubbleTabSideEffect()
+    data class GoToChallenge(val challenge: UIChallenge) : BubbleTabSideEffect()
+}

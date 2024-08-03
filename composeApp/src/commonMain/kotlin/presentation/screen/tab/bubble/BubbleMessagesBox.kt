@@ -32,16 +32,23 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.koin.getNavigatorScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
+import cafe.adriel.voyager.navigator.tab.TabNavigator
 import data.local.ConnectionState
 import data.local.HasUsagePermissionState
 import di.LocalAppNavigator
 import kotlinx.coroutines.launch
+import presentation.model.ChallengeStatus
 import presentation.model.UIBubbleMessage
 import presentation.model.UIBubblerMessage
 import presentation.model.UICallToActionType
+import presentation.model.UIChallenge
+import presentation.model.UIMessage
 import presentation.model.UIMessageBody
 import presentation.screen.PaywallScreen
+import presentation.screen.tab.ProfileTab
 import presentation.screenmodel.BubbleTabScreenModel
+import presentation.screenmodel.BubbleTabSideEffect
 import presentation.screenmodel.BubbleTabState
 
 @Composable
@@ -51,9 +58,20 @@ fun BubbleMessagesBox(
     val interactionSource = remember { MutableInteractionSource() }
     val localSoftwareKeyboardController = LocalSoftwareKeyboardController.current
     val appNavigator = LocalAppNavigator.currentOrThrow
+    val tabNavigator = LocalTabNavigator.current
     val navigator = LocalNavigator.currentOrThrow
     val screenModel = navigator.getNavigatorScreenModel<BubbleTabScreenModel>()
     val state: BubbleTabState by screenModel.container.stateFlow.collectAsState()
+    val sideEffect: BubbleTabSideEffect by screenModel
+        .container
+        .sideEffectFlow
+        .collectAsState(BubbleTabSideEffect.Idle)
+    when (sideEffect) {
+        is BubbleTabSideEffect.GoToChallenge -> {
+            tabNavigator.current = ProfileTab
+        }
+        else -> Unit
+    }
     val lazyListState = rememberLazyListState()
     val messages = state.messages
     val remainingFreeMessages = state.remainingFreeMessages

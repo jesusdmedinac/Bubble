@@ -1,5 +1,7 @@
 package presentation.model
 
+import data.remote.Body
+import data.remote.Message
 import kotlinx.serialization.Serializable
 
 sealed interface UIMessage {
@@ -7,6 +9,12 @@ sealed interface UIMessage {
     val author: String
     val body: UIMessageBody
     val isFree: Boolean
+
+    fun toMessage(): Message = Message(
+        id = id,
+        author = author,
+        body = body.toBody(),
+    )
 }
 
 data class UIBubblerMessage(
@@ -28,7 +36,12 @@ data class UIMessageBody(
     val message: String,
     val challenge: UIChallenge? = null,
     val callToAction: UICallToActionType? = null
-)
+) {
+    fun toBody(): Body = Body(
+        message = message,
+        challenge = challenge?.toChallenge()
+    )
+}
 
 @Serializable
 enum class UICallToActionType {
