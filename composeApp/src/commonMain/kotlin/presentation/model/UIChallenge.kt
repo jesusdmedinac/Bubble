@@ -99,6 +99,12 @@ data class UIChallenge(
             ChallengeStatus.CANCELLED -> data.remote.ChallengeStatus.CANCELLED
         }
     )
+
+    val statusLabel: String
+        get() = when {
+            rejected -> ""
+            else -> status.title
+        }
 }
 
 @Serializable
@@ -137,11 +143,13 @@ enum class ChallengeCategory(
 }
 
 @Serializable
-enum class ChallengeStatus {
-    SUGGESTED,
-    ACCEPTED,
-    COMPLETED,
-    IN_PROGRESS,
-    EXPIRED,
-    CANCELLED,
+enum class ChallengeStatus(
+    val title: String
+) {
+    SUGGESTED("Sugerido"),
+    ACCEPTED("Aceptado"),
+    COMPLETED("Completado"),
+    IN_PROGRESS("En progreso"),
+    EXPIRED("Caducado"),
+    CANCELLED("Cancelado"),
 }

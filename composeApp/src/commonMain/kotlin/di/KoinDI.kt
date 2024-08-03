@@ -51,8 +51,8 @@ fun domainModule() = module {
 }
 
 fun presentationModule() = module {
-    single { BubbleTabScreenModel(get(), get(), get(), get()) }
-    single { ProfileTabScreenModel(get()) }
+    single { BubbleTabScreenModel(get(), get(), get(), get(), get()) }
+    single { ProfileTabScreenModel(get(), get(), get()) }
 }
 
 fun appModules() = listOf(

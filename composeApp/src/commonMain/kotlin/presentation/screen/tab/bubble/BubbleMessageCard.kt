@@ -159,7 +159,8 @@ fun BubbleMessageCard(uiMessage: UIBubbleMessage) {
                                     ),
                             ) {
                                 when (challenge.status) {
-                                    ChallengeStatus.SUGGESTED -> Button(
+                                    ChallengeStatus.SUGGESTED,
+                                    ChallengeStatus.CANCELLED -> Button(
                                         onClick = {
                                             screenModel.addChallenge(challenge)
                                         },
@@ -172,7 +173,8 @@ fun BubbleMessageCard(uiMessage: UIBubbleMessage) {
                                             )
                                         }
                                     }
-                                    ChallengeStatus.ACCEPTED -> {
+
+                                    else -> {
                                         TextButton(
                                             onClick = {
                                                 screenModel.goToChallenge(challenge)
@@ -187,7 +189,6 @@ fun BubbleMessageCard(uiMessage: UIBubbleMessage) {
                                             }
                                         }
                                     }
-                                    else -> Unit
                                 }
                             }
                         }

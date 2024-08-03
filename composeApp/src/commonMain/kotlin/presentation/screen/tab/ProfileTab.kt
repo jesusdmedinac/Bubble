@@ -58,6 +58,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
@@ -67,6 +68,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import bubble.composeapp.generated.resources.Res
 import bubble.composeapp.generated.resources.ic_chat_bubble
+import bubble.composeapp.generated.resources.ic_thumb_down
 import bubble.composeapp.generated.resources.tab_title_profile
 import cafe.adriel.voyager.koin.getNavigatorScreenModel
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -80,6 +82,7 @@ import di.LocalUsageAPI
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import presentation.model.UIChallenge
 import presentation.screenmodel.ProfileTabScreenModel
 import presentation.screenmodel.ProfileTabState
 import kotlin.math.max
@@ -133,7 +136,7 @@ object ProfileTab : Tab {
                 }
             }
 
-            if (state.savedChallenges.isEmpty()) {
+            if (state.acceptedChallenges.isEmpty()) {
                 item {
                     Column(
                         modifier = Modifier.padding(16.dp)
@@ -165,8 +168,42 @@ object ProfileTab : Tab {
                 }
             }
 
-            items(state.savedChallenges) {
-                ChallengeSwipeableItem()
+            items(state.acceptedChallenges) { challenge ->
+                ChallengeSwipeableItem(
+                    challenge,
+                    leadActions = {
+                        Button(
+                            onClick = {
+                                screenModel.completeChallenge(challenge)
+                            },
+                            colors = ButtonDefaults.textButtonColors(
+                                contentColor = MaterialTheme.colorScheme.onSecondary,
+                                containerColor = MaterialTheme.colorScheme.secondary,
+                            ),
+                            shape = RectangleShape,
+                            modifier = Modifier
+                                .height(88.dp)
+                        ) {
+                            Text("Completar")
+                        }
+                    },
+                    trailingActions = {
+                        Button(
+                            onClick = {
+                                screenModel.cancelChallenge(challenge)
+                            },
+                            colors = ButtonDefaults.textButtonColors(
+                                contentColor = MaterialTheme.colorScheme.onError,
+                                containerColor = MaterialTheme.colorScheme.error
+                            ),
+                            shape = RectangleShape,
+                            modifier = Modifier
+                                .height(88.dp)
+                        ) {
+                            Text("Cancelar")
+                        }
+                    }
+                )
             }
 
             if (state.completedChallenges.isNotEmpty()) {
@@ -195,9 +232,104 @@ object ProfileTab : Tab {
                 }
             }
 
-            items(state.completedChallenges) {
+            items(state.completedChallenges) { challenge ->
                 AnimatedVisibility(completedChallengesIsVisible) {
-                    ChallengeSwipeableItem()
+                    ChallengeSwipeableItem(
+                        challenge,
+                        leadActions = {
+                            Button(
+                                onClick = {
+                                    screenModel.acceptChallenge(challenge)
+                                },
+                                colors = ButtonDefaults.textButtonColors(
+                                    contentColor = MaterialTheme.colorScheme.onSecondary,
+                                    containerColor = MaterialTheme.colorScheme.secondary,
+                                ),
+                                shape = RectangleShape,
+                                modifier = Modifier
+                                    .height(88.dp)
+                            ) {
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Text("Retomar")
+                                    Text("desafío")
+                                }
+                            }
+                        },
+                        trailingActions = {
+                            Button(
+                                onClick = {
+                                    screenModel.rejectChallenge(challenge)
+                                },
+                                colors = ButtonDefaults.textButtonColors(
+                                    containerColor = MaterialTheme.colorScheme.background,
+                                    contentColor = MaterialTheme.colorScheme.error
+                                ),
+                                shape = RectangleShape,
+                                modifier = Modifier
+                                    .height(88.dp)
+                            ) {
+                                Icon(
+                                    painter = painterResource(Res.drawable.ic_thumb_down),
+                                    contentDescription = null,
+                                )
+                            }
+                        }
+                    )
+                }
+            }
+
+            if (state.rejectedChallenges.isNotEmpty()) {
+                item {
+                    Row(
+                        modifier = Modifier
+                            .clickable {
+                                completedChallengesIsVisible = !completedChallengesIsVisible
+                            }
+                            .fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            "Desafíos Rechazados",
+                            style = MaterialTheme.typography.titleLarge,
+                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                        )
+                        Spacer(modifier = Modifier.weight(1f))
+                        Icon(
+                            Icons.Default.KeyboardArrowUp,
+                            contentDescription = null,
+                            modifier = Modifier.padding(end = 16.dp)
+                                .rotate(animatedChallengesIconRotation),
+                        )
+                    }
+                }
+            }
+
+            items(state.rejectedChallenges) { challenge ->
+                AnimatedVisibility(completedChallengesIsVisible) {
+                    ChallengeSwipeableItem(
+                        challenge,
+                        trailingActions = {
+                            Button(
+                                onClick = {
+                                    screenModel.undoRejection(challenge)
+                                },
+                                colors = ButtonDefaults.textButtonColors(
+                                    contentColor = MaterialTheme.colorScheme.background,
+                                    containerColor = MaterialTheme.colorScheme.error
+                                ),
+                                shape = RectangleShape,
+                                modifier = Modifier
+                                    .height(88.dp)
+                            ) {
+                                Icon(
+                                    painter = painterResource(Res.drawable.ic_thumb_down),
+                                    contentDescription = null,
+                                )
+                            }
+                        }
+                    )
                 }
             }
         }
@@ -446,7 +578,11 @@ object ProfileTab : Tab {
     }
 
     @Composable
-    private fun ChallengeSwipeableItem() {
+    private fun ChallengeSwipeableItem(
+        challenge: UIChallenge,
+        leadActions: (@Composable () -> Unit)? = null,
+        trailingActions: (@Composable () -> Unit)? = null,
+    ) {
         Swipeable(
             onClink = {
             },
@@ -454,67 +590,27 @@ object ProfileTab : Tab {
                 .fillMaxWidth()
                 .height(88.dp),
             content = {
-                Row(
-                    modifier = it,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    val primary = MaterialTheme.colorScheme.primary
-                    Box(
-                        modifier = Modifier
-                            .padding(end = 8.dp)
-                            .size(72.dp)
-                            .aspectRatio(1f)
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(primary)
-                    ) {
-
+                ListItem(
+                    headlineContent = {
+                        Text(challenge.name)
+                    },
+                    supportingContent = {
+                        Text(challenge.description)
+                    },
+                    trailingContent = {
+                        Text(challenge.statusLabel)
                     }
-                    Column {
-                        Text(
-                            text = "Challenge",
-                            style = MaterialTheme.typography.titleLarge,
-                        )
-                        Text(
-                            text = "Description",
-                            style = MaterialTheme.typography.headlineLarge,
-                        )
-                        Text(
-                            text = "Status",
-                            style = MaterialTheme.typography.headlineLarge,
-                        )
-                    }
-                }
+                )
             },
-            leadActions = {
-                TextButton(
-                    onClick = {},
-                    modifier = Modifier.fillMaxSize(),
-                    colors = ButtonDefaults.textButtonColors(
-                        contentColor = MaterialTheme.colorScheme.onSecondary,
-                        containerColor = MaterialTheme.colorScheme.secondary
-                    )
-                ) {
-                    Text("Completar")
-                }
-            },
-            trailingActions = {
-                TextButton(
-                    onClick = {},
-                    modifier = Modifier.fillMaxSize(),
-                    colors = ButtonDefaults.textButtonColors(
-                        contentColor = MaterialTheme.colorScheme.onError,
-                        containerColor = MaterialTheme.colorScheme.error
-                    )
-                ) {
-                    Text("Cancelar")
-                }
-            }
+            leadActions = leadActions,
+            trailingActions = trailingActions
         )
     }
 }
 
 enum class DragAnchors {
     Start,
+    Idle,
     End,
 }
 
@@ -523,8 +619,8 @@ enum class DragAnchors {
 fun Swipeable(
     onClink: () -> Unit,
     content: @Composable (Modifier) -> Unit,
-    leadActions: @Composable RowScope.() -> Unit = {},
-    trailingActions: @Composable RowScope.() -> Unit = {},
+    leadActions: (@Composable () -> Unit)? = null,
+    trailingActions: (@Composable () -> Unit)? = null,
     modifier: Modifier = Modifier,
 ) {
     val density = LocalDensity.current
@@ -533,7 +629,7 @@ fun Swipeable(
     val anchoredDraggableState = remember {
         AnchoredDraggableState(
             // 2
-            initialValue = DragAnchors.Start,
+            initialValue = DragAnchors.Idle,
             // 3
             positionalThreshold = { distance: Float -> distance * 0.5f },
             // 4
@@ -545,8 +641,11 @@ fun Swipeable(
             updateAnchors(
                 // 7
                 DraggableAnchors {
-                    DragAnchors.Start at 0f
-                    DragAnchors.End at 400f
+                    if (trailingActions != null)
+                        DragAnchors.Start at -320f
+                    DragAnchors.Idle at 0f
+                    if (leadActions != null)
+                        DragAnchors.End at 320f
                 }
             )
         }
@@ -554,54 +653,49 @@ fun Swipeable(
     val coroutineScope = rememberCoroutineScope()
     Box(
         modifier = modifier
-            .clickable {
-                coroutineScope.launch {
-                    anchoredDraggableState.animateTo(DragAnchors.End)
-                }
-                onClink()
-            }
-            .onGloballyPositioned {
-                width = it.size.width
-            }
-            .width(width.dp)
-            .offset {
-                IntOffset(
-                    // 2
-                    x = anchoredDraggableState.requireOffset().roundToInt(),
-                    y = 0,
-                )
-            }
-            .anchoredDraggable(anchoredDraggableState, Orientation.Horizontal)
-        /*.swipeable(
-            state = swipeableState,
-            anchors = mapOf(0f - (width / 3) to 0, 0f to 1, (width / 3f) to 2),
-            thresholds = { _, _ -> FractionalThreshold(0.3f) },
-            orientation = Orientation.Horizontal
-        )*/
+            .fillMaxWidth(),
+        contentAlignment = Alignment.Center,
     ) {
-        Row(
-            Modifier
-                .fillMaxHeight()
-                .fillMaxWidth(0.3f)
-                .align(Alignment.CenterStart)
+        Box(
+            modifier = Modifier
+                .align(Alignment.CenterStart),
         ) {
-            leadActions()
+            leadActions?.invoke()
         }
-        Row(
-            Modifier
-                .fillMaxHeight()
-                .fillMaxWidth(0.3f)
-                .align(Alignment.CenterEnd)
+        Box(
+            modifier = Modifier
+                .align(Alignment.CenterEnd),
         ) {
-            trailingActions()
+            trailingActions?.invoke()
         }
-        content(
-            Modifier
-                .offset { IntOffset(anchoredDraggableState.offset.roundToInt(), 0) }
-                .width(width.dp)
-                .background(MaterialTheme.colorScheme.background)
-                .padding(8.dp)
-        )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .onGloballyPositioned {
+                    width = it.size.width
+                }
+                .offset {
+                    IntOffset(
+                        // 2
+                        x = anchoredDraggableState.requireOffset().roundToInt(),
+                        y = 0,
+                    )
+                }
+                .anchoredDraggable(anchoredDraggableState, Orientation.Horizontal)
+                .clickable {
+                    coroutineScope.launch {
+                        anchoredDraggableState.animateTo(DragAnchors.Idle)
+                    }
+                    onClink()
+                }
+        ) {
+            content(
+                Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.background)
+                    .padding(8.dp)
+            )
+        }
     }
 }
 

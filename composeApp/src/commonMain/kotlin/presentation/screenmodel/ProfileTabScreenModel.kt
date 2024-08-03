@@ -4,7 +4,11 @@ import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import data.formattedDuration
 import data.local.UsageAPI
+import data.remote.Analytics
+import data.remote.ChallengesAPI
 import data.startOfWeekInMillis
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
@@ -16,6 +20,8 @@ import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
+import presentation.mapper.toUIChallenge
+import presentation.model.ChallengeStatus
 import presentation.model.UIChallenge
 import presentation.model.UIDailyUsageStats
 import presentation.model.UIUsageStats
@@ -23,10 +29,26 @@ import kotlin.math.max
 
 class ProfileTabScreenModel(
     private val usageAPI: UsageAPI,
+    private val challengesAPI: ChallengesAPI,
+    private val analytics: Analytics,
 ) : ScreenModel, ContainerHost<ProfileTabState, ProfileTabSideEffect> {
     override val container: Container<ProfileTabState, ProfileTabSideEffect> =
         screenModelScope.container(ProfileTabState()) {
             loadUsageStats()
+            coroutineScope {
+                launch {
+                    challengesAPI
+                        .getChallenges()
+                        .onSuccess { challengesFlow ->
+                            challengesFlow
+                                .collect { challenges ->
+                                    reduce {
+                                        state.copy(challenges = challenges.map { it.toUIChallenge() })
+                                    }
+                                }
+                        }
+                }
+            }
         }
 
     fun loadUsageStats() = intent {
@@ -73,6 +95,59 @@ class ProfileTabScreenModel(
             )
         }
     }
+
+    fun rejectChallenge(challenge: UIChallenge) = intent {
+        val dataChallenge = challenge.toDataChallenge()
+            .copy(rejected = true)
+        challengesAPI.saveChallenge(dataChallenge)
+        analytics.sendSaveChallengeEvent(
+            Analytics.SCREEN_PROFILE_TAB,
+            dataChallenge,
+        )
+    }
+
+    fun undoRejection(challenge: UIChallenge) = intent {
+        val dataChallenge = challenge.toDataChallenge()
+            .copy(
+                rejected = false,
+                status = data.remote.ChallengeStatus.SUGGESTED
+            )
+        challengesAPI.saveChallenge(dataChallenge)
+        analytics.sendSaveChallengeEvent(
+            Analytics.SCREEN_PROFILE_TAB,
+            dataChallenge,
+        )
+    }
+
+    fun acceptChallenge(challenge: UIChallenge) = intent {
+        val dataChallenge = challenge.toDataChallenge()
+            .copy(status = data.remote.ChallengeStatus.ACCEPTED)
+        challengesAPI.saveChallenge(dataChallenge)
+        analytics.sendSaveChallengeEvent(
+            Analytics.SCREEN_PROFILE_TAB,
+            dataChallenge,
+        )
+    }
+
+    fun completeChallenge(challenge: UIChallenge) = intent {
+        val dataChallenge = challenge.toDataChallenge()
+            .copy(status = data.remote.ChallengeStatus.COMPLETED)
+        challengesAPI.saveChallenge(dataChallenge)
+        analytics.sendSaveChallengeEvent(
+            Analytics.SCREEN_PROFILE_TAB,
+            dataChallenge,
+        )
+    }
+
+    fun cancelChallenge(challenge: UIChallenge) = intent {
+        val dataChallenge = challenge.toDataChallenge()
+            .copy(status = data.remote.ChallengeStatus.CANCELLED)
+        challengesAPI.saveChallenge(dataChallenge)
+        analytics.sendSaveChallengeEvent(
+            Analytics.SCREEN_PROFILE_TAB,
+            dataChallenge,
+        )
+    }
 }
 
 data class ProfileTabState(
@@ -80,15 +155,15 @@ data class ProfileTabState(
     val hasUsagePermission: Boolean = false,
     val isUserLoggedIn: Boolean = false,
     val usageStats: List<UIUsageStats> = emptyList(),
-    val savedChallenges: List<UIChallenge> = emptyList(),
-    val completedChallenges: List<UIChallenge> = emptyList(),
     val todayDate: LocalDateTime? = Clock.System.now()
         .toLocalDateTime(TimeZone.currentSystemDefault()),
     val dailyUsageStats: List<UIDailyUsageStats> = emptyList(),
+    val challenges: List<UIChallenge> = emptyList()
 ) {
     fun averageTimeInForeground(): Long = dailyUsageStats
         .sumOf { it.usageStats.sumOf { it.totalTimeInForeground } } /
             max(dailyUsageStats.size, 1)
+
     fun formattedAverageTimeInForeground(): String = averageTimeInForeground()
         .formattedDuration(includeSeconds = false)
 
@@ -127,6 +202,20 @@ data class ProfileTabState(
             .format(it)
     }
         ?: ""
+
+    val acceptedChallenges: List<UIChallenge>
+        get() = challenges
+            .filterNot { it.rejected }
+            .filter { it.status == ChallengeStatus.ACCEPTED }
+
+    val completedChallenges: List<UIChallenge>
+        get() = challenges
+            .filterNot { it.rejected }
+            .filter { it.status == ChallengeStatus.COMPLETED }
+
+    val rejectedChallenges: List<UIChallenge>
+        get() = challenges
+            .filter { it.rejected }
 }
 
 sealed class ProfileTabSideEffect

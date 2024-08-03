@@ -9,6 +9,7 @@ import data.local.NetworkAPI
 import data.remote.Body
 import data.remote.Message
 import data.local.UsageAPI
+import data.remote.Analytics
 import data.remote.ChallengeStatus
 import data.remote.ChallengesAPI
 import domain.ChatRepository
@@ -35,6 +36,7 @@ class BubbleTabScreenModel(
     private val usageAPI: UsageAPI,
     private val networkAPI: NetworkAPI,
     private val challengesAPI: ChallengesAPI,
+    private val analytics: Analytics,
 ) : ScreenModel, ContainerHost<BubbleTabState, BubbleTabSideEffect> {
     private val connectionFlow = channelFlow {
         networkAPI.onConnectionStateChange { trySend(it) }
@@ -93,17 +95,12 @@ class BubbleTabScreenModel(
                         .onSuccess { challengesFlow ->
                             challengesFlow
                                 .collect { challenges ->
-                                    challenges
-                                        .map { it.toUIChallenge() }
-                                        .also { reduce { state.copy(challenges = it) } }
                                     state
                                         .messages
                                         .filter { it.body.challenge != null }
                                         .forEach { uiMessage ->
-                                            val challenge = state
-                                                .challenges
+                                            val challenge = challenges
                                                 .firstOrNull { it.id == uiMessage.body.challenge?.id }
-                                                ?.toChallenge()
                                             if (challenge != null) {
                                                 val message = uiMessage.toMessage()
                                                     .let { it.copy(body = it.body.copy(challenge = challenge)) }
@@ -184,6 +181,10 @@ class BubbleTabScreenModel(
         val dataChallenge = challenge.toDataChallenge()
             .copy(status = ChallengeStatus.ACCEPTED)
         challengesAPI.saveChallenge(dataChallenge)
+        analytics.sendSaveChallengeEvent(
+            Analytics.SCREEN_BUBBLE_TAB,
+            dataChallenge,
+        )
         reduce {
             state.copy(
                 addingChallenge = false
@@ -195,6 +196,10 @@ class BubbleTabScreenModel(
         val dataChallenge = challenge.toDataChallenge()
             .copy(rejected = !challenge.rejected)
         challengesAPI.saveChallenge(dataChallenge)
+        analytics.sendSaveChallengeEvent(
+            Analytics.SCREEN_BUBBLE_TAB,
+            dataChallenge,
+        )
     }
 
     fun goToChallenge(challenge: UIChallenge) = intent {
@@ -212,7 +217,6 @@ data class BubbleTabState(
     val dailyUsageStats: List<UIDailyUsageStats> = emptyList(),
     val hasUsagePermissionState: HasUsagePermissionState = HasUsagePermissionState.Idle,
     val connectionState: ConnectionState = ConnectionState.Idle,
-    val challenges: List<UIChallenge> = emptyList(),
 ) {
     fun averageTimeInForeground(): Long = dailyUsageStats
         .sumOf { it.usageStats.sumOf { it.totalTimeInForeground } } /
