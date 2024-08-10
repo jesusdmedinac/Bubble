@@ -10,5 +10,5 @@ class FirebaseUtils(
     fun getCurrentUserChild() = auth
         .currentUser
         ?.uid
-        ?.let { database.reference().child(it) }
+        ?.let { database.reference().child("users").child(it) }
 }

@@ -1,13 +1,15 @@
 package domain
 
 import data.remote.Analytics
-import data.remote.AuthAPI
-import data.remote.Chat
-import data.remote.ChatAIAPI
+import data.remote.Body
+import data.remote.GeminiAPI
 import data.remote.ChatMessagesAPI
 import data.remote.Message
+import data.remote.model.ContentItem
+import data.remote.model.GeminiContent
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.serialization.json.Json
 
 interface ChatRepository {
     suspend fun initChat()
@@ -17,7 +19,7 @@ interface ChatRepository {
 }
 
 class ChatRepositoryImpl(
-    private val chatAIAPI: ChatAIAPI,
+    private val geminiAPI: GeminiAPI,
     private val userRepository: UserRepository,
     private val chatMessagesAPI: ChatMessagesAPI,
     private val analytics: Analytics,
@@ -25,9 +27,6 @@ class ChatRepositoryImpl(
     override suspend fun initChat() {
         userRepository
             .initUser()
-            .onSuccess {
-                chatAIAPI.initModel()
-            }
             .onFailure {
                 it.printStackTrace()
             }
@@ -37,18 +36,51 @@ class ChatRepositoryImpl(
         chatMessagesAPI.getChatMessages()
 
     override suspend fun sendMessage(message: Message): Result<Unit> =
-        run { chatMessagesAPI.saveMessage(message) }
+        saveMessage(message)
             .let { getMessages() }
             .fold(
                 onSuccess = { it },
                 onFailure = { null }
             )
             ?.firstOrNull()
-            ?.let { chatAIAPI.sendMessage(it) }
-            ?.apply { analytics.sendChatResponseEvent(this) }
-            ?.let { bubbleMessage -> chatMessagesAPI.saveMessage(bubbleMessage) }
-            ?.let { Result.success(Unit) }
+            ?.map {
+                ContentItem(
+                    role = it.author,
+                    parts = listOf(
+                        data.remote.model.ContentPart(
+                            text = it.body.message ?: ""
+                        )
+                    )
+                )
+            }
+            ?.let { GeminiContent(contents = it) }
+            ?.let { geminiContent ->
+                val auth = userRepository.getUser().getOrNull()?.id ?: ""
+                val generatedContentResponse = geminiAPI.generateContent(auth, geminiContent)
+                val content = generatedContentResponse
+                    .candidates
+                    .firstOrNull()
+                    ?.content
+                val body = content
+                    ?.parts
+                    ?.firstOrNull()
+                    ?.text
+                    ?.let { Json.decodeFromString<Body>(it) }
+                if (body != null) {
+                    Message(
+                        id = geminiContent.contents.size + 1,
+                        author = content.role,
+                        body = body
+                    )
+                        .apply { analytics.sendChatResponseEvent(this) }
+                        .let { bubbleMessage -> saveMessage(bubbleMessage) }
+                        .let { Result.success(Unit) }
+                } else {
+                    Result.failure(Exception("No messages found"))
+                }
+            }
             ?: Result.failure(Exception("No messages found"))
 
-    override suspend fun saveMessage(message: Message): Result<Unit> = chatMessagesAPI.saveMessage(message)
+    override suspend fun saveMessage(message: Message): Result<Unit> =
+        chatMessagesAPI.saveMessage(message)
 }

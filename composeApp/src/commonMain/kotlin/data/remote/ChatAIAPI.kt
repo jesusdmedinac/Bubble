@@ -2,30 +2,6 @@ package data.remote
 
 import kotlin.random.Random
 
-interface ChatAIAPI {
-    suspend fun initModel()
-
-    suspend fun systemInstructions(): String
-
-    suspend fun sendMessage(messages: List<Message>): Message
-
-    companion object {
-        val Default = object : ChatAIAPI {
-            override suspend fun initModel() {
-                TODO("initModel on ChatAPI is not yet implemented")
-            }
-
-            override suspend fun systemInstructions(): String {
-                TODO("systemInstructions on ChatAPI is not yet implemented yet")
-            }
-
-            override suspend fun sendMessage(messages: List<Message>): Message {
-                TODO("sendMessage on ChatAPI is not implemented yet")
-            }
-        }
-    }
-}
-
 private val challenges: List<Challenge>
     get() = listOf(
         Challenge(

@@ -4,7 +4,6 @@ import data.remote.AuthAPI
 import data.remote.AuthAPIImpl
 import data.remote.ChallengesAPI
 import data.remote.ChallengesAPIImpl
-import data.remote.ChatAIAPI
 import data.remote.ChatMessagesAPI
 import data.remote.ChatMessagesAPIImpl
 import data.remote.UserAPI
@@ -76,6 +75,3 @@ object KoinDI {
     ): T = koinApplication?.koin?.get(qualifier, parameters)
         ?: throw IllegalStateException("KoinApplication is not initialized")
 }
-
-fun firebaseDatabase(): FirebaseDatabase = get()
-fun firebaseAuth(): FirebaseAuth = get()

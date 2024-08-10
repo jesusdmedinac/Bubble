@@ -56,3 +56,9 @@ local.properties
 composeApp/google-services.json
 composeApp/bubble-firebase-adminsdk.json
 iosApp/iosApp.xcodeproj/xcshareddata/
+
+# Ktor Server
+server/build/
+
+# Shared
+shared/build/

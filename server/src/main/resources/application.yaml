@@ -1,0 +1,11 @@
+ktor:
+  deployment:
+    port: $PORT
+  application:
+    modules:
+      - com.jesusdmedinac.bubble.ApplicationKt.module
+gemini:
+  key: $GEMINI_KEY
+firebase:
+  database:
+    name: $FIREBASE_DATABASE_NAME

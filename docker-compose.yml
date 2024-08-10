@@ -1,0 +1,10 @@
+services:
+  web:
+    build:
+      context: .
+      args:
+        - PORT=$PORT
+        - GEMINI_KEY=$GEMINI_KEY
+        - FIREBASE_DATABASE_NAME=$FIREBASE_DATABASE_NAME
+    ports:
+      - "$PORT:$PORT"

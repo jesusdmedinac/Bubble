@@ -11,16 +11,25 @@ import kotlinx.coroutines.flow.lastOrNull
 import kotlinx.coroutines.flow.map
 
 interface UserAPI {
-    suspend fun initUser(): Result<Unit>
+    suspend fun initUser(user: User): Result<Unit>
+    suspend fun getUser(): Result<User>
 }
 
 class UserAPIImpl(
     private val firebaseUtils: FirebaseUtils,
 ) : UserAPI {
-    override suspend fun initUser(): Result<Unit> = runCatching {
+    override suspend fun initUser(user: User): Result<Unit> = runCatching {
         val child = firebaseUtils.getCurrentUserChild()
         if (child?.valueEvents?.firstOrNull()?.exists == false) {
-            child.setValue(User(id = child.key.toString()))
+            child.setValue(user)
         }
+    }
+
+    override suspend fun getUser(): Result<User> = runCatching {
+        firebaseUtils.getCurrentUserChild()
+            ?.valueEvents
+            ?.firstOrNull()
+            ?.value()
+            ?: throw Exception("User not found")
     }
 }

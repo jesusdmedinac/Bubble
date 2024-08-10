@@ -2,8 +2,6 @@ import com.codingfeline.buildkonfig.compiler.FieldSpec
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
-import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 import java.io.FileInputStream
 import java.io.InputStreamReader
 import java.util.Properties
@@ -20,24 +18,6 @@ plugins {
 }
 
 kotlin {
-    @OptIn(ExperimentalWasmDsl::class)
-    wasmJs {
-        moduleName = "composeApp"
-        browser {
-            val projectDirPath = project.projectDir.path
-            commonWebpackConfig {
-                outputFileName = "composeApp.js"
-                devServer = (devServer ?: KotlinWebpackConfig.DevServer()).apply {
-                    static = (static ?: mutableListOf()).apply {
-                        // Serve sources to debug inside browser
-                        add(projectDirPath)
-                    }
-                }
-            }
-        }
-        binaries.executable()
-    }
-
     androidTarget {
         @OptIn(ExperimentalKotlinGradlePluginApi::class)
         compilerOptions {
@@ -59,22 +39,6 @@ kotlin {
     }
 
     sourceSets {
-        val commonDependenciesExceptWasm: org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler.() -> Unit = {
-            implementation(libs.voyager.koin)
-
-            implementation(libs.kamel.image)
-
-            implementation(libs.ktor.client.core)
-            implementation(libs.ktor.serialization.kotlinx.json)
-
-            implementation("io.insert-koin:koin-core:3.5.6")
-            implementation("io.insert-koin:koin-compose:1.1.5")
-
-            implementation("dev.gitlive:firebase-database:1.13.0")
-            implementation("dev.gitlive:firebase-auth:1.13.0")
-
-            implementation(libs.orbit.mvi)
-        }
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
@@ -83,29 +47,36 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
+            implementation(projects.shared)
 
             implementation(libs.voyager.navigator)
             implementation(libs.voyager.screenmodel)
             implementation(libs.voyager.tab.navigator)
             implementation(libs.voyager.transitions)
 
+            implementation(libs.koin.compose)
+
             implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0")
 
             implementation(libs.multiplatform.markdown.renderer.m2)
 
             implementation("com.materialkolor:material-kolor:1.7.0")
+
+            implementation(libs.voyager.koin)
+
+            implementation(libs.kamel.image)
+
+            implementation(libs.orbit.mvi)
+
+            implementation(libs.gitlive.firebase.database)
+            implementation(libs.gitlive.firebase.auth)
         }
 
         iosMain.dependencies {
-            implementation(libs.ktor.client.darwin)
-
-            commonDependenciesExceptWasm()
         }
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
-
-            implementation(libs.ktor.client.android)
 
             implementation(libs.generative.ai)
 
@@ -115,15 +86,12 @@ kotlin {
             implementation("com.google.firebase:firebase-database")
 
             implementation("com.android.billingclient:billing-ktx:7.0.0")
-
-            commonDependenciesExceptWasm()
         }
         val desktopMain by getting {
             dependencies {
-                commonDependenciesExceptWasm()
+                implementation(compose.desktop.currentOs)
             }
         }
-        val wasmJsMain by getting
     }
 }
 
@@ -156,11 +124,6 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-
-            buildConfigField("String", "apiKey", getPropertiesFile("apiKey"))
-        }
-        getByName("debug") {
-            buildConfigField("String", "apiKey", getPropertiesFile("apiKey"))
         }
     }
     compileOptions {
@@ -194,6 +157,9 @@ buildkonfig {
     defaultConfigs {
         buildConfigField(FieldSpec.Type.INT, "versionCode", libs.versions.version.code.get())
         buildConfigField(FieldSpec.Type.STRING, "versionName", libs.versions.version.name.get())
+        buildConfigField(FieldSpec.Type.STRING, "geminiKey", getPropertiesFile("gemini.key"))
+        buildConfigField(FieldSpec.Type.STRING, "firebaseWebKey", getPropertiesFile("firebase.web.key"))
+        buildConfigField(FieldSpec.Type.STRING, "firebaseDatabaseName", getPropertiesFile("firebase.database.name"))
     }
 }
 

@@ -3,12 +3,10 @@ import androidx.compose.ui.window.ComposeUIViewController
 import data.local.HasUsagePermissionState
 import data.remote.Analytics
 import data.local.NetworkAPI
-import data.remote.ChatAIAPI
 import data.remote.Event
 import data.local.SendingData
 import data.local.UsageAPI
 import data.local.UsageStats
-import dev.gitlive.firebase.database.FirebaseDatabase
 import di.LocalUsageAPI
 import di.LocalSendingData
 import di.LocalAnalytics
@@ -19,7 +17,6 @@ import platform.UIKit.UIApplication
 import platform.UIKit.UIViewController
 
 fun MainViewController(
-    chatModuleBlock: (FirebaseDatabase) -> ChatAIAPI = { ChatAIAPI.Default },
     networkAPI: NetworkAPI,
 ) = ComposeUIViewController {
     CompositionLocalProvider(LocalNetworkAPI provides networkAPI) {
@@ -55,7 +52,7 @@ fun MainViewController(
                     }
                 }
                 CompositionLocalProvider(LocalAnalytics provides analytics) {
-                    App(chatModuleBlock = chatModuleBlock)
+                    App()
                 }
             }
         }
