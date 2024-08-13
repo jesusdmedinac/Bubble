@@ -25,8 +25,6 @@ kotlin {
         }
     }
 
-    jvm("desktop")
-
     listOf(
         iosX64(),
         iosArm64(),
@@ -87,11 +85,6 @@ kotlin {
 
             implementation("com.android.billingclient:billing-ktx:7.0.0")
         }
-        val desktopMain by getting {
-            dependencies {
-                implementation(compose.desktop.currentOs)
-            }
-        }
     }
 }
 
@@ -136,18 +129,6 @@ android {
     }
     dependencies {
         debugImplementation(compose.uiTooling)
-    }
-}
-
-compose.desktop {
-    application {
-        mainClass = "MainKt"
-
-        nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "com.jesusdmedinac.bubble"
-            packageVersion = "1.0.0"
-        }
     }
 }
 
