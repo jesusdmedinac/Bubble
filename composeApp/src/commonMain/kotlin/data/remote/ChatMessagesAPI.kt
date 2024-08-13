@@ -1,6 +1,7 @@
 package data.remote
 
 import data.remote.model.DataMessage
+import data.remote.model.DataMessages
 import data.utils.FirebaseUtils
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
@@ -10,7 +11,7 @@ import kotlinx.coroutines.flow.map
 interface ChatMessagesAPI {
     suspend fun systemInstructions(): Result<String>
     suspend fun saveMessage(dataMessage: DataMessage): Result<Unit>
-    suspend fun getChatMessages(): Result<Flow<List<DataMessage>>>
+    suspend fun getChatMessages(): Result<Flow<DataMessages>>
 }
 
 class ChatMessagesAPIImpl(
@@ -35,7 +36,7 @@ class ChatMessagesAPIImpl(
             ?.setValue(dataMessage)
     }
 
-    override suspend fun getChatMessages(): Result<Flow<List<DataMessage>>> = runCatching {
+    override suspend fun getChatMessages(): Result<Flow<DataMessages>> = runCatching {
         firebaseUtils
             .getCurrentUserChild()
             ?.child("messages")
@@ -48,7 +49,7 @@ class ChatMessagesAPIImpl(
                         val dataMessage = childSnapshot.value<DataMessage>()
                         dataMessages.add(dataMessage)
                     }
-                dataMessages.sortedByDescending { it.id }
+                DataMessages(dataMessages.sortedByDescending { it.id })
             }
             ?: emptyFlow()
     }

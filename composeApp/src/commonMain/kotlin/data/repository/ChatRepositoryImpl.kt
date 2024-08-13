@@ -33,7 +33,11 @@ class ChatRepositoryImpl(
 
     override suspend fun getMessages(): Result<Flow<List<Message>>> =
         chatMessagesAPI.getChatMessages()
-            .toDomain()
+            .map { flow ->
+                flow.map { dataMessages ->
+                    dataMessages.messages.map { it.toDomain() }
+                }
+            }
 
     override suspend fun sendMessage(message: Message): Result<Unit> =
         saveMessage(message)

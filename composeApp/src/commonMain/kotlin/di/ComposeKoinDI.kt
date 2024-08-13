@@ -9,16 +9,15 @@ import data.remote.ChatMessagesAPIImpl
 import data.remote.UserAPI
 import data.remote.UserAPIImpl
 import data.repository.ChatRepositoryImpl
+import data.repository.UserRepositoryImpl
 import data.utils.FirebaseUtils
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.FirebaseAuth
 import dev.gitlive.firebase.auth.auth
 import dev.gitlive.firebase.database.FirebaseDatabase
 import dev.gitlive.firebase.database.database
-import di.KoinDI.get
 import domain.ChatRepository
 import domain.UserRepository
-import domain.UserRepositoryImpl
 import org.koin.core.KoinApplication
 import org.koin.core.parameter.ParametersDefinition
 import org.koin.core.qualifier.Qualifier

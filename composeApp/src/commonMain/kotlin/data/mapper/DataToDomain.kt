@@ -4,17 +4,18 @@ import data.remote.model.DataBody
 import data.remote.model.DataChallenge
 import data.remote.model.DataChallengeCategory
 import data.remote.model.DataChallengeStatus
+import data.remote.model.DataChallenges
 import data.remote.model.DataMessage
+import data.remote.model.DataMessages
 import data.remote.model.DataReward
+import data.remote.model.DataUser
 import domain.model.Body
 import domain.model.Challenge
 import domain.model.ChallengeCategory
 import domain.model.ChallengeStatus
 import domain.model.Message
 import domain.model.Reward
-import io.ktor.util.valuesOf
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
+import domain.model.User
 
 fun DataMessage.toDomain(): Message = Message(
     id = id,
@@ -52,14 +53,14 @@ fun DataChallengeCategory.toDomain(): ChallengeCategory =
 fun DataChallengeStatus.toDomain(): ChallengeStatus =
     ChallengeStatus.valueOf(name)
 
-// region List Mappers
-fun List<DataMessage>.toDomain(): List<Message> = map { it.toDomain() }
+fun DataUser.toDomain(): User = User(
+    id = id,
+    messages = messages.toDomain(),
+    challenges = challenges.toDomain(),
+)
 
-fun Flow<List<DataMessage>>.toDomain(): Flow<List<Message>> = map { dataMessages ->
-    dataMessages.toDomain()
-}
+fun DataMessages.toDomain(): List<Message> =
+    messages.map { it.toDomain() }
 
-fun Result<Flow<List<DataMessage>>>.toDomain(): Result<Flow<List<Message>>> = map { dataMessages ->
-    dataMessages.toDomain()
-}
-// endregion
+fun DataChallenges.toDomain(): List<Challenge> =
+    challenges.map { it.toDomain() }
