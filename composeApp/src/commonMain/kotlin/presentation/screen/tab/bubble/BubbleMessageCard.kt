@@ -74,7 +74,7 @@ fun BubbleMessageCard(uiMessage: UIBubbleMessage) {
             Markdown(
                 uiMessage.body.message,
                 colors = markdownColor(
-                    text = MaterialTheme.colorScheme.onPrimary
+                    text = MaterialTheme.colorScheme.onSecondary
                 ),
             )
             uiMessage

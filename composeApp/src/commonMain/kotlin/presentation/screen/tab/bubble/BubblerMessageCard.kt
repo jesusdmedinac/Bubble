@@ -2,6 +2,7 @@ package presentation.screen.tab.bubble
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -18,6 +19,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import bubble.composeapp.generated.resources.Res
 import bubble.composeapp.generated.resources.ic_message_corner
+import com.mikepenz.markdown.m2.Markdown
+import com.mikepenz.markdown.m2.markdownColor
 import org.jetbrains.compose.resources.painterResource
 import presentation.model.UIBubblerMessage
 import presentation.model.UIMessage
@@ -30,7 +33,7 @@ fun BubblerMessageCard(uiMessage: UIBubblerMessage) {
             .fillMaxWidth(),
         contentAlignment = Alignment.CenterEnd,
     ) {
-        Text(
+        Markdown(
             uiMessage.body.message,
             modifier = Modifier
                 .padding(vertical = 2.dp)
@@ -40,8 +43,9 @@ fun BubblerMessageCard(uiMessage: UIBubblerMessage) {
                 .clip(RoundedCornerShape(topStart = 50.dp, bottomStart = 50.dp))
                 .background(primary)
                 .padding(12.dp),
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onPrimary
+            colors = markdownColor(
+                text = MaterialTheme.colorScheme.onPrimary
+            )
         )
         Box(
             modifier = Modifier

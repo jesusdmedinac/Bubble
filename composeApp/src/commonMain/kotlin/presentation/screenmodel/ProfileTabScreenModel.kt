@@ -4,8 +4,10 @@ import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import data.formattedDuration
 import data.local.UsageAPI
-import data.remote.Analytics
+import data.mapper.toDomain
+import data.remote.AnalyticsAPI
 import data.remote.ChallengesAPI
+import data.remote.model.DataChallengeStatus
 import data.startOfWeekInMillis
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -20,7 +22,7 @@ import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
-import presentation.mapper.toUIChallenge
+import presentation.mapper.toUI
 import presentation.model.ChallengeStatus
 import presentation.model.UIChallenge
 import presentation.model.UIDailyUsageStats
@@ -30,7 +32,7 @@ import kotlin.math.max
 class ProfileTabScreenModel(
     private val usageAPI: UsageAPI,
     private val challengesAPI: ChallengesAPI,
-    private val analytics: Analytics,
+    private val analyticsAPI: AnalyticsAPI,
 ) : ScreenModel, ContainerHost<ProfileTabState, ProfileTabSideEffect> {
     override val container: Container<ProfileTabState, ProfileTabSideEffect> =
         screenModelScope.container(ProfileTabState()) {
@@ -43,7 +45,7 @@ class ProfileTabScreenModel(
                             challengesFlow
                                 .collect { challenges ->
                                     reduce {
-                                        state.copy(challenges = challenges.map { it.toUIChallenge() })
+                                        state.copy(challenges = challenges.map { it.toDomain().toUI() })
                                     }
                                 }
                         }
@@ -100,8 +102,8 @@ class ProfileTabScreenModel(
         val dataChallenge = challenge.toDataChallenge()
             .copy(rejected = true)
         challengesAPI.saveChallenge(dataChallenge)
-        analytics.sendSaveChallengeEvent(
-            Analytics.SCREEN_PROFILE_TAB,
+        analyticsAPI.sendSaveChallengeEvent(
+            AnalyticsAPI.SCREEN_PROFILE_TAB,
             dataChallenge,
         )
     }
@@ -110,41 +112,41 @@ class ProfileTabScreenModel(
         val dataChallenge = challenge.toDataChallenge()
             .copy(
                 rejected = false,
-                status = data.remote.ChallengeStatus.SUGGESTED
+                status = DataChallengeStatus.SUGGESTED
             )
         challengesAPI.saveChallenge(dataChallenge)
-        analytics.sendSaveChallengeEvent(
-            Analytics.SCREEN_PROFILE_TAB,
+        analyticsAPI.sendSaveChallengeEvent(
+            AnalyticsAPI.SCREEN_PROFILE_TAB,
             dataChallenge,
         )
     }
 
     fun acceptChallenge(challenge: UIChallenge) = intent {
         val dataChallenge = challenge.toDataChallenge()
-            .copy(status = data.remote.ChallengeStatus.ACCEPTED)
+            .copy(status = DataChallengeStatus.ACCEPTED)
         challengesAPI.saveChallenge(dataChallenge)
-        analytics.sendSaveChallengeEvent(
-            Analytics.SCREEN_PROFILE_TAB,
+        analyticsAPI.sendSaveChallengeEvent(
+            AnalyticsAPI.SCREEN_PROFILE_TAB,
             dataChallenge,
         )
     }
 
     fun completeChallenge(challenge: UIChallenge) = intent {
         val dataChallenge = challenge.toDataChallenge()
-            .copy(status = data.remote.ChallengeStatus.COMPLETED)
+            .copy(status = DataChallengeStatus.COMPLETED)
         challengesAPI.saveChallenge(dataChallenge)
-        analytics.sendSaveChallengeEvent(
-            Analytics.SCREEN_PROFILE_TAB,
+        analyticsAPI.sendSaveChallengeEvent(
+            AnalyticsAPI.SCREEN_PROFILE_TAB,
             dataChallenge,
         )
     }
 
     fun cancelChallenge(challenge: UIChallenge) = intent {
         val dataChallenge = challenge.toDataChallenge()
-            .copy(status = data.remote.ChallengeStatus.CANCELLED)
+            .copy(status = DataChallengeStatus.CANCELLED)
         challengesAPI.saveChallenge(dataChallenge)
-        analytics.sendSaveChallengeEvent(
-            Analytics.SCREEN_PROFILE_TAB,
+        analyticsAPI.sendSaveChallengeEvent(
+            AnalyticsAPI.SCREEN_PROFILE_TAB,
             dataChallenge,
         )
     }

@@ -1,4 +1,5 @@
 import com.codingfeline.buildkonfig.compiler.FieldSpec
+import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import java.io.FileInputStream
@@ -36,14 +37,44 @@ kotlin {
     }
 
     sourceSets {
+        commonMain.dependencies {
+            implementation(compose.runtime)
+            implementation(compose.foundation)
+            implementation(compose.material)
+            implementation(compose.material3)
+            implementation(compose.ui)
+            implementation(compose.components.resources)
+            implementation(compose.components.uiToolingPreview)
+            implementation(projects.shared)
+
+            implementation(libs.voyager.navigator)
+            implementation(libs.voyager.screenmodel)
+            implementation(libs.voyager.tab.navigator)
+            implementation(libs.voyager.transitions)
+
+            implementation(libs.koin.compose)
+
+            implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0")
+
+            implementation(libs.multiplatform.markdown.renderer.m2)
+
+            implementation("com.materialkolor:material-kolor:1.7.0")
+
+            implementation(libs.voyager.koin)
+
+            implementation(libs.kamel.image)
+
+            implementation(libs.orbit.mvi)
+
+            implementation(libs.gitlive.firebase.database)
+            implementation(libs.gitlive.firebase.auth)
+        }
+
         iosMain.dependencies {
-            implementation(libs.ktor.client.darwin)
         }
         androidMain.dependencies {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
-
-            implementation(libs.ktor.client.android)
 
             implementation(libs.generative.ai)
 
@@ -53,40 +84,6 @@ kotlin {
             implementation("com.google.firebase:firebase-database")
 
             implementation("com.android.billingclient:billing-ktx:7.0.0")
-        }
-        commonMain.dependencies {
-            implementation(compose.runtime)
-            implementation(compose.foundation)
-            implementation(compose.material)
-            implementation(compose.material3)
-            implementation(compose.ui)
-            implementation(compose.components.resources)
-            implementation(compose.components.uiToolingPreview)
-
-            implementation(libs.voyager.navigator)
-            implementation(libs.voyager.screenmodel)
-            implementation(libs.voyager.tab.navigator)
-            implementation(libs.voyager.transitions)
-            implementation(libs.voyager.koin)
-
-            implementation(libs.kamel.image)
-
-            implementation(libs.ktor.client.core)
-            implementation(libs.ktor.serialization.kotlinx.json)
-
-            implementation("io.insert-koin:koin-core:3.5.6")
-            implementation("io.insert-koin:koin-compose:1.1.5")
-
-            implementation(libs.orbit.mvi)
-
-            implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0")
-
-            implementation(libs.multiplatform.markdown.renderer.m2)
-
-            implementation("com.materialkolor:material-kolor:1.7.0")
-
-            implementation("dev.gitlive:firebase-database:1.13.0")
-            implementation("dev.gitlive:firebase-auth:1.13.0")
         }
     }
 }
@@ -142,6 +139,8 @@ buildkonfig {
         buildConfigField(FieldSpec.Type.INT, "versionCode", libs.versions.version.code.get())
         buildConfigField(FieldSpec.Type.STRING, "versionName", libs.versions.version.name.get())
         buildConfigField(FieldSpec.Type.STRING, "geminiKey", getPropertiesFile("gemini.key"))
+        buildConfigField(FieldSpec.Type.STRING, "firebaseWebKey", getPropertiesFile("firebase.web.key"))
+        buildConfigField(FieldSpec.Type.STRING, "firebaseDatabaseName", getPropertiesFile("firebase.database.name"))
     }
 }
 

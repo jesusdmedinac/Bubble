@@ -22,20 +22,18 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.logEvent
-import com.jesusdmedinac.bubble.data.ChatAIAPIImpl
 import com.jesusdmedinac.bubble.data.NetworkAPIImpl
 import com.jesusdmedinac.bubble.data.UsageAPIImpl
+import com.jesusdmedinac.bubble.data.getHttpClient
 import data.local.ConnectionState
 import data.local.HasUsagePermissionState
 import data.local.SendingData
-import data.remote.Analytics
-import data.remote.ChatAIAPI
+import data.remote.AnalyticsAPI
 import data.remote.Event
-import di.LocalAnalytics
+import di.LocalAnalyticsAPI
 import di.LocalNetworkAPI
 import di.LocalSendingData
 import di.LocalUsageAPI
-import getHttpClient
 import io.kamel.core.config.KamelConfig
 import io.kamel.core.config.httpFetcher
 import io.kamel.core.config.takeFrom
@@ -43,8 +41,6 @@ import io.kamel.image.config.Default
 import io.kamel.image.config.LocalKamelConfig
 import io.kamel.image.config.resourcesFetcher
 import kotlinx.coroutines.flow.update
-import kotlinx.serialization.json.Json
-import org.koin.dsl.module
 
 class MainActivity : ComponentActivity() {
     private val networkAPIImpl: NetworkAPIImpl by lazy { NetworkAPIImpl() }
@@ -174,8 +170,8 @@ class MainActivity : ComponentActivity() {
         val firebaseAnalytics = remember {
             FirebaseAnalytics.getInstance(this)
         }
-        val analytics = remember {
-            object : Analytics {
+        val analyticsAPI = remember {
+            object : AnalyticsAPI {
                 override fun sendEvent(event: Event) {
                     firebaseAnalytics.logEvent(event.name) {
                         event.params.forEach { (key, value) ->
@@ -194,7 +190,7 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-        CompositionLocalProvider(LocalAnalytics provides analytics) {
+        CompositionLocalProvider(LocalAnalyticsAPI provides analyticsAPI) {
             KamelCompositionProvider()
         }
     }
@@ -209,16 +205,7 @@ class MainActivity : ComponentActivity() {
             }
         }
         CompositionLocalProvider(LocalKamelConfig provides androidConfig) {
-            App(
-                chatModuleBlock = { database ->
-                    ChatAIAPIImpl(
-                        database = database,
-                        json = Json {
-                            ignoreUnknownKeys = true
-                            prettyPrint = true
-                        })
-                }
-            )
+            App()
         }
     }
 

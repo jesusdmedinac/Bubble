@@ -6,13 +6,14 @@ import data.formattedDuration
 import data.local.ConnectionState
 import data.local.HasUsagePermissionState
 import data.local.NetworkAPI
-import data.remote.Body
-import data.remote.Message
 import data.local.UsageAPI
-import data.remote.Analytics
-import data.remote.ChallengeStatus
+import data.mapper.toDomain
+import data.remote.AnalyticsAPI
+import data.remote.model.DataChallengeStatus
 import data.remote.ChallengesAPI
 import domain.ChatRepository
+import domain.model.Body
+import domain.model.Message
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
@@ -23,8 +24,10 @@ import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.syntax.simple.subIntent
-import presentation.mapper.toUIChallenge
-import presentation.mapper.toUIMessage
+import presentation.mapper.toDomain
+import presentation.mapper.toUI
+import presentation.model.UIBubbleMessage
+import presentation.model.UIBubblerMessage
 import presentation.model.UIChallenge
 import presentation.model.UIDailyUsageStats
 import presentation.model.UIMessage
@@ -36,7 +39,7 @@ class BubbleTabScreenModel(
     private val usageAPI: UsageAPI,
     private val networkAPI: NetworkAPI,
     private val challengesAPI: ChallengesAPI,
-    private val analytics: Analytics,
+    private val analyticsAPI: AnalyticsAPI,
 ) : ScreenModel, ContainerHost<BubbleTabState, BubbleTabSideEffect> {
     private val connectionFlow = channelFlow {
         networkAPI.onConnectionStateChange { trySend(it) }
@@ -75,7 +78,7 @@ class BubbleTabScreenModel(
                             messagesFlow
                                 .collect { messages ->
                                     messages
-                                        .map { it.toUIMessage() }
+                                        .map { it.toUI() }
                                         .also { reduce { state.copy(messages = it) } }
                                     reduce {
                                         state.copy(
@@ -101,10 +104,23 @@ class BubbleTabScreenModel(
                                         .forEach { uiMessage ->
                                             val challenge = challenges
                                                 .firstOrNull { it.id == uiMessage.body.challenge?.id }
+                                                ?.toDomain()
+                                                ?.toUI()
                                             if (challenge != null) {
-                                                val message = uiMessage.toMessage()
-                                                    .let { it.copy(body = it.body.copy(challenge = challenge)) }
-                                                chatRepository.saveMessage(message)
+                                                val message = when (uiMessage) {
+                                                    is UIBubbleMessage -> uiMessage.copy(
+                                                        body = uiMessage.body.copy(
+                                                            challenge = challenge
+                                                        )
+                                                    )
+
+                                                    is UIBubblerMessage -> uiMessage.copy(
+                                                        body = uiMessage.body.copy(
+                                                            challenge = challenge
+                                                        )
+                                                    )
+                                                }
+                                                chatRepository.saveMessage(message.toDomain())
                                             }
                                         }
                                 }
@@ -179,10 +195,10 @@ class BubbleTabScreenModel(
             )
         }
         val dataChallenge = challenge.toDataChallenge()
-            .copy(status = ChallengeStatus.ACCEPTED)
+            .copy(status = DataChallengeStatus.ACCEPTED)
         challengesAPI.saveChallenge(dataChallenge)
-        analytics.sendSaveChallengeEvent(
-            Analytics.SCREEN_BUBBLE_TAB,
+        analyticsAPI.sendSaveChallengeEvent(
+            AnalyticsAPI.SCREEN_BUBBLE_TAB,
             dataChallenge,
         )
         reduce {
@@ -196,8 +212,8 @@ class BubbleTabScreenModel(
         val dataChallenge = challenge.toDataChallenge()
             .copy(rejected = !challenge.rejected)
         challengesAPI.saveChallenge(dataChallenge)
-        analytics.sendSaveChallengeEvent(
-            Analytics.SCREEN_BUBBLE_TAB,
+        analyticsAPI.sendSaveChallengeEvent(
+            AnalyticsAPI.SCREEN_BUBBLE_TAB,
             dataChallenge,
         )
     }

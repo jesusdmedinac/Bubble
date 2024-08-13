@@ -1,26 +1,29 @@
 package data.remote
 
+import data.remote.model.DataUser
 import data.utils.FirebaseUtils
-import dev.gitlive.firebase.auth.FirebaseAuth
-import dev.gitlive.firebase.database.FirebaseDatabase
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.last
-import kotlinx.coroutines.flow.lastOrNull
-import kotlinx.coroutines.flow.map
 
 interface UserAPI {
-    suspend fun initUser(): Result<Unit>
+    suspend fun initUser(dataUser: DataUser): Result<Unit>
+    suspend fun getUser(): Result<DataUser>
 }
 
 class UserAPIImpl(
     private val firebaseUtils: FirebaseUtils,
 ) : UserAPI {
-    override suspend fun initUser(): Result<Unit> = runCatching {
+    override suspend fun initUser(dataUser: DataUser): Result<Unit> = runCatching {
         val child = firebaseUtils.getCurrentUserChild()
         if (child?.valueEvents?.firstOrNull()?.exists == false) {
-            child.setValue(User(id = child.key.toString()))
+            child.setValue(dataUser)
         }
+    }
+
+    override suspend fun getUser(): Result<DataUser> = runCatching {
+        firebaseUtils.getCurrentUserChild()
+            ?.valueEvents
+            ?.firstOrNull()
+            ?.value()
+            ?: throw Exception("User not found")
     }
 }
