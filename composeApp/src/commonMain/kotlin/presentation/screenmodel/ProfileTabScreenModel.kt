@@ -7,6 +7,7 @@ import data.local.UsageAPI
 import data.mapper.toDomain
 import data.remote.AnalyticsAPI
 import data.remote.ChallengesAPI
+import data.remote.model.DataChallengeStatus
 import data.startOfWeekInMillis
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
@@ -111,7 +112,7 @@ class ProfileTabScreenModel(
         val dataChallenge = challenge.toDataChallenge()
             .copy(
                 rejected = false,
-                status = data.remote.model.DataChallengeStatus.SUGGESTED
+                status = DataChallengeStatus.SUGGESTED
             )
         challengesAPI.saveChallenge(dataChallenge)
         analyticsAPI.sendSaveChallengeEvent(
@@ -122,7 +123,7 @@ class ProfileTabScreenModel(
 
     fun acceptChallenge(challenge: UIChallenge) = intent {
         val dataChallenge = challenge.toDataChallenge()
-            .copy(status = data.remote.model.DataChallengeStatus.ACCEPTED)
+            .copy(status = DataChallengeStatus.ACCEPTED)
         challengesAPI.saveChallenge(dataChallenge)
         analyticsAPI.sendSaveChallengeEvent(
             AnalyticsAPI.SCREEN_PROFILE_TAB,
@@ -132,7 +133,7 @@ class ProfileTabScreenModel(
 
     fun completeChallenge(challenge: UIChallenge) = intent {
         val dataChallenge = challenge.toDataChallenge()
-            .copy(status = data.remote.model.DataChallengeStatus.COMPLETED)
+            .copy(status = DataChallengeStatus.COMPLETED)
         challengesAPI.saveChallenge(dataChallenge)
         analyticsAPI.sendSaveChallengeEvent(
             AnalyticsAPI.SCREEN_PROFILE_TAB,
@@ -142,7 +143,7 @@ class ProfileTabScreenModel(
 
     fun cancelChallenge(challenge: UIChallenge) = intent {
         val dataChallenge = challenge.toDataChallenge()
-            .copy(status = data.remote.model.DataChallengeStatus.CANCELLED)
+            .copy(status = DataChallengeStatus.CANCELLED)
         challengesAPI.saveChallenge(dataChallenge)
         analyticsAPI.sendSaveChallengeEvent(
             AnalyticsAPI.SCREEN_PROFILE_TAB,
