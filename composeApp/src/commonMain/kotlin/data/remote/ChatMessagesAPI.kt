@@ -1,8 +1,7 @@
 package data.remote
 
+import data.remote.model.DataMessage
 import data.utils.FirebaseUtils
-import dev.gitlive.firebase.auth.FirebaseAuth
-import dev.gitlive.firebase.database.FirebaseDatabase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.firstOrNull
@@ -10,8 +9,8 @@ import kotlinx.coroutines.flow.map
 
 interface ChatMessagesAPI {
     suspend fun systemInstructions(): Result<String>
-    suspend fun saveMessage(message: Message): Result<Unit>
-    suspend fun getChatMessages(): Result<Flow<List<Message>>>
+    suspend fun saveMessage(dataMessage: DataMessage): Result<Unit>
+    suspend fun getChatMessages(): Result<Flow<List<DataMessage>>>
 }
 
 class ChatMessagesAPIImpl(
@@ -28,28 +27,28 @@ class ChatMessagesAPIImpl(
             .toString()
     }
 
-    override suspend fun saveMessage(message: Message): Result<Unit> = runCatching {
+    override suspend fun saveMessage(dataMessage: DataMessage): Result<Unit> = runCatching {
         firebaseUtils
             .getCurrentUserChild()
-            ?.child("messages")
-            ?.child(message.id.toString())
-            ?.setValue(message)
+            ?.child("dataMessages")
+            ?.child(dataMessage.id.toString())
+            ?.setValue(dataMessage)
     }
 
-    override suspend fun getChatMessages(): Result<Flow<List<Message>>> = runCatching {
+    override suspend fun getChatMessages(): Result<Flow<List<DataMessage>>> = runCatching {
         firebaseUtils
             .getCurrentUserChild()
-            ?.child("messages")
+            ?.child("dataMessages")
             ?.valueEvents
             ?.map { snapshot ->
-                val messages = mutableListOf<Message>()
+                val dataMessages = mutableListOf<DataMessage>()
                 snapshot
                     .children
                     .forEach { childSnapshot ->
-                        val message = childSnapshot.value<Message>()
-                        messages.add(message)
+                        val dataMessage = childSnapshot.value<DataMessage>()
+                        dataMessages.add(dataMessage)
                     }
-                messages.sortedByDescending { it.id }
+                dataMessages.sortedByDescending { it.id }
             }
             ?: emptyFlow()
     }

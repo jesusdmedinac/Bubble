@@ -1,12 +1,12 @@
 package domain
 
 import data.remote.AuthAPI
-import data.remote.User
+import data.remote.model.DataUser
 import data.remote.UserAPI
 
 interface UserRepository {
     suspend fun initUser(): Result<Unit>
-    suspend fun getUser(): Result<User>
+    suspend fun getUser(): Result<DataUser>
 }
 
 class UserRepositoryImpl(
@@ -20,5 +20,5 @@ class UserRepositoryImpl(
             onFailure = { Result.failure(it) }
         )
 
-    override suspend fun getUser(): Result<User> = userAPI.getUser()
+    override suspend fun getUser(): Result<DataUser> = userAPI.getUser()
 }

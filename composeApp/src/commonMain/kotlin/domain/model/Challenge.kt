@@ -1,8 +1,5 @@
-package data.remote
+package domain.model
 
-import kotlinx.serialization.Serializable
-
-@Serializable
 data class Challenge(
     val id: Int = -1,
     val title: String = "",
@@ -14,7 +11,6 @@ data class Challenge(
     val status: ChallengeStatus = ChallengeStatus.SUGGESTED,
 )
 
-@Serializable
 enum class ChallengeCategory(
     val title: String
 ) {
@@ -32,7 +28,6 @@ enum class ChallengeCategory(
     MUSICA_Y_ENTRETENIMIENTO("Música y entretenimiento"),
 }
 
-@Serializable
 enum class ChallengeStatus {
     SUGGESTED,
     ACCEPTED,

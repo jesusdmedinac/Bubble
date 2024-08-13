@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -18,7 +17,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -41,7 +39,7 @@ import bubble.composeapp.generated.resources.Res
 import bubble.composeapp.generated.resources.ic_chat_bubble
 import bubble.composeapp.generated.resources.ic_message
 import bubble.composeapp.generated.resources.ic_send
-import di.LocalAnalytics
+import di.LocalAnalyticsAPI
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.painterResource
 
@@ -54,7 +52,7 @@ fun BubbleTextField(
     onSendClick: (TextFieldValue) -> Unit = {},
     modifier: Modifier = Modifier,
 ) {
-    val analytics = LocalAnalytics.current
+    val analytics = LocalAnalyticsAPI.current
     val noMoreMessages = remainingFreeMessages <= 0
     val isSendingMessageEnabled = !isSendingMessage && !noMoreMessages && value.text.isNotEmpty()
     Row(

@@ -6,11 +6,11 @@ import data.formattedDuration
 import data.local.ConnectionState
 import data.local.HasUsagePermissionState
 import data.local.NetworkAPI
-import data.remote.Body
-import data.remote.Message
+import data.remote.model.DataBody
+import data.remote.model.DataMessage
 import data.local.UsageAPI
-import data.remote.Analytics
-import data.remote.ChallengeStatus
+import data.remote.AnalyticsAPI
+import data.remote.model.DataChallengeStatus
 import data.remote.ChallengesAPI
 import domain.ChatRepository
 import kotlinx.coroutines.coroutineScope
@@ -23,7 +23,6 @@ import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.syntax.simple.subIntent
-import presentation.mapper.toUIChallenge
 import presentation.mapper.toUIMessage
 import presentation.model.UIChallenge
 import presentation.model.UIDailyUsageStats
@@ -36,7 +35,7 @@ class BubbleTabScreenModel(
     private val usageAPI: UsageAPI,
     private val networkAPI: NetworkAPI,
     private val challengesAPI: ChallengesAPI,
-    private val analytics: Analytics,
+    private val analyticsAPI: AnalyticsAPI,
 ) : ScreenModel, ContainerHost<BubbleTabState, BubbleTabSideEffect> {
     private val connectionFlow = channelFlow {
         networkAPI.onConnectionStateChange { trySend(it) }
@@ -103,7 +102,7 @@ class BubbleTabScreenModel(
                                                 .firstOrNull { it.id == uiMessage.body.challenge?.id }
                                             if (challenge != null) {
                                                 val message = uiMessage.toMessage()
-                                                    .let { it.copy(body = it.body.copy(challenge = challenge)) }
+                                                    .let { it.copy(dataBody = it.dataBody.copy(dataChallenge = challenge)) }
                                                 chatRepository.saveMessage(message)
                                             }
                                         }
@@ -159,10 +158,10 @@ class BubbleTabScreenModel(
             )
         }
         chatRepository.sendMessage(
-            Message(
+            DataMessage(
                 id = state.messages.size + 1,
                 author = "user",
-                body = Body(message = textMessage)
+                dataBody = DataBody(message = textMessage)
             )
         )
         reduce {
@@ -179,10 +178,10 @@ class BubbleTabScreenModel(
             )
         }
         val dataChallenge = challenge.toDataChallenge()
-            .copy(status = ChallengeStatus.ACCEPTED)
+            .copy(status = DataChallengeStatus.ACCEPTED)
         challengesAPI.saveChallenge(dataChallenge)
-        analytics.sendSaveChallengeEvent(
-            Analytics.SCREEN_BUBBLE_TAB,
+        analyticsAPI.sendSaveChallengeEvent(
+            AnalyticsAPI.SCREEN_BUBBLE_TAB,
             dataChallenge,
         )
         reduce {
@@ -196,8 +195,8 @@ class BubbleTabScreenModel(
         val dataChallenge = challenge.toDataChallenge()
             .copy(rejected = !challenge.rejected)
         challengesAPI.saveChallenge(dataChallenge)
-        analytics.sendSaveChallengeEvent(
-            Analytics.SCREEN_BUBBLE_TAB,
+        analyticsAPI.sendSaveChallengeEvent(
+            AnalyticsAPI.SCREEN_BUBBLE_TAB,
             dataChallenge,
         )
     }

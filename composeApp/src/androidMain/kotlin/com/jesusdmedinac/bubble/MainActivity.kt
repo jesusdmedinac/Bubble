@@ -28,9 +28,9 @@ import com.jesusdmedinac.bubble.data.getHttpClient
 import data.local.ConnectionState
 import data.local.HasUsagePermissionState
 import data.local.SendingData
-import data.remote.Analytics
+import data.remote.AnalyticsAPI
 import data.remote.Event
-import di.LocalAnalytics
+import di.LocalAnalyticsAPI
 import di.LocalNetworkAPI
 import di.LocalSendingData
 import di.LocalUsageAPI
@@ -170,8 +170,8 @@ class MainActivity : ComponentActivity() {
         val firebaseAnalytics = remember {
             FirebaseAnalytics.getInstance(this)
         }
-        val analytics = remember {
-            object : Analytics {
+        val analyticsAPI = remember {
+            object : AnalyticsAPI {
                 override fun sendEvent(event: Event) {
                     firebaseAnalytics.logEvent(event.name) {
                         event.params.forEach { (key, value) ->
@@ -190,7 +190,7 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-        CompositionLocalProvider(LocalAnalytics provides analytics) {
+        CompositionLocalProvider(LocalAnalyticsAPI provides analyticsAPI) {
             KamelCompositionProvider()
         }
     }

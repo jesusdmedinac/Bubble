@@ -1,7 +1,7 @@
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.window.ComposeUIViewController
 import data.local.HasUsagePermissionState
-import data.remote.Analytics
+import data.remote.AnalyticsAPI
 import data.local.NetworkAPI
 import data.remote.Event
 import data.local.SendingData
@@ -9,7 +9,7 @@ import data.local.UsageAPI
 import data.local.UsageStats
 import di.LocalUsageAPI
 import di.LocalSendingData
-import di.LocalAnalytics
+import di.LocalAnalyticsAPI
 import di.LocalNetworkAPI
 import platform.UIKit.UIActivity
 import platform.UIKit.UIActivityViewController
@@ -46,12 +46,12 @@ fun MainViewController(
                 }
             }
             CompositionLocalProvider(LocalSendingData provides sendingData) {
-                val analytics = object : Analytics {
+                val analyticsAPI = object : AnalyticsAPI {
                     override fun sendEvent(event: Event) {
                         // TODO implement send event to Firebase
                     }
                 }
-                CompositionLocalProvider(LocalAnalytics provides analytics) {
+                CompositionLocalProvider(LocalAnalyticsAPI provides analyticsAPI) {
                     App()
                 }
             }

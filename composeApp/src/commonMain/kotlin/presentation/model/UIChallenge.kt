@@ -1,7 +1,7 @@
 package presentation.model
 
-import data.remote.Challenge
-import data.remote.Reward
+import data.remote.model.DataChallenge
+import data.remote.model.DataReward
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -39,64 +39,64 @@ data class UIChallenge(
             """.trimIndent()
         }
 
-    fun toDataChallenge() = Challenge(
+    fun toDataChallenge() = DataChallenge(
         id = id,
         title = name,
         description = description,
         image = image,
         category = when (category) {
-            ChallengeCategory.TODO -> data.remote.ChallengeCategory.TODO
-            ChallengeCategory.LECTURA -> data.remote.ChallengeCategory.LECTURA
-            ChallengeCategory.AIRE_LIBRE -> data.remote.ChallengeCategory.AIRE_LIBRE
-            ChallengeCategory.ARTE -> data.remote.ChallengeCategory.ARTE
-            ChallengeCategory.EJERCICIO_Y_BIENESTAR_FISICO -> data.remote.ChallengeCategory.EJERCICIO_Y_BIENESTAR_FISICO
-            ChallengeCategory.MANUALIDADES_Y_PROYECTOS_DIY -> data.remote.ChallengeCategory.MANUALIDADES_Y_PROYECTOS_DIY
-            ChallengeCategory.COCINA_Y_COMIDA -> data.remote.ChallengeCategory.COCINA_Y_COMIDA
-            ChallengeCategory.VOLUNTARIADO_Y_COMUNIDAD -> data.remote.ChallengeCategory.VOLUNTARIADO_Y_COMUNIDAD
-            ChallengeCategory.DESARROLLO_PERSONAL_Y_APRENDIZAJE -> data.remote.ChallengeCategory.DESARROLLO_PERSONAL_Y_APRENDIZAJE
-            ChallengeCategory.SALUD_Y_BIENESTAR -> data.remote.ChallengeCategory.SALUD_Y_BIENESTAR
-            ChallengeCategory.DESAFIOS_RIDICULOS -> data.remote.ChallengeCategory.DESAFIOS_RIDICULOS
-            ChallengeCategory.MUSICA_Y_ENTRETENIMIENTO -> data.remote.ChallengeCategory.MUSICA_Y_ENTRETENIMIENTO
+            ChallengeCategory.TODO -> data.remote.model.DataChallengeCategory.TODO
+            ChallengeCategory.LECTURA -> data.remote.model.DataChallengeCategory.LECTURA
+            ChallengeCategory.AIRE_LIBRE -> data.remote.model.DataChallengeCategory.AIRE_LIBRE
+            ChallengeCategory.ARTE -> data.remote.model.DataChallengeCategory.ARTE
+            ChallengeCategory.EJERCICIO_Y_BIENESTAR_FISICO -> data.remote.model.DataChallengeCategory.EJERCICIO_Y_BIENESTAR_FISICO
+            ChallengeCategory.MANUALIDADES_Y_PROYECTOS_DIY -> data.remote.model.DataChallengeCategory.MANUALIDADES_Y_PROYECTOS_DIY
+            ChallengeCategory.COCINA_Y_COMIDA -> data.remote.model.DataChallengeCategory.COCINA_Y_COMIDA
+            ChallengeCategory.VOLUNTARIADO_Y_COMUNIDAD -> data.remote.model.DataChallengeCategory.VOLUNTARIADO_Y_COMUNIDAD
+            ChallengeCategory.DESARROLLO_PERSONAL_Y_APRENDIZAJE -> data.remote.model.DataChallengeCategory.DESARROLLO_PERSONAL_Y_APRENDIZAJE
+            ChallengeCategory.SALUD_Y_BIENESTAR -> data.remote.model.DataChallengeCategory.SALUD_Y_BIENESTAR
+            ChallengeCategory.DESAFIOS_RIDICULOS -> data.remote.model.DataChallengeCategory.DESAFIOS_RIDICULOS
+            ChallengeCategory.MUSICA_Y_ENTRETENIMIENTO -> data.remote.model.DataChallengeCategory.MUSICA_Y_ENTRETENIMIENTO
         },
         rejected = rejected,
         status = when (status) {
-            ChallengeStatus.SUGGESTED -> data.remote.ChallengeStatus.SUGGESTED
-            ChallengeStatus.ACCEPTED -> data.remote.ChallengeStatus.ACCEPTED
-            ChallengeStatus.COMPLETED -> data.remote.ChallengeStatus.COMPLETED
-            ChallengeStatus.IN_PROGRESS -> data.remote.ChallengeStatus.IN_PROGRESS
-            ChallengeStatus.EXPIRED -> data.remote.ChallengeStatus.EXPIRED
-            ChallengeStatus.CANCELLED -> data.remote.ChallengeStatus.CANCELLED
+            ChallengeStatus.SUGGESTED -> data.remote.model.DataChallengeStatus.SUGGESTED
+            ChallengeStatus.ACCEPTED -> data.remote.model.DataChallengeStatus.ACCEPTED
+            ChallengeStatus.COMPLETED -> data.remote.model.DataChallengeStatus.COMPLETED
+            ChallengeStatus.IN_PROGRESS -> data.remote.model.DataChallengeStatus.IN_PROGRESS
+            ChallengeStatus.EXPIRED -> data.remote.model.DataChallengeStatus.EXPIRED
+            ChallengeStatus.CANCELLED -> data.remote.model.DataChallengeStatus.CANCELLED
         }
     )
 
-    fun toChallenge(): Challenge = Challenge(
+    fun toChallenge(): DataChallenge = DataChallenge(
         id = id,
         title = name,
         description = description,
         image = image,
-        rewards = rewards.map { it.toReward() },
+        dataRewards = rewards.map { it.toReward() },
         category = when (category) {
-            ChallengeCategory.TODO -> data.remote.ChallengeCategory.TODO
-            ChallengeCategory.LECTURA -> data.remote.ChallengeCategory.LECTURA
-            ChallengeCategory.AIRE_LIBRE -> data.remote.ChallengeCategory.AIRE_LIBRE
-            ChallengeCategory.ARTE -> data.remote.ChallengeCategory.ARTE
-            ChallengeCategory.EJERCICIO_Y_BIENESTAR_FISICO -> data.remote.ChallengeCategory.EJERCICIO_Y_BIENESTAR_FISICO
-            ChallengeCategory.MANUALIDADES_Y_PROYECTOS_DIY -> data.remote.ChallengeCategory.MANUALIDADES_Y_PROYECTOS_DIY
-            ChallengeCategory.COCINA_Y_COMIDA -> data.remote.ChallengeCategory.COCINA_Y_COMIDA
-            ChallengeCategory.VOLUNTARIADO_Y_COMUNIDAD -> data.remote.ChallengeCategory.VOLUNTARIADO_Y_COMUNIDAD
-            ChallengeCategory.DESARROLLO_PERSONAL_Y_APRENDIZAJE -> data.remote.ChallengeCategory.DESARROLLO_PERSONAL_Y_APRENDIZAJE
-            ChallengeCategory.SALUD_Y_BIENESTAR -> data.remote.ChallengeCategory.SALUD_Y_BIENESTAR
-            ChallengeCategory.DESAFIOS_RIDICULOS -> data.remote.ChallengeCategory.DESAFIOS_RIDICULOS
-            ChallengeCategory.MUSICA_Y_ENTRETENIMIENTO -> data.remote.ChallengeCategory.MUSICA_Y_ENTRETENIMIENTO
+            ChallengeCategory.TODO -> data.remote.model.DataChallengeCategory.TODO
+            ChallengeCategory.LECTURA -> data.remote.model.DataChallengeCategory.LECTURA
+            ChallengeCategory.AIRE_LIBRE -> data.remote.model.DataChallengeCategory.AIRE_LIBRE
+            ChallengeCategory.ARTE -> data.remote.model.DataChallengeCategory.ARTE
+            ChallengeCategory.EJERCICIO_Y_BIENESTAR_FISICO -> data.remote.model.DataChallengeCategory.EJERCICIO_Y_BIENESTAR_FISICO
+            ChallengeCategory.MANUALIDADES_Y_PROYECTOS_DIY -> data.remote.model.DataChallengeCategory.MANUALIDADES_Y_PROYECTOS_DIY
+            ChallengeCategory.COCINA_Y_COMIDA -> data.remote.model.DataChallengeCategory.COCINA_Y_COMIDA
+            ChallengeCategory.VOLUNTARIADO_Y_COMUNIDAD -> data.remote.model.DataChallengeCategory.VOLUNTARIADO_Y_COMUNIDAD
+            ChallengeCategory.DESARROLLO_PERSONAL_Y_APRENDIZAJE -> data.remote.model.DataChallengeCategory.DESARROLLO_PERSONAL_Y_APRENDIZAJE
+            ChallengeCategory.SALUD_Y_BIENESTAR -> data.remote.model.DataChallengeCategory.SALUD_Y_BIENESTAR
+            ChallengeCategory.DESAFIOS_RIDICULOS -> data.remote.model.DataChallengeCategory.DESAFIOS_RIDICULOS
+            ChallengeCategory.MUSICA_Y_ENTRETENIMIENTO -> data.remote.model.DataChallengeCategory.MUSICA_Y_ENTRETENIMIENTO
         },
         rejected = rejected,
         status = when (status) {
-            ChallengeStatus.SUGGESTED -> data.remote.ChallengeStatus.SUGGESTED
-            ChallengeStatus.ACCEPTED -> data.remote.ChallengeStatus.ACCEPTED
-            ChallengeStatus.COMPLETED -> data.remote.ChallengeStatus.COMPLETED
-            ChallengeStatus.IN_PROGRESS -> data.remote.ChallengeStatus.IN_PROGRESS
-            ChallengeStatus.EXPIRED -> data.remote.ChallengeStatus.EXPIRED
-            ChallengeStatus.CANCELLED -> data.remote.ChallengeStatus.CANCELLED
+            ChallengeStatus.SUGGESTED -> data.remote.model.DataChallengeStatus.SUGGESTED
+            ChallengeStatus.ACCEPTED -> data.remote.model.DataChallengeStatus.ACCEPTED
+            ChallengeStatus.COMPLETED -> data.remote.model.DataChallengeStatus.COMPLETED
+            ChallengeStatus.IN_PROGRESS -> data.remote.model.DataChallengeStatus.IN_PROGRESS
+            ChallengeStatus.EXPIRED -> data.remote.model.DataChallengeStatus.EXPIRED
+            ChallengeStatus.CANCELLED -> data.remote.model.DataChallengeStatus.CANCELLED
         }
     )
 
@@ -115,7 +115,7 @@ data class UIReward(
     val image: String = "",
     val points: Int = 0,
 ) {
-    fun toReward(): Reward = Reward(
+    fun toReward(): DataReward = DataReward(
         id = id,
         title = title,
         description = description,
