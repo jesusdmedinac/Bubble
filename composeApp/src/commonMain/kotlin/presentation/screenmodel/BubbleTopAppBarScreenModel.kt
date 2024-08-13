@@ -2,6 +2,8 @@ package presentation.screenmodel
 
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
+import data.mapper.toData
+import data.remote.AnalyticsAPI
 import data.today
 import domain.UserRepository
 import kotlinx.coroutines.coroutineScope
@@ -18,11 +20,13 @@ import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.syntax.simple.repeatOnSubscription
+import presentation.mapper.toDomain
 import presentation.mapper.toUI
 import presentation.model.UIUser
 
 class BubbleTopAppBarScreenModel(
     private val userRepository: UserRepository,
+    private val analyticsAPI: AnalyticsAPI,
 ) : ScreenModel, ContainerHost<BubbleTopAppBarState, BubbleTopAppBarSideEffect> {
     override val container: Container<BubbleTopAppBarState, BubbleTopAppBarSideEffect> =
         screenModelScope.container(BubbleTopAppBarState()) {
@@ -83,6 +87,7 @@ class BubbleTopAppBarScreenModel(
                 }
             }
         }
+        analyticsAPI.sendUpdateStreakEvent(user.toDomain().toData(), streak)
     }
 }
 
