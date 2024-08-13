@@ -4,6 +4,7 @@ import android.util.Log
 import com.google.ai.client.generativeai.GenerativeModel
 import com.google.ai.client.generativeai.type.content
 import com.jesusdmedinac.bubble.BuildConfig
+import com.jesusdmedinac.bubble.BuildKonfig
 import data.remote.Body
 import data.remote.ChatAIAPI
 import data.remote.Message
@@ -25,7 +26,7 @@ class ChatAIAPIImpl(
             // The Gemini 1.5 models are versatile and work with most use cases
             modelName = "gemini-1.5-flash",
             // Access your API key as a Build Configuration variable (see "Set up your API key" above)
-            apiKey = BuildConfig.apiKey,
+            apiKey = BuildKonfig.geminiKey,
             systemInstruction = content { text(systemInstructions) },
         )
     }

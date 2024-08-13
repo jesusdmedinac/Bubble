@@ -120,11 +120,6 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-
-            buildConfigField("String", "apiKey", getPropertiesFile("apiKey"))
-        }
-        getByName("debug") {
-            buildConfigField("String", "apiKey", getPropertiesFile("apiKey"))
         }
     }
     compileOptions {
@@ -146,6 +141,7 @@ buildkonfig {
     defaultConfigs {
         buildConfigField(FieldSpec.Type.INT, "versionCode", libs.versions.version.code.get())
         buildConfigField(FieldSpec.Type.STRING, "versionName", libs.versions.version.name.get())
+        buildConfigField(FieldSpec.Type.STRING, "geminiKey", getPropertiesFile("gemini.key"))
     }
 }
 
