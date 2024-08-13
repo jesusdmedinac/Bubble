@@ -30,7 +30,7 @@ class ChatMessagesAPIImpl(
     override suspend fun saveMessage(dataMessage: DataMessage): Result<Unit> = runCatching {
         firebaseUtils
             .getCurrentUserChild()
-            ?.child("dataMessages")
+            ?.child("messages")
             ?.child(dataMessage.id.toString())
             ?.setValue(dataMessage)
     }
@@ -38,7 +38,7 @@ class ChatMessagesAPIImpl(
     override suspend fun getChatMessages(): Result<Flow<List<DataMessage>>> = runCatching {
         firebaseUtils
             .getCurrentUserChild()
-            ?.child("dataMessages")
+            ?.child("messages")
             ?.valueEvents
             ?.map { snapshot ->
                 val dataMessages = mutableListOf<DataMessage>()

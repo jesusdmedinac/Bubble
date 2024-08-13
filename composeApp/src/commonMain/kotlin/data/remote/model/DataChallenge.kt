@@ -8,7 +8,7 @@ data class DataChallenge(
     val title: String = "",
     val description: String = "",
     val image: String = "",
-    val dataRewards: List<DataReward> = emptyList(),
+    val rewards: List<DataReward> = emptyList(),
     val category: DataChallengeCategory = DataChallengeCategory.TODO,
     val rejected: Boolean = false,
     val status: DataChallengeStatus = DataChallengeStatus.SUGGESTED,

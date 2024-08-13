@@ -8,6 +8,7 @@ import data.remote.ChatMessagesAPI
 import data.remote.ChatMessagesAPIImpl
 import data.remote.UserAPI
 import data.remote.UserAPIImpl
+import data.repository.ChatRepositoryImpl
 import data.utils.FirebaseUtils
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.auth.FirebaseAuth
@@ -16,7 +17,6 @@ import dev.gitlive.firebase.database.FirebaseDatabase
 import dev.gitlive.firebase.database.database
 import di.KoinDI.get
 import domain.ChatRepository
-import domain.ChatRepositoryImpl
 import domain.UserRepository
 import domain.UserRepositoryImpl
 import org.koin.core.KoinApplication

@@ -6,13 +6,14 @@ import data.formattedDuration
 import data.local.ConnectionState
 import data.local.HasUsagePermissionState
 import data.local.NetworkAPI
-import data.remote.model.DataBody
-import data.remote.model.DataMessage
 import data.local.UsageAPI
+import data.mapper.toDomain
 import data.remote.AnalyticsAPI
 import data.remote.model.DataChallengeStatus
 import data.remote.ChallengesAPI
 import domain.ChatRepository
+import domain.model.Body
+import domain.model.Message
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
@@ -23,7 +24,10 @@ import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.postSideEffect
 import org.orbitmvi.orbit.syntax.simple.reduce
 import org.orbitmvi.orbit.syntax.simple.subIntent
-import presentation.mapper.toUIMessage
+import presentation.mapper.toDomain
+import presentation.mapper.toUI
+import presentation.model.UIBubbleMessage
+import presentation.model.UIBubblerMessage
 import presentation.model.UIChallenge
 import presentation.model.UIDailyUsageStats
 import presentation.model.UIMessage
@@ -74,7 +78,7 @@ class BubbleTabScreenModel(
                             messagesFlow
                                 .collect { messages ->
                                     messages
-                                        .map { it.toUIMessage() }
+                                        .map { it.toUI() }
                                         .also { reduce { state.copy(messages = it) } }
                                     reduce {
                                         state.copy(
@@ -100,10 +104,23 @@ class BubbleTabScreenModel(
                                         .forEach { uiMessage ->
                                             val challenge = challenges
                                                 .firstOrNull { it.id == uiMessage.body.challenge?.id }
+                                                ?.toDomain()
+                                                ?.toUI()
                                             if (challenge != null) {
-                                                val message = uiMessage.toMessage()
-                                                    .let { it.copy(dataBody = it.dataBody.copy(dataChallenge = challenge)) }
-                                                chatRepository.saveMessage(message)
+                                                val message = when (uiMessage) {
+                                                    is UIBubbleMessage -> uiMessage.copy(
+                                                        body = uiMessage.body.copy(
+                                                            challenge = challenge
+                                                        )
+                                                    )
+
+                                                    is UIBubblerMessage -> uiMessage.copy(
+                                                        body = uiMessage.body.copy(
+                                                            challenge = challenge
+                                                        )
+                                                    )
+                                                }
+                                                chatRepository.saveMessage(message.toDomain())
                                             }
                                         }
                                 }
@@ -158,10 +175,10 @@ class BubbleTabScreenModel(
             )
         }
         chatRepository.sendMessage(
-            DataMessage(
+            Message(
                 id = state.messages.size + 1,
                 author = "user",
-                dataBody = DataBody(message = textMessage)
+                body = Body(message = textMessage)
             )
         )
         reduce {

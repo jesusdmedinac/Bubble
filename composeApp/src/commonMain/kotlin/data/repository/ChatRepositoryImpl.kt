@@ -77,10 +77,10 @@ class ChatRepositoryImpl(
                         .let { bubbleMessage -> saveMessage(bubbleMessage) }
                         .let { Result.success(Unit) }
                 } else {
-                    Result.failure(Exception("No dataMessages found"))
+                    Result.failure(Exception("No messages found"))
                 }
             }
-            ?: Result.failure(Exception("No dataMessages found"))
+            ?: Result.failure(Exception("No messages found"))
 
     override suspend fun saveMessage(message: Message): Result<Unit> =
         chatMessagesAPI.saveMessage(message.toData())

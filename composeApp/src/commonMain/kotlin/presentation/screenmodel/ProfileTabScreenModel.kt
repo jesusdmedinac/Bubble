@@ -4,6 +4,7 @@ import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import data.formattedDuration
 import data.local.UsageAPI
+import data.mapper.toDomain
 import data.remote.AnalyticsAPI
 import data.remote.ChallengesAPI
 import data.startOfWeekInMillis
@@ -20,7 +21,7 @@ import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
-import presentation.mapper.toUIChallenge
+import presentation.mapper.toUI
 import presentation.model.ChallengeStatus
 import presentation.model.UIChallenge
 import presentation.model.UIDailyUsageStats
@@ -43,7 +44,7 @@ class ProfileTabScreenModel(
                             challengesFlow
                                 .collect { challenges ->
                                     reduce {
-                                        state.copy(challenges = challenges.map { it.toUIChallenge() })
+                                        state.copy(challenges = challenges.map { it.toDomain().toUI() })
                                     }
                                 }
                         }

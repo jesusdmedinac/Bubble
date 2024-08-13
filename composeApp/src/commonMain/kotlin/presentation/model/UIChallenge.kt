@@ -74,7 +74,7 @@ data class UIChallenge(
         title = name,
         description = description,
         image = image,
-        dataRewards = rewards.map { it.toReward() },
+        rewards = rewards.map { it.toReward() },
         category = when (category) {
             ChallengeCategory.TODO -> data.remote.model.DataChallengeCategory.TODO
             ChallengeCategory.LECTURA -> data.remote.model.DataChallengeCategory.LECTURA

@@ -9,12 +9,6 @@ sealed interface UIMessage {
     val author: String
     val body: UIMessageBody
     val isFree: Boolean
-
-    fun toMessage(): DataMessage = DataMessage(
-        id = id,
-        author = author,
-        dataBody = body.toBody(),
-    )
 }
 
 data class UIBubblerMessage(
@@ -36,12 +30,7 @@ data class UIMessageBody(
     val message: String,
     val challenge: UIChallenge? = null,
     val callToAction: UICallToActionType? = null
-) {
-    fun toBody(): DataBody = DataBody(
-        message = message,
-        dataChallenge = challenge?.toChallenge()
-    )
-}
+)
 
 @Serializable
 enum class UICallToActionType {

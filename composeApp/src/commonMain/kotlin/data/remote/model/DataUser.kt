@@ -1,7 +1,10 @@
 package data.remote.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class DataUser(
     val id: String = "",
-    val dataMessages: List<DataMessage> = emptyList(),
-    val dataChallenges: List<DataChallenge> = emptyList(),
+    val messages: List<DataMessage> = emptyList(),
+    val challenges: List<DataChallenge> = emptyList(),
 )

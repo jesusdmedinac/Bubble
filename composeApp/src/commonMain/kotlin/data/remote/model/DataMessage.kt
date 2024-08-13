@@ -6,11 +6,11 @@ import kotlinx.serialization.Serializable
 data class DataMessage(
     val id: Int,
     val author: String,
-    val dataBody: DataBody,
+    val body: DataBody,
 )
 
 @Serializable
 data class DataBody(
     val message: String? = "",
-    val dataChallenge: DataChallenge? = null
+    val challenge: DataChallenge? = null
 )
