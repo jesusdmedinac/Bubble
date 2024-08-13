@@ -71,6 +71,7 @@ import bubble.composeapp.generated.resources.ic_chat_bubble
 import bubble.composeapp.generated.resources.ic_thumb_down
 import bubble.composeapp.generated.resources.tab_title_profile
 import cafe.adriel.voyager.koin.getNavigatorScreenModel
+import cafe.adriel.voyager.koin.koinNavigatorScreenModel
 import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
@@ -109,7 +110,7 @@ object ProfileTab : Tab {
         val tabNavigator = LocalTabNavigator.current
         val appNavigator = LocalAppNavigator.currentOrThrow
         val usageAPI = LocalUsageAPI.current
-        val screenModel = appNavigator.getNavigatorScreenModel<ProfileTabScreenModel>()
+        val screenModel = appNavigator.koinNavigatorScreenModel<ProfileTabScreenModel>()
         val state by screenModel.container.stateFlow.collectAsState()
         LaunchedEffect(Unit) {
             screenModel.loadUsageStats()

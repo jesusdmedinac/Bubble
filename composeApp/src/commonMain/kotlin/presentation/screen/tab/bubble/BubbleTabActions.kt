@@ -1,70 +1,65 @@
 package presentation.screen.tab.bubble
 
-import di.LocalAppNavigator
-import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.unit.dp
 import bubble.composeapp.generated.resources.Res
-import bubble.composeapp.generated.resources.ic_help
-import bubble.composeapp.generated.resources.ic_premium
-import bubble.composeapp.generated.resources.ic_settings
+import bubble.composeapp.generated.resources.ic_chat_bubble
+import bubble.composeapp.generated.resources.ic_streak
+import cafe.adriel.voyager.koin.koinNavigatorScreenModel
+import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
-import presentation.screen.PaywallScreen
+import presentation.screenmodel.BubbleTopAppBarScreenModel
 
 @Composable
-fun BubbleTabActions() {
-    val appNavigator = LocalAppNavigator.currentOrThrow
-    Button(
-        onClick = {
-            appNavigator.push(PaywallScreen)
-        },
-        modifier = Modifier
-            .size(48.dp)
-            .clip(CircleShape),
-        contentPadding = PaddingValues(0.dp)
-    ) {
-        Icon(
-            painterResource(Res.drawable.ic_premium),
-            contentDescription = null
-        )
-    }
-    Spacer(modifier = Modifier.size(8.dp))/*
-    Button(
+fun RowScope.BubbleTabActions() {
+    val navigator = LocalNavigator.currentOrThrow
+    val screenModel = navigator.koinNavigatorScreenModel<BubbleTopAppBarScreenModel>()
+    val state by screenModel.container.stateFlow.collectAsState()
+    TextButton(
         onClick = {},
-        modifier = Modifier
-            .size(48.dp)
-            .clip(CircleShape),
-        contentPadding = PaddingValues(0.dp)
+        colors = ButtonDefaults.textButtonColors(
+            containerColor = MaterialTheme.colorScheme.onPrimary,
+            contentColor = MaterialTheme.colorScheme.primary,
+        ),
     ) {
         Icon(
-            painterResource(Res.drawable.ic_settings),
-            contentDescription = null
+            painter = painterResource(Res.drawable.ic_chat_bubble),
+            contentDescription = null,
+            modifier = Modifier.size(32.dp)
+        )
+        Text(
+            text = state.user.points.toString(),
+            style = MaterialTheme.typography.titleLarge
         )
     }
-    Spacer(modifier = Modifier.size(8.dp))*/
-    val uriHandler = LocalUriHandler.current
-    Button(
-        onClick = {
-            uriHandler.openUri("https://tally.so/r/w2kMdV")
-        },
-        modifier = Modifier
-            .size(48.dp)
-            .clip(CircleShape),
-        contentPadding = PaddingValues(0.dp)
+    Spacer(modifier = Modifier.weight(1f))
+    TextButton(
+        onClick = {},
+        colors = ButtonDefaults.textButtonColors(
+            containerColor = MaterialTheme.colorScheme.onPrimary,
+            contentColor = MaterialTheme.colorScheme.primary,
+        )
     ) {
         Icon(
-            painterResource(Res.drawable.ic_help),
-            contentDescription = null
+            painter = painterResource(Res.drawable.ic_streak),
+            contentDescription = null,
+            modifier = Modifier.size(32.dp)
+        )
+        Text(
+            text = state.user.streak.size.toString(),
+            style = MaterialTheme.typography.titleLarge
         )
     }
 }

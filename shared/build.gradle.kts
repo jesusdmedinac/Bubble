@@ -37,6 +37,8 @@ kotlin {
             api(libs.ktor.client.auth)
             api(libs.ktor.serialization.kotlinx.json)
             api(libs.koin.core)
+
+            api(libs.kotlinx.datetime)
         }
     }
 }

@@ -54,8 +54,6 @@ kotlin {
 
             implementation(libs.koin.compose)
 
-            implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.6.0")
-
             implementation(libs.multiplatform.markdown.renderer.m2)
 
             implementation("com.materialkolor:material-kolor:1.7.0")

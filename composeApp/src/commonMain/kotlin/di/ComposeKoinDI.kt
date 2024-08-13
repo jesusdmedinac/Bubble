@@ -23,6 +23,7 @@ import org.koin.core.parameter.ParametersDefinition
 import org.koin.core.qualifier.Qualifier
 import org.koin.dsl.module
 import presentation.screenmodel.BubbleTabScreenModel
+import presentation.screenmodel.BubbleTopAppBarScreenModel
 import presentation.screenmodel.ProfileTabScreenModel
 import kotlin.native.concurrent.ThreadLocal
 
@@ -49,6 +50,7 @@ fun domainModule() = module {
 }
 
 fun presentationModule() = module {
+    single { BubbleTopAppBarScreenModel(get()) }
     single { BubbleTabScreenModel(get(), get(), get(), get(), get()) }
     single { ProfileTabScreenModel(get(), get(), get()) }
 }

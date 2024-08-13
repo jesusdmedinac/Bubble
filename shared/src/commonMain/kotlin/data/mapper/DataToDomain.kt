@@ -57,6 +57,8 @@ fun DataUser.toDomain(): User = User(
     id = id,
     messages = messages.toDomain(),
     challenges = challenges.toDomain(),
+    streak = streak,
+    points = points
 )
 
 fun DataMessages.toDomain(): List<Message> =

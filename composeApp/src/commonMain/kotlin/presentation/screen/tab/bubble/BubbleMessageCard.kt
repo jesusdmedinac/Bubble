@@ -36,6 +36,7 @@ import bubble.composeapp.generated.resources.ic_message_corner
 import bubble.composeapp.generated.resources.ic_thumb_down
 import bubble.composeapp.generated.resources.ic_thumb_down_off
 import cafe.adriel.voyager.koin.getNavigatorScreenModel
+import cafe.adriel.voyager.koin.koinNavigatorScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.mikepenz.markdown.m2.Markdown
@@ -52,7 +53,7 @@ import presentation.screenmodel.BubbleTabState
 @Composable
 fun BubbleMessageCard(uiMessage: UIBubbleMessage) {
     val navigator = LocalNavigator.currentOrThrow
-    val screenModel = navigator.getNavigatorScreenModel<BubbleTabScreenModel>()
+    val screenModel = navigator.koinNavigatorScreenModel<BubbleTabScreenModel>()
     val state: BubbleTabState by screenModel.container.stateFlow.collectAsState()
     val usageAPI = LocalUsageAPI.current
     val secondary = MaterialTheme.colorScheme.secondary
