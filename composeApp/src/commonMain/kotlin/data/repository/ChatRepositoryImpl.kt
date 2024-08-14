@@ -7,10 +7,9 @@ import data.remote.model.DataBody
 import data.remote.ChatMessagesAPI
 import data.remote.GeminiAPI
 import data.remote.model.ContentItem
-import data.remote.model.DataMessage
 import data.remote.model.GeminiContent
-import domain.ChatRepository
-import domain.UserRepository
+import domain.repository.ChatRepository
+import domain.repository.UserRepository
 import domain.model.Message
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
@@ -66,23 +65,24 @@ class ChatRepositoryImpl(
                     .candidates
                     .firstOrNull()
                     ?.content
-                val dataBody = content
-                    ?.parts
-                    ?.firstOrNull()
-                    ?.text
-                    ?.let { Json.decodeFromString<DataBody>(it) }
-                if (dataBody != null) {
-                    Message(
-                        id = geminiContent.contents.size + 1,
-                        author = content.role,
-                        body = dataBody.toDomain()
-                    )
-                        .apply { analyticsAPI.sendChatResponseEvent(this.toData()) }
-                        .let { bubbleMessage -> saveMessage(bubbleMessage) }
-                        .let { Result.success(Unit) }
-                } else {
-                    Result.failure(Exception("No messages found"))
+                runCatching {
+                    content
+                        ?.parts
+                        ?.firstOrNull()
+                        ?.text
+                        ?.let { Json.decodeFromString<DataBody>(it) }
+                        ?: throw Exception("No messages found")
                 }
+                    .map { dataBody ->
+                        Message(
+                            id = geminiContent.contents.size + 1,
+                            author = content?.role ?: "model",
+                            body = dataBody.toDomain()
+                        )
+                            .apply { analyticsAPI.sendChatResponseEvent(this.toData()) }
+                            .let { bubbleMessage -> saveMessage(bubbleMessage) }
+                        Unit
+                    }
             }
             ?: Result.failure(Exception("No messages found"))
 

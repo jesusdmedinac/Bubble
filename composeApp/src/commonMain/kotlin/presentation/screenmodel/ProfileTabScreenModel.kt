@@ -4,11 +4,11 @@ import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import data.formattedDuration
 import data.local.UsageAPI
-import data.mapper.toDomain
+import data.mapper.toData
 import data.remote.AnalyticsAPI
-import data.remote.ChallengesAPI
-import data.remote.model.DataChallengeStatus
 import data.startOfWeekInMillis
+import domain.repository.ChallengeRepository
+import domain.usecase.ChallengeUseCase
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
@@ -22,6 +22,7 @@ import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
+import presentation.mapper.toDomain
 import presentation.mapper.toUI
 import presentation.model.ChallengeStatus
 import presentation.model.UIChallenge
@@ -31,21 +32,22 @@ import kotlin.math.max
 
 class ProfileTabScreenModel(
     private val usageAPI: UsageAPI,
-    private val challengesAPI: ChallengesAPI,
+    private val challengeRepository: ChallengeRepository,
     private val analyticsAPI: AnalyticsAPI,
+    private val challengeUseCase: ChallengeUseCase,
 ) : ScreenModel, ContainerHost<ProfileTabState, ProfileTabSideEffect> {
     override val container: Container<ProfileTabState, ProfileTabSideEffect> =
         screenModelScope.container(ProfileTabState()) {
             loadUsageStats()
             coroutineScope {
                 launch {
-                    challengesAPI
+                    challengeRepository
                         .getChallenges()
                         .onSuccess { challengesFlow ->
                             challengesFlow
                                 .collect { challenges ->
                                     reduce {
-                                        state.copy(challenges = challenges.map { it.toDomain().toUI() })
+                                        state.copy(challenges = challenges.map { it.toUI() })
                                     }
                                 }
                         }
@@ -99,56 +101,60 @@ class ProfileTabScreenModel(
     }
 
     fun rejectChallenge(challenge: UIChallenge) = intent {
-        val dataChallenge = challenge.toDataChallenge()
+        val dataChallenge = challenge
             .copy(rejected = true)
-        challengesAPI.saveChallenge(dataChallenge)
+        challengeRepository.saveChallenge(dataChallenge.toDomain())
         analyticsAPI.sendSaveChallengeEvent(
             AnalyticsAPI.SCREEN_PROFILE_TAB,
-            dataChallenge,
+            dataChallenge.toDomain().toData(),
         )
     }
 
     fun undoRejection(challenge: UIChallenge) = intent {
-        val dataChallenge = challenge.toDataChallenge()
-            .copy(
-                rejected = false,
-                status = DataChallengeStatus.SUGGESTED
-            )
-        challengesAPI.saveChallenge(dataChallenge)
-        analyticsAPI.sendSaveChallengeEvent(
-            AnalyticsAPI.SCREEN_PROFILE_TAB,
-            dataChallenge,
-        )
+        challengeUseCase
+            .suggest(challenge.toDomain())
+            .onSuccess { domainChallenge ->
+                analyticsAPI.sendSaveChallengeEvent(
+                    AnalyticsAPI.SCREEN_PROFILE_TAB,
+                    domainChallenge.toData(),
+                )
+            }
+            .onFailure {
+                it.printStackTrace()
+            }
     }
 
     fun acceptChallenge(challenge: UIChallenge) = intent {
-        val dataChallenge = challenge.toDataChallenge()
-            .copy(status = DataChallengeStatus.ACCEPTED)
-        challengesAPI.saveChallenge(dataChallenge)
-        analyticsAPI.sendSaveChallengeEvent(
-            AnalyticsAPI.SCREEN_PROFILE_TAB,
-            dataChallenge,
-        )
+        challengeUseCase
+            .accept(challenge.toDomain())
+            .onSuccess { domainChallenge ->
+                analyticsAPI.sendSaveChallengeEvent(
+                    AnalyticsAPI.SCREEN_PROFILE_TAB,
+                    domainChallenge.toData(),
+                )
+            }
     }
 
     fun completeChallenge(challenge: UIChallenge) = intent {
-        val dataChallenge = challenge.toDataChallenge()
-            .copy(status = DataChallengeStatus.COMPLETED)
-        challengesAPI.saveChallenge(dataChallenge)
-        analyticsAPI.sendSaveChallengeEvent(
-            AnalyticsAPI.SCREEN_PROFILE_TAB,
-            dataChallenge,
-        )
+        challengeUseCase
+            .complete(challenge.toDomain())
+            .onSuccess { domainChallenge ->
+                analyticsAPI.sendSaveChallengeEvent(
+                    AnalyticsAPI.SCREEN_PROFILE_TAB,
+                    domainChallenge.toData(),
+                )
+            }
     }
 
     fun cancelChallenge(challenge: UIChallenge) = intent {
-        val dataChallenge = challenge.toDataChallenge()
-            .copy(status = DataChallengeStatus.CANCELLED)
-        challengesAPI.saveChallenge(dataChallenge)
-        analyticsAPI.sendSaveChallengeEvent(
-            AnalyticsAPI.SCREEN_PROFILE_TAB,
-            dataChallenge,
-        )
+        challengeUseCase
+            .cancel(challenge.toDomain())
+            .onSuccess { domainChallenge ->
+                analyticsAPI.sendSaveChallengeEvent(
+                    AnalyticsAPI.SCREEN_PROFILE_TAB,
+                    domainChallenge.toData(),
+                )
+            }
     }
 }
 

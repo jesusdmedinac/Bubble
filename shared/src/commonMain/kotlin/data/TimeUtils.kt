@@ -1,16 +1,12 @@
 package data
 
-import data.local.UsageStats
 import kotlinx.datetime.Clock
 import kotlinx.datetime.DateTimeUnit
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
-import kotlinx.datetime.format.DayOfWeekNames
 import kotlinx.datetime.isoDayNumber
 import kotlinx.datetime.minus
-import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayIn
 
@@ -75,13 +71,5 @@ fun getDayOfTheWeekAsString(): String {
     val daysOfWeek =
         listOf("Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado")
     return daysOfWeek[getDayOfTheWeek() - 1]
-}
-
-fun List<UsageStats>.getAverageDailyUsage(): Long {
-    if (isEmpty()) return 0L
-    val today = getDayOfTheWeek()
-
-    val totalUsage = sumOf { it.totalTimeInForeground }
-    return totalUsage / today
 }
 

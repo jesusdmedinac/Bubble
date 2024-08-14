@@ -8,6 +8,7 @@ import data.remote.ChatMessagesAPI
 import data.remote.ChatMessagesAPIImpl
 import data.remote.UserAPI
 import data.remote.UserAPIImpl
+import data.repository.ChallengeRepositoryImpl
 import data.repository.ChatRepositoryImpl
 import data.repository.UserRepositoryImpl
 import data.utils.FirebaseUtils
@@ -16,8 +17,15 @@ import dev.gitlive.firebase.auth.FirebaseAuth
 import dev.gitlive.firebase.auth.auth
 import dev.gitlive.firebase.database.FirebaseDatabase
 import dev.gitlive.firebase.database.database
-import domain.ChatRepository
-import domain.UserRepository
+import domain.repository.ChallengeRepository
+import domain.repository.ChatRepository
+import domain.repository.UserRepository
+import domain.usecase.AddNewStreakPointsUseCase
+import domain.usecase.AddNewStreakPointsUseCaseImpl
+import domain.usecase.AddSendMessagePointsUseCase
+import domain.usecase.AddSendMessagePointsUseCaseImpl
+import domain.usecase.ChallengeUseCase
+import domain.usecase.ChallengeUseCaseImpl
 import org.koin.core.KoinApplication
 import org.koin.core.parameter.ParametersDefinition
 import org.koin.core.qualifier.Qualifier
@@ -47,12 +55,16 @@ fun dataModule() = module {
 fun domainModule() = module {
     single<ChatRepository> { ChatRepositoryImpl(get(), get(), get(), get()) }
     single<UserRepository> { UserRepositoryImpl(get(), get()) }
+    single<ChallengeRepository> { ChallengeRepositoryImpl(get()) }
+    single<AddNewStreakPointsUseCase> { AddNewStreakPointsUseCaseImpl(get()) }
+    single<AddSendMessagePointsUseCase> { AddSendMessagePointsUseCaseImpl(get(), get()) }
+    single<ChallengeUseCase> { ChallengeUseCaseImpl(get(), get()) }
 }
 
 fun presentationModule() = module {
-    single { BubbleTopAppBarScreenModel(get(), get()) }
-    single { BubbleTabScreenModel(get(), get(), get(), get(), get()) }
-    single { ProfileTabScreenModel(get(), get(), get()) }
+    single { BubbleTopAppBarScreenModel(get(), get(), get()) }
+    single { BubbleTabScreenModel(get(), get(), get(), get(), get(), get(), get()) }
+    single { ProfileTabScreenModel(get(), get(), get(), get()) }
 }
 
 fun appModules() = listOf(

@@ -62,3 +62,5 @@ server/build/
 
 # Shared
 shared/build/
+
+rootkey.csv

@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.mapNotNull
 interface ChallengesAPI {
     suspend fun getChallenges(): Result<Flow<List<DataChallenge>>>
     suspend fun getChallenge(id: Int): Result<Flow<DataChallenge>>
-    suspend fun saveChallenge(dataChallenge: DataChallenge): Result<Unit>
+    suspend fun saveChallenge(dataChallenge: DataChallenge): Result<DataChallenge>
     suspend fun deleteChallenge(id: Int): Result<Unit>
 
     companion object {
@@ -23,7 +23,7 @@ interface ChallengesAPI {
                 TODO("getChallenge on ChallengeAPI is not yet implemented")
             }
 
-            override suspend fun saveChallenge(dataChallenge: DataChallenge): Result<Unit> {
+            override suspend fun saveChallenge(dataChallenge: DataChallenge): Result<DataChallenge> {
                 TODO("saveChallenge on ChallengeAPI is not yet implemented")
             }
 
@@ -51,9 +51,10 @@ class ChallengesAPIImpl(
             ?: emptyFlow()
     }
 
-    override suspend fun saveChallenge(dataChallenge: DataChallenge): Result<Unit> = runCatching {
+    override suspend fun saveChallenge(dataChallenge: DataChallenge): Result<DataChallenge> = runCatching {
         challengeChild(dataChallenge.id)
             ?.setValue(dataChallenge)
+        dataChallenge
     }
 
     override suspend fun deleteChallenge(id: Int): Result<Unit> = runCatching {

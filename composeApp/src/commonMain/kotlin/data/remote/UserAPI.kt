@@ -1,11 +1,10 @@
 package data.remote
 
+import data.remote.model.DataPointsSubject
 import data.remote.model.DataUser
 import data.utils.FirebaseUtils
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.flow.lastOrNull
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 
 interface UserAPI {
@@ -13,6 +12,7 @@ interface UserAPI {
     suspend fun getUser(): Result<DataUser>
     suspend fun getUserAsFlow(): Result<Flow<DataUser>>
     suspend fun updateStreak(streak: MutableList<String>)
+    suspend fun addPoints(pointsSubjects: List<DataPointsSubject>): Result<Unit>
 }
 
 class UserAPIImpl(
@@ -50,5 +50,17 @@ class UserAPIImpl(
         child
             ?.child("streak")
             ?.setValue(streak)
+    }
+
+    override suspend fun addPoints(pointsSubjects: List<DataPointsSubject>) = runCatching {
+        firebaseUtils
+            .getCurrentUserChild()
+            ?.run {
+                child("pointsSubjects")
+                    .setValue(pointsSubjects)
+                child("points")
+                    .setValue(pointsSubjects.sumOf { it.points })
+            }
+            ?: throw Exception("User not found")
     }
 }

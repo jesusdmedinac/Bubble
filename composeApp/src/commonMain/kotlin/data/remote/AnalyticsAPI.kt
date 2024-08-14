@@ -58,7 +58,7 @@ interface AnalyticsAPI {
 
     fun sendUpdateStreakEvent(
         user: DataUser,
-        streak: MutableList<String>
+        streak: List<String>
     ) {
         sendEvent(
             Event(

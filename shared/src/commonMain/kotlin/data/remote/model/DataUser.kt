@@ -20,4 +20,5 @@ data class DataUser(
     val challenges: DataChallenges = DataChallenges(),
     val streak: List<String> = emptyList(),
     val points: Int = 0,
+    val pointsSubjects: List<DataPointsSubject> = emptyList(),
 )

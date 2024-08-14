@@ -1,11 +1,11 @@
 package data.repository
 
+import data.mapper.toData
 import data.mapper.toDomain
-import data.remote.AnalyticsAPI
 import data.remote.AuthAPI
 import data.remote.UserAPI
-import data.remote.model.DataUser
-import domain.UserRepository
+import domain.model.PointsSubject
+import domain.repository.UserRepository
 import domain.model.User
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -31,4 +31,16 @@ class UserRepositoryImpl(
 
     override suspend fun updateStreak(streak: MutableList<String>) = userAPI
         .updateStreak(streak)
+
+    override suspend fun updatePoints(pointsSubject: PointsSubject): Result<Unit> =
+        userAPI
+            .getUser()
+            .getOrNull()
+            ?.pointsSubjects
+            ?.let { pointsSubjects ->
+                (pointsSubjects.toSet() + pointsSubject.toData())
+                    .toList()
+                    .let { userAPI.addPoints(it) }
+            }
+            ?: Result.failure(Exception("User not found"))
 }
