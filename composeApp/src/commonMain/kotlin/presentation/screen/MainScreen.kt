@@ -35,7 +35,9 @@ object MainScreen : Screen {
         TabNavigator(BubbleTab) { tabNavigator: TabNavigator ->
             Scaffold(
                 topBar = {
-                    BubbleTopAppBar()
+                    if (tabNavigator.current != ProfileTab) {
+                        BubbleTopAppBar()
+                    }
                 },
                 bottomBar = {
                     NavigationBar {

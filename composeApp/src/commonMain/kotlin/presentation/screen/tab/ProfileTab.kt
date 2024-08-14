@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -61,6 +62,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import bubble.composeapp.generated.resources.Res
 import bubble.composeapp.generated.resources.ic_chat_bubble
+import bubble.composeapp.generated.resources.ic_streak
 import bubble.composeapp.generated.resources.ic_thumb_down
 import bubble.composeapp.generated.resources.tab_title_profile
 import cafe.adriel.voyager.koin.koinNavigatorScreenModel
@@ -113,6 +115,76 @@ object ProfileTab : Tab {
             modifier = Modifier
                 .fillMaxWidth()
         ) {
+            item {
+                Column {
+                    Text(
+                        "Resumen",
+                        style = MaterialTheme.typography.titleLarge,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+                    )
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp, vertical = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Card(
+                            modifier = Modifier
+                                .weight(1f)
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .padding(8.dp)
+                            ) {
+                                Icon(
+                                    painterResource(Res.drawable.ic_chat_bubble),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Column {
+                                    Text(
+                                        state.user.points.toString(),
+                                        style = MaterialTheme.typography.bodyLarge,
+                                    )
+                                    Text(
+                                        "Burbujas",
+                                        style = MaterialTheme.typography.bodyLarge,
+                                    )
+                                }
+                            }
+                        }
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Card(
+                            modifier = Modifier
+                                .weight(1f)
+                        ) {
+                            Row(
+                                modifier = Modifier
+                                    .padding(8.dp)
+                            ) {
+                                Icon(
+                                    painterResource(Res.drawable.ic_streak),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Column {
+                                    Text(
+                                        state.user.streak.size.toString(),
+                                        style = MaterialTheme.typography.bodyLarge,
+                                    )
+                                    Text(
+                                        "Días de racha",
+                                        style = MaterialTheme.typography.bodyLarge,
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
             if (state.isUserLoggedIn) {
                 item {
                     UserProfileCard()
@@ -355,9 +427,8 @@ object ProfileTab : Tab {
         Column {
             Text(
                 text = "Tiempo en pantalla",
-                style = MaterialTheme.typography.titleSmall,
-                modifier = Modifier
-                    .padding(horizontal = 16.dp, vertical = 4.dp)
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
             )
             Card(
                 modifier = Modifier

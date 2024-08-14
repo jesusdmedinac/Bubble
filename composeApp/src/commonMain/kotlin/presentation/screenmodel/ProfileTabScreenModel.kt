@@ -8,8 +8,10 @@ import data.mapper.toData
 import data.remote.AnalyticsAPI
 import data.startOfWeekInMillis
 import domain.repository.ChallengeRepository
+import domain.repository.UserRepository
 import domain.usecase.ChallengeUseCase
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
@@ -28,6 +30,7 @@ import presentation.model.ChallengeStatus
 import presentation.model.UIChallenge
 import presentation.model.UIDailyUsageStats
 import presentation.model.UIUsageStats
+import presentation.model.UIUser
 import kotlin.math.max
 
 class ProfileTabScreenModel(
@@ -35,6 +38,7 @@ class ProfileTabScreenModel(
     private val challengeRepository: ChallengeRepository,
     private val analyticsAPI: AnalyticsAPI,
     private val challengeUseCase: ChallengeUseCase,
+    private val userRepository: UserRepository,
 ) : ScreenModel, ContainerHost<ProfileTabState, ProfileTabSideEffect> {
     override val container: Container<ProfileTabState, ProfileTabSideEffect> =
         screenModelScope.container(ProfileTabState()) {
@@ -52,8 +56,34 @@ class ProfileTabScreenModel(
                                 }
                         }
                 }
+                launch {
+                    collectUserFlow()
+                }
             }
         }
+
+    private suspend fun collectUserFlow() {
+        userRepository
+            .getUserAsFlow()
+            .onSuccess { flow ->
+                flow.collect { user ->
+                    onUserLoad(user.toUI())
+                }
+            }
+            .onFailure { exception ->
+                exception.printStackTrace()
+                delay(1000)
+                collectUserFlow()
+            }
+    }
+
+    private fun onUserLoad(user: UIUser) = intent {
+        reduce {
+            state.copy(
+                user = user
+            )
+        }
+    }
 
     fun loadUsageStats() = intent {
         val hasPermission = usageAPI.hasPermission()
@@ -166,7 +196,8 @@ data class ProfileTabState(
     val todayDate: LocalDateTime? = Clock.System.now()
         .toLocalDateTime(TimeZone.currentSystemDefault()),
     val dailyUsageStats: List<UIDailyUsageStats> = emptyList(),
-    val challenges: List<UIChallenge> = emptyList()
+    val challenges: List<UIChallenge> = emptyList(),
+    val user: UIUser = UIUser(),
 ) {
     fun averageTimeInForeground(): Long = dailyUsageStats
         .sumOf { it.usageStats.sumOf { it.totalTimeInForeground } } /
