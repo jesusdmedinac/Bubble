@@ -11,19 +11,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.koin.koinNavigatorScreenModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import presentation.screen.tab.bubble.BubbleTabActions
 import presentation.screen.tab.bubble.BubbleTabTitle
-import presentation.screenmodel.BubbleTabScreenModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BubbleTopAppBar() {
     Column {
         TopAppBar(
-            title = {},
+            title = {
+                BubbleTabTitle()
+            },
             actions = {
                 BubbleTabActions()
             },

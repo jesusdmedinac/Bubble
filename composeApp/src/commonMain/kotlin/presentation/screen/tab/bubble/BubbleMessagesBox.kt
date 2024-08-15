@@ -30,7 +30,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.koin.getNavigatorScreenModel
-import cafe.adriel.voyager.koin.koinNavigatorScreenModel
+import cafe.adriel.voyager.koin.getNavigatorScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
@@ -61,7 +61,7 @@ fun BubbleMessagesBox(
     val appNavigator = LocalAppNavigator.currentOrThrow
     val tabNavigator = LocalTabNavigator.current
     val navigator = LocalNavigator.currentOrThrow
-    val screenModel = navigator.koinNavigatorScreenModel<BubbleTabScreenModel>()
+    val screenModel = navigator.getNavigatorScreenModel<BubbleTabScreenModel>()
     val state: BubbleTabState by screenModel.container.stateFlow.collectAsState()
     val sideEffect: BubbleTabSideEffect by screenModel
         .container

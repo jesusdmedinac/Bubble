@@ -8,34 +8,42 @@ import androidx.compose.ui.graphics.Color
 enum class TrendTimeInForeground(
     val degrees: Float,
     val color: Color,
+    val label: String = "",
 ) {
     RAPIDLY_RISING(
         degrees = -90f,
         color = DarkRed,
+        label = "Incremento rápido",
     ),
     RISING(
         degrees = -60f,
         color = Red,
+        label = "Incremento",
     ),
     SLOWLY_RISING(
         degrees = -30f,
         color = Yellow,
+        label = "Incremento lento",
     ),
     STABLE(
         degrees = 0f,
-        color = Blue
+        color = Blue,
+        label = "Estable",
     ),
     SLOWLY_FALLING(
         degrees = 30f,
         color = LightBlue,
+        label = "Decremento lento",
     ),
     FALLING(
         degrees = 60f,
         color = DarkBlue,
+        label = "Decremento",
     ),
     RAPIDLY_FALLING(
         degrees = 90f,
-        color = Green
+        color = Green,
+        label = "Decremento rápido",
     ),
 }
 

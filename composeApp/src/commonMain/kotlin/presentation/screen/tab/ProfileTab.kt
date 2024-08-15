@@ -29,6 +29,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -59,7 +60,9 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import bubble.composeapp.generated.resources.Res
@@ -68,7 +71,7 @@ import bubble.composeapp.generated.resources.ic_streak
 import bubble.composeapp.generated.resources.ic_thumb_down
 import bubble.composeapp.generated.resources.ic_thumb_down_off
 import bubble.composeapp.generated.resources.tab_title_profile
-import cafe.adriel.voyager.koin.koinNavigatorScreenModel
+import cafe.adriel.voyager.koin.getNavigatorScreenModel
 import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
@@ -76,12 +79,11 @@ import cafe.adriel.voyager.navigator.tab.TabOptions
 import data.formattedDuration
 import data.today
 import di.LocalAppNavigator
+import di.LocalSendingData
 import di.LocalUsageAPI
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import presentation.model.TrendTimeInForeground
 import presentation.model.UIChallenge
 import presentation.screenmodel.ProfileTabScreenModel
 import presentation.screenmodel.ProfileTabState
@@ -109,7 +111,7 @@ object ProfileTab : Tab {
         val tabNavigator = LocalTabNavigator.current
         val appNavigator = LocalAppNavigator.currentOrThrow
         val usageAPI = LocalUsageAPI.current
-        val screenModel = appNavigator.koinNavigatorScreenModel<ProfileTabScreenModel>()
+        val screenModel = appNavigator.getNavigatorScreenModel<ProfileTabScreenModel>()
         val state by screenModel.container.stateFlow.collectAsState()
         LaunchedEffect(Unit) {
             screenModel.loadUsageStats()
@@ -121,73 +123,7 @@ object ProfileTab : Tab {
                 .fillMaxWidth()
         ) {
             item {
-                Column {
-                    Text(
-                        "Resumen",
-                        style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                    )
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp, vertical = 8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Card(
-                            modifier = Modifier
-                                .weight(1f)
-                        ) {
-                            Row(
-                                modifier = Modifier
-                                    .padding(8.dp)
-                            ) {
-                                Icon(
-                                    painterResource(Res.drawable.ic_chat_bubble),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(24.dp)
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Column {
-                                    Text(
-                                        state.user.points.toString(),
-                                        style = MaterialTheme.typography.bodyLarge,
-                                    )
-                                    Text(
-                                        "Burbujas",
-                                        style = MaterialTheme.typography.bodyLarge,
-                                    )
-                                }
-                            }
-                        }
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Card(
-                            modifier = Modifier
-                                .weight(1f)
-                        ) {
-                            Row(
-                                modifier = Modifier
-                                    .padding(8.dp)
-                            ) {
-                                Icon(
-                                    painterResource(Res.drawable.ic_streak),
-                                    contentDescription = null,
-                                    modifier = Modifier.size(24.dp)
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Column {
-                                    Text(
-                                        state.user.streak.size.toString(),
-                                        style = MaterialTheme.typography.bodyLarge,
-                                    )
-                                    Text(
-                                        "Días de racha",
-                                        style = MaterialTheme.typography.bodyLarge,
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
+                ResumeGrid(state)
             }
 
             if (state.isUserLoggedIn) {
@@ -395,6 +331,165 @@ object ProfileTab : Tab {
                             }
                         }
                     )
+                }
+            }
+        }
+    }
+
+    @Composable
+    private fun ResumeGrid(state: ProfileTabState) {
+        Column {
+            Text(
+                "Resumen",
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Card(
+                    modifier = Modifier
+                        .weight(1f)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .padding(8.dp)
+                    ) {
+                        Icon(
+                            painterResource(Res.drawable.ic_chat_bubble),
+                            contentDescription = null,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Column {
+                            Text(
+                                state.user.formattedPoints,
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.Bold,
+                            )
+                            Text(
+                                "Burbujas",
+                                style = MaterialTheme.typography.bodyLarge,
+                            )
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                Card(
+                    modifier = Modifier
+                        .weight(1f)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .padding(8.dp)
+                    ) {
+                        Icon(
+                            painterResource(Res.drawable.ic_streak),
+                            contentDescription = null,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Column {
+                            Text(
+                                state.user.formattedStreak,
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.Bold,
+                            )
+                            Text(
+                                "Días de racha",
+                                style = MaterialTheme.typography.bodyLarge,
+                            )
+                        }
+                    }
+                }
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Card(
+                    modifier = Modifier
+                        .weight(1f)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .padding(8.dp)
+                    ) {
+                        val trendTimeInForeground = state.trendTimeInForeground()
+                        val trendColorAnimation by animateColorAsState(trendTimeInForeground.color)
+                        val trendDegreesAnimation by animateFloatAsState(trendTimeInForeground.degrees)
+                        Box(
+                            modifier = Modifier
+                                .size(24.dp)
+                                .clip(CircleShape)
+                                .background(trendColorAnimation)
+                                .padding(4.dp),
+                        ) {
+                            Icon(
+                                Icons.AutoMirrored.Filled.ArrowForward,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .rotate(trendDegreesAnimation),
+                                tint = Color.White,
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Column {
+                            Text(
+                                trendTimeInForeground.label,
+                                style = MaterialTheme.typography.bodyLarge,
+                                overflow = TextOverflow.Ellipsis,
+                                maxLines = 1,
+                                fontWeight = FontWeight.Bold,
+                            )
+                            Text(
+                                "Tendencia",
+                                style = MaterialTheme.typography.bodyLarge,
+                            )
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                val sendingData = LocalSendingData.current
+                Card(
+                    modifier = Modifier
+                        .weight(1f)
+                        .clickable {
+                            sendingData.sendPlainText("""
+                                🙌 ¡Bubble está cambiando la forma en que uso mi smartphone! 📱
+                                ¡Logré acumular ${state.user.formattedPoints} burbujas 🫧! 
+                                Llevo una racha de ${state.user.formattedStreak} días consecutivos 🚀 y mi tendencia de uso es ${state.trendTimeInForeground().label.lowercase()} esta semana.
+                                Prueba Bubble: https://astro-bubble.pages.dev/
+                            """.trimIndent())
+                        }
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .padding(8.dp)
+                    ) {
+                        Icon(
+                            Icons.Default.Share,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(24.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Column {
+                            Text(
+                                "Compartir resumen",
+                                style = MaterialTheme.typography.bodyLarge,
+                                overflow = TextOverflow.Ellipsis,
+                                maxLines = 1,
+                                fontWeight = FontWeight.Bold,
+                            )
+                            Text(" ")
+                        }
+                    }
                 }
             }
         }

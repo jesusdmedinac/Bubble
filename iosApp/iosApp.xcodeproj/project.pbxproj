@@ -21,8 +21,89 @@
 		D9714FB92C40CEDF006EAD97 /* UsageAPIImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9714FB82C40CEDF006EAD97 /* UsageAPIImpl.swift */; };
 		D99B83172C2492D500CEF980 /* GenerativeAI-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D99B83162C2492D500CEF980 /* GenerativeAI-Info.plist */; };
 		D99B83192C24934C00CEF980 /* APIKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99B83182C24934C00CEF980 /* APIKey.swift */; };
-		D99B831B2C24937D00CEF980 /* ChatAIAPIImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = D99B831A2C24937D00CEF980 /* ChatAIAPIImpl.swift */; };
 		D99B831E2C24950500CEF980 /* GoogleGenerativeAI in Frameworks */ = {isa = PBXBuildFile; productRef = D99B831D2C24950500CEF980 /* GoogleGenerativeAI */; };
+		D9AD55F12C6DD4B800FC5962 /* compose-multiplatform.xml in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55842C6DD4B800FC5962 /* compose-multiplatform.xml */; };
+		D9AD55F22C6DD4B800FC5962 /* ic_awards.xml in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55852C6DD4B800FC5962 /* ic_awards.xml */; };
+		D9AD55F32C6DD4B800FC5962 /* ic_bubble_paywall.xml in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55862C6DD4B800FC5962 /* ic_bubble_paywall.xml */; };
+		D9AD55F42C6DD4B800FC5962 /* ic_chat_bubble.xml in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55872C6DD4B800FC5962 /* ic_chat_bubble.xml */; };
+		D9AD55F52C6DD4B800FC5962 /* ic_close.xml in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55882C6DD4B800FC5962 /* ic_close.xml */; };
+		D9AD55F62C6DD4B800FC5962 /* ic_help.xml in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55892C6DD4B800FC5962 /* ic_help.xml */; };
+		D9AD55F72C6DD4B800FC5962 /* ic_message_corner.xml in Resources */ = {isa = PBXBuildFile; fileRef = D9AD558A2C6DD4B800FC5962 /* ic_message_corner.xml */; };
+		D9AD55F82C6DD4B800FC5962 /* ic_message.xml in Resources */ = {isa = PBXBuildFile; fileRef = D9AD558B2C6DD4B800FC5962 /* ic_message.xml */; };
+		D9AD55F92C6DD4B800FC5962 /* ic_messages.xml in Resources */ = {isa = PBXBuildFile; fileRef = D9AD558C2C6DD4B800FC5962 /* ic_messages.xml */; };
+		D9AD55FA2C6DD4B800FC5962 /* ic_objective.xml in Resources */ = {isa = PBXBuildFile; fileRef = D9AD558D2C6DD4B800FC5962 /* ic_objective.xml */; };
+		D9AD55FB2C6DD4B800FC5962 /* ic_premium.xml in Resources */ = {isa = PBXBuildFile; fileRef = D9AD558E2C6DD4B800FC5962 /* ic_premium.xml */; };
+		D9AD55FC2C6DD4B800FC5962 /* ic_send.xml in Resources */ = {isa = PBXBuildFile; fileRef = D9AD558F2C6DD4B800FC5962 /* ic_send.xml */; };
+		D9AD55FD2C6DD4B800FC5962 /* ic_settings.xml in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55902C6DD4B800FC5962 /* ic_settings.xml */; };
+		D9AD55FE2C6DD4B800FC5962 /* ic_statistics.xml in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55912C6DD4B800FC5962 /* ic_statistics.xml */; };
+		D9AD55FF2C6DD4B800FC5962 /* ic_streak.xml in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55922C6DD4B800FC5962 /* ic_streak.xml */; };
+		D9AD56002C6DD4B800FC5962 /* ic_thumb_down_off.xml in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55932C6DD4B800FC5962 /* ic_thumb_down_off.xml */; };
+		D9AD56012C6DD4B800FC5962 /* ic_thumb_down.xml in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55942C6DD4B800FC5962 /* ic_thumb_down.xml */; };
+		D9AD56022C6DD4B800FC5962 /* strings.xml in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55962C6DD4B800FC5962 /* strings.xml */; };
+		D9AD56032C6DD4B800FC5962 /* DailyUsageStats.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55992C6DD4B800FC5962 /* DailyUsageStats.kt */; };
+		D9AD56042C6DD4B800FC5962 /* NetworkAPI.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD559A2C6DD4B800FC5962 /* NetworkAPI.kt */; };
+		D9AD56052C6DD4B800FC5962 /* SendingData.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD559B2C6DD4B800FC5962 /* SendingData.kt */; };
+		D9AD56062C6DD4B800FC5962 /* UsageAPI.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD559C2C6DD4B800FC5962 /* UsageAPI.kt */; };
+		D9AD56072C6DD4B800FC5962 /* UsageStats.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD559D2C6DD4B800FC5962 /* UsageStats.kt */; };
+		D9AD56082C6DD4B800FC5962 /* AnalyticsAPI.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD559F2C6DD4B800FC5962 /* AnalyticsAPI.kt */; };
+		D9AD56092C6DD4B800FC5962 /* AuthAPI.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55A02C6DD4B800FC5962 /* AuthAPI.kt */; };
+		D9AD560A2C6DD4B800FC5962 /* ChallengesAPI.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55A12C6DD4B800FC5962 /* ChallengesAPI.kt */; };
+		D9AD560B2C6DD4B800FC5962 /* ChatMessagesAPI.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55A22C6DD4B800FC5962 /* ChatMessagesAPI.kt */; };
+		D9AD560C2C6DD4B800FC5962 /* UserAPI.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55A32C6DD4B800FC5962 /* UserAPI.kt */; };
+		D9AD560D2C6DD4B800FC5962 /* ChallengeRepositoryImpl.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55A52C6DD4B800FC5962 /* ChallengeRepositoryImpl.kt */; };
+		D9AD560E2C6DD4B800FC5962 /* ChatRepositoryImpl.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55A62C6DD4B800FC5962 /* ChatRepositoryImpl.kt */; };
+		D9AD560F2C6DD4B800FC5962 /* UserRepositoryImpl.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55A72C6DD4B800FC5962 /* UserRepositoryImpl.kt */; };
+		D9AD56102C6DD4B800FC5962 /* FirebaseAuth.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55A92C6DD4B800FC5962 /* FirebaseAuth.kt */; };
+		D9AD56112C6DD4B800FC5962 /* UsageStatsUtils.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55AA2C6DD4B800FC5962 /* UsageStatsUtils.kt */; };
+		D9AD56122C6DD4B800FC5962 /* ChatAIAPIModule.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55AD2C6DD4B800FC5962 /* ChatAIAPIModule.kt */; };
+		D9AD56132C6DD4B800FC5962 /* ComposeKoinDI.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55AE2C6DD4B800FC5962 /* ComposeKoinDI.kt */; };
+		D9AD56142C6DD4B800FC5962 /* LocalAppProvidables.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55AF2C6DD4B800FC5962 /* LocalAppProvidables.kt */; };
+		D9AD56152C6DD4B800FC5962 /* ComposeAsyncImageNode.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55B12C6DD4B800FC5962 /* ComposeAsyncImageNode.kt */; };
+		D9AD56162C6DD4B800FC5962 /* ComposeColumn.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55B22C6DD4B800FC5962 /* ComposeColumn.kt */; };
+		D9AD56172C6DD4B800FC5962 /* ComposeLayout.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55B32C6DD4B800FC5962 /* ComposeLayout.kt */; };
+		D9AD56182C6DD4B800FC5962 /* ComposeNode.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55B42C6DD4B800FC5962 /* ComposeNode.kt */; };
+		D9AD56192C6DD4B800FC5962 /* ComposeTextNode.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55B52C6DD4B800FC5962 /* ComposeTextNode.kt */; };
+		D9AD561A2C6DD4B800FC5962 /* GenerativeUIUtils.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55B62C6DD4B800FC5962 /* GenerativeUIUtils.kt */; };
+		D9AD561B2C6DD4B800FC5962 /* NodeModifier.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55B72C6DD4B800FC5962 /* NodeModifier.kt */; };
+		D9AD561C2C6DD4B800FC5962 /* SerializableModels.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55B82C6DD4B800FC5962 /* SerializableModels.kt */; };
+		D9AD561D2C6DD4B800FC5962 /* DomainToUIMapper.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55BA2C6DD4B800FC5962 /* DomainToUIMapper.kt */; };
+		D9AD561E2C6DD4B800FC5962 /* UIToDomainMapper.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55BB2C6DD4B800FC5962 /* UIToDomainMapper.kt */; };
+		D9AD561F2C6DD4B800FC5962 /* TrendTimeInForeground.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55BD2C6DD4B800FC5962 /* TrendTimeInForeground.kt */; };
+		D9AD56202C6DD4B800FC5962 /* UIBenefit.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55BE2C6DD4B800FC5962 /* UIBenefit.kt */; };
+		D9AD56212C6DD4B800FC5962 /* UICard.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55BF2C6DD4B800FC5962 /* UICard.kt */; };
+		D9AD56222C6DD4B800FC5962 /* UIChallenge.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55C02C6DD4B800FC5962 /* UIChallenge.kt */; };
+		D9AD56232C6DD4B800FC5962 /* UIDailyUsageStats.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55C12C6DD4B800FC5962 /* UIDailyUsageStats.kt */; };
+		D9AD56242C6DD4B800FC5962 /* UIMessage.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55C22C6DD4B800FC5962 /* UIMessage.kt */; };
+		D9AD56252C6DD4B800FC5962 /* UIPaymentPlan.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55C32C6DD4B800FC5962 /* UIPaymentPlan.kt */; };
+		D9AD56262C6DD4B800FC5962 /* UIUsageStats.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55C42C6DD4B800FC5962 /* UIUsageStats.kt */; };
+		D9AD56272C6DD4B800FC5962 /* UIUser.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55C52C6DD4B800FC5962 /* UIUser.kt */; };
+		D9AD56282C6DD4B800FC5962 /* BubbleTopAppBar.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55C72C6DD4B800FC5962 /* BubbleTopAppBar.kt */; };
+		D9AD56292C6DD4B800FC5962 /* BubbleMessageCard.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55C92C6DD4B800FC5962 /* BubbleMessageCard.kt */; };
+		D9AD562A2C6DD4B800FC5962 /* BubbleMessagesBox.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55CA2C6DD4B800FC5962 /* BubbleMessagesBox.kt */; };
+		D9AD562B2C6DD4B800FC5962 /* BubblerMessageCard.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55CB2C6DD4B800FC5962 /* BubblerMessageCard.kt */; };
+		D9AD562C2C6DD4B800FC5962 /* BubbleTabActions.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55CC2C6DD4B800FC5962 /* BubbleTabActions.kt */; };
+		D9AD562D2C6DD4B800FC5962 /* BubbleTabTitle.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55CD2C6DD4B800FC5962 /* BubbleTabTitle.kt */; };
+		D9AD562E2C6DD4B800FC5962 /* BubbleTextField.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55CE2C6DD4B800FC5962 /* BubbleTextField.kt */; };
+		D9AD562F2C6DD4B800FC5962 /* ChallengesCategories.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55D02C6DD4B800FC5962 /* ChallengesCategories.kt */; };
+		D9AD56302C6DD4B800FC5962 /* DonorsShorts.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55D12C6DD4B800FC5962 /* DonorsShorts.kt */; };
+		D9AD56312C6DD4B800FC5962 /* BubbleTab.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55D32C6DD4B800FC5962 /* BubbleTab.kt */; };
+		D9AD56322C6DD4B800FC5962 /* HomeTab.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55D42C6DD4B800FC5962 /* HomeTab.kt */; };
+		D9AD56332C6DD4B800FC5962 /* ProfileTab.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55D52C6DD4B800FC5962 /* ProfileTab.kt */; };
+		D9AD56342C6DD4B800FC5962 /* CardsSection.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55D72C6DD4B800FC5962 /* CardsSection.kt */; };
+		D9AD56352C6DD4B800FC5962 /* ChallengeScreen.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55D82C6DD4B800FC5962 /* ChallengeScreen.kt */; };
+		D9AD56362C6DD4B800FC5962 /* MainScreen.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55D92C6DD4B800FC5962 /* MainScreen.kt */; };
+		D9AD56372C6DD4B800FC5962 /* PaywallScreen.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55DA2C6DD4B800FC5962 /* PaywallScreen.kt */; };
+		D9AD56382C6DD4B800FC5962 /* BubbleTabScreenModel.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55DC2C6DD4B800FC5962 /* BubbleTabScreenModel.kt */; };
+		D9AD56392C6DD4B800FC5962 /* BubbleTopAppBarScreenModel.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55DD2C6DD4B800FC5962 /* BubbleTopAppBarScreenModel.kt */; };
+		D9AD563A2C6DD4B800FC5962 /* ProfileTabScreenModel.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55DE2C6DD4B800FC5962 /* ProfileTabScreenModel.kt */; };
+		D9AD563B2C6DD4B800FC5962 /* Color.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55E02C6DD4B800FC5962 /* Color.kt */; };
+		D9AD563C2C6DD4B800FC5962 /* Theme.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55E12C6DD4B800FC5962 /* Theme.kt */; };
+		D9AD563D2C6DD4B800FC5962 /* App.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55E52C6DD4B800FC5962 /* App.kt */; };
+		D9AD563E2C6DD4B800FC5962 /* Greeting.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55E62C6DD4B800FC5962 /* Greeting.kt */; };
+		D9AD563F2C6DD4B800FC5962 /* Platform.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55E72C6DD4B800FC5962 /* Platform.kt */; };
+		D9AD56402C6DD4B800FC5962 /* ChatAIAPIModule.ios.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55EB2C6DD4B800FC5962 /* ChatAIAPIModule.ios.kt */; };
+		D9AD56412C6DD4B800FC5962 /* MainViewController.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55ED2C6DD4B800FC5962 /* MainViewController.kt */; };
+		D9AD56422C6DD4B800FC5962 /* Platform.ios.kt in Resources */ = {isa = PBXBuildFile; fileRef = D9AD55EE2C6DD4B800FC5962 /* Platform.ios.kt */; };
 		D9C0AABB2C5D3D4D00A43663 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = D9C0AABA2C5D3D4D00A43663 /* FirebaseAnalytics */; };
 		D9C0AABD2C5D3D4D00A43663 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = D9C0AABC2C5D3D4D00A43663 /* FirebaseAuth */; };
 		D9C0AABF2C5D3D4D00A43663 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = D9C0AABE2C5D3D4D00A43663 /* FirebaseCrashlytics */; };
@@ -75,7 +156,88 @@
 		D9714FB82C40CEDF006EAD97 /* UsageAPIImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsageAPIImpl.swift; sourceTree = "<group>"; };
 		D99B83162C2492D500CEF980 /* GenerativeAI-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GenerativeAI-Info.plist"; sourceTree = "<group>"; };
 		D99B83182C24934C00CEF980 /* APIKey.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIKey.swift; sourceTree = "<group>"; };
-		D99B831A2C24937D00CEF980 /* ChatAIAPIImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatAIAPIImpl.swift; sourceTree = "<group>"; };
+		D9AD55842C6DD4B800FC5962 /* compose-multiplatform.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "compose-multiplatform.xml"; sourceTree = "<group>"; };
+		D9AD55852C6DD4B800FC5962 /* ic_awards.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ic_awards.xml; sourceTree = "<group>"; };
+		D9AD55862C6DD4B800FC5962 /* ic_bubble_paywall.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ic_bubble_paywall.xml; sourceTree = "<group>"; };
+		D9AD55872C6DD4B800FC5962 /* ic_chat_bubble.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ic_chat_bubble.xml; sourceTree = "<group>"; };
+		D9AD55882C6DD4B800FC5962 /* ic_close.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ic_close.xml; sourceTree = "<group>"; };
+		D9AD55892C6DD4B800FC5962 /* ic_help.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ic_help.xml; sourceTree = "<group>"; };
+		D9AD558A2C6DD4B800FC5962 /* ic_message_corner.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ic_message_corner.xml; sourceTree = "<group>"; };
+		D9AD558B2C6DD4B800FC5962 /* ic_message.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ic_message.xml; sourceTree = "<group>"; };
+		D9AD558C2C6DD4B800FC5962 /* ic_messages.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ic_messages.xml; sourceTree = "<group>"; };
+		D9AD558D2C6DD4B800FC5962 /* ic_objective.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ic_objective.xml; sourceTree = "<group>"; };
+		D9AD558E2C6DD4B800FC5962 /* ic_premium.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ic_premium.xml; sourceTree = "<group>"; };
+		D9AD558F2C6DD4B800FC5962 /* ic_send.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ic_send.xml; sourceTree = "<group>"; };
+		D9AD55902C6DD4B800FC5962 /* ic_settings.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ic_settings.xml; sourceTree = "<group>"; };
+		D9AD55912C6DD4B800FC5962 /* ic_statistics.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ic_statistics.xml; sourceTree = "<group>"; };
+		D9AD55922C6DD4B800FC5962 /* ic_streak.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ic_streak.xml; sourceTree = "<group>"; };
+		D9AD55932C6DD4B800FC5962 /* ic_thumb_down_off.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ic_thumb_down_off.xml; sourceTree = "<group>"; };
+		D9AD55942C6DD4B800FC5962 /* ic_thumb_down.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = ic_thumb_down.xml; sourceTree = "<group>"; };
+		D9AD55962C6DD4B800FC5962 /* strings.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = strings.xml; sourceTree = "<group>"; };
+		D9AD55992C6DD4B800FC5962 /* DailyUsageStats.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DailyUsageStats.kt; sourceTree = "<group>"; };
+		D9AD559A2C6DD4B800FC5962 /* NetworkAPI.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NetworkAPI.kt; sourceTree = "<group>"; };
+		D9AD559B2C6DD4B800FC5962 /* SendingData.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SendingData.kt; sourceTree = "<group>"; };
+		D9AD559C2C6DD4B800FC5962 /* UsageAPI.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UsageAPI.kt; sourceTree = "<group>"; };
+		D9AD559D2C6DD4B800FC5962 /* UsageStats.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UsageStats.kt; sourceTree = "<group>"; };
+		D9AD559F2C6DD4B800FC5962 /* AnalyticsAPI.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AnalyticsAPI.kt; sourceTree = "<group>"; };
+		D9AD55A02C6DD4B800FC5962 /* AuthAPI.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = AuthAPI.kt; sourceTree = "<group>"; };
+		D9AD55A12C6DD4B800FC5962 /* ChallengesAPI.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ChallengesAPI.kt; sourceTree = "<group>"; };
+		D9AD55A22C6DD4B800FC5962 /* ChatMessagesAPI.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ChatMessagesAPI.kt; sourceTree = "<group>"; };
+		D9AD55A32C6DD4B800FC5962 /* UserAPI.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UserAPI.kt; sourceTree = "<group>"; };
+		D9AD55A52C6DD4B800FC5962 /* ChallengeRepositoryImpl.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ChallengeRepositoryImpl.kt; sourceTree = "<group>"; };
+		D9AD55A62C6DD4B800FC5962 /* ChatRepositoryImpl.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ChatRepositoryImpl.kt; sourceTree = "<group>"; };
+		D9AD55A72C6DD4B800FC5962 /* UserRepositoryImpl.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UserRepositoryImpl.kt; sourceTree = "<group>"; };
+		D9AD55A92C6DD4B800FC5962 /* FirebaseAuth.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = FirebaseAuth.kt; sourceTree = "<group>"; };
+		D9AD55AA2C6DD4B800FC5962 /* UsageStatsUtils.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UsageStatsUtils.kt; sourceTree = "<group>"; };
+		D9AD55AD2C6DD4B800FC5962 /* ChatAIAPIModule.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ChatAIAPIModule.kt; sourceTree = "<group>"; };
+		D9AD55AE2C6DD4B800FC5962 /* ComposeKoinDI.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ComposeKoinDI.kt; sourceTree = "<group>"; };
+		D9AD55AF2C6DD4B800FC5962 /* LocalAppProvidables.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LocalAppProvidables.kt; sourceTree = "<group>"; };
+		D9AD55B12C6DD4B800FC5962 /* ComposeAsyncImageNode.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ComposeAsyncImageNode.kt; sourceTree = "<group>"; };
+		D9AD55B22C6DD4B800FC5962 /* ComposeColumn.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ComposeColumn.kt; sourceTree = "<group>"; };
+		D9AD55B32C6DD4B800FC5962 /* ComposeLayout.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ComposeLayout.kt; sourceTree = "<group>"; };
+		D9AD55B42C6DD4B800FC5962 /* ComposeNode.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ComposeNode.kt; sourceTree = "<group>"; };
+		D9AD55B52C6DD4B800FC5962 /* ComposeTextNode.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ComposeTextNode.kt; sourceTree = "<group>"; };
+		D9AD55B62C6DD4B800FC5962 /* GenerativeUIUtils.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GenerativeUIUtils.kt; sourceTree = "<group>"; };
+		D9AD55B72C6DD4B800FC5962 /* NodeModifier.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NodeModifier.kt; sourceTree = "<group>"; };
+		D9AD55B82C6DD4B800FC5962 /* SerializableModels.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SerializableModels.kt; sourceTree = "<group>"; };
+		D9AD55BA2C6DD4B800FC5962 /* DomainToUIMapper.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DomainToUIMapper.kt; sourceTree = "<group>"; };
+		D9AD55BB2C6DD4B800FC5962 /* UIToDomainMapper.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UIToDomainMapper.kt; sourceTree = "<group>"; };
+		D9AD55BD2C6DD4B800FC5962 /* TrendTimeInForeground.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TrendTimeInForeground.kt; sourceTree = "<group>"; };
+		D9AD55BE2C6DD4B800FC5962 /* UIBenefit.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UIBenefit.kt; sourceTree = "<group>"; };
+		D9AD55BF2C6DD4B800FC5962 /* UICard.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UICard.kt; sourceTree = "<group>"; };
+		D9AD55C02C6DD4B800FC5962 /* UIChallenge.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UIChallenge.kt; sourceTree = "<group>"; };
+		D9AD55C12C6DD4B800FC5962 /* UIDailyUsageStats.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UIDailyUsageStats.kt; sourceTree = "<group>"; };
+		D9AD55C22C6DD4B800FC5962 /* UIMessage.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UIMessage.kt; sourceTree = "<group>"; };
+		D9AD55C32C6DD4B800FC5962 /* UIPaymentPlan.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UIPaymentPlan.kt; sourceTree = "<group>"; };
+		D9AD55C42C6DD4B800FC5962 /* UIUsageStats.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UIUsageStats.kt; sourceTree = "<group>"; };
+		D9AD55C52C6DD4B800FC5962 /* UIUser.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = UIUser.kt; sourceTree = "<group>"; };
+		D9AD55C72C6DD4B800FC5962 /* BubbleTopAppBar.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BubbleTopAppBar.kt; sourceTree = "<group>"; };
+		D9AD55C92C6DD4B800FC5962 /* BubbleMessageCard.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BubbleMessageCard.kt; sourceTree = "<group>"; };
+		D9AD55CA2C6DD4B800FC5962 /* BubbleMessagesBox.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BubbleMessagesBox.kt; sourceTree = "<group>"; };
+		D9AD55CB2C6DD4B800FC5962 /* BubblerMessageCard.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BubblerMessageCard.kt; sourceTree = "<group>"; };
+		D9AD55CC2C6DD4B800FC5962 /* BubbleTabActions.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BubbleTabActions.kt; sourceTree = "<group>"; };
+		D9AD55CD2C6DD4B800FC5962 /* BubbleTabTitle.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BubbleTabTitle.kt; sourceTree = "<group>"; };
+		D9AD55CE2C6DD4B800FC5962 /* BubbleTextField.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BubbleTextField.kt; sourceTree = "<group>"; };
+		D9AD55D02C6DD4B800FC5962 /* ChallengesCategories.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ChallengesCategories.kt; sourceTree = "<group>"; };
+		D9AD55D12C6DD4B800FC5962 /* DonorsShorts.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DonorsShorts.kt; sourceTree = "<group>"; };
+		D9AD55D32C6DD4B800FC5962 /* BubbleTab.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BubbleTab.kt; sourceTree = "<group>"; };
+		D9AD55D42C6DD4B800FC5962 /* HomeTab.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = HomeTab.kt; sourceTree = "<group>"; };
+		D9AD55D52C6DD4B800FC5962 /* ProfileTab.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ProfileTab.kt; sourceTree = "<group>"; };
+		D9AD55D72C6DD4B800FC5962 /* CardsSection.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = CardsSection.kt; sourceTree = "<group>"; };
+		D9AD55D82C6DD4B800FC5962 /* ChallengeScreen.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ChallengeScreen.kt; sourceTree = "<group>"; };
+		D9AD55D92C6DD4B800FC5962 /* MainScreen.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MainScreen.kt; sourceTree = "<group>"; };
+		D9AD55DA2C6DD4B800FC5962 /* PaywallScreen.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PaywallScreen.kt; sourceTree = "<group>"; };
+		D9AD55DC2C6DD4B800FC5962 /* BubbleTabScreenModel.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BubbleTabScreenModel.kt; sourceTree = "<group>"; };
+		D9AD55DD2C6DD4B800FC5962 /* BubbleTopAppBarScreenModel.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BubbleTopAppBarScreenModel.kt; sourceTree = "<group>"; };
+		D9AD55DE2C6DD4B800FC5962 /* ProfileTabScreenModel.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ProfileTabScreenModel.kt; sourceTree = "<group>"; };
+		D9AD55E02C6DD4B800FC5962 /* Color.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Color.kt; sourceTree = "<group>"; };
+		D9AD55E12C6DD4B800FC5962 /* Theme.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Theme.kt; sourceTree = "<group>"; };
+		D9AD55E52C6DD4B800FC5962 /* App.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = App.kt; sourceTree = "<group>"; };
+		D9AD55E62C6DD4B800FC5962 /* Greeting.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Greeting.kt; sourceTree = "<group>"; };
+		D9AD55E72C6DD4B800FC5962 /* Platform.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Platform.kt; sourceTree = "<group>"; };
+		D9AD55EB2C6DD4B800FC5962 /* ChatAIAPIModule.ios.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ChatAIAPIModule.ios.kt; sourceTree = "<group>"; };
+		D9AD55ED2C6DD4B800FC5962 /* MainViewController.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MainViewController.kt; sourceTree = "<group>"; };
+		D9AD55EE2C6DD4B800FC5962 /* Platform.ios.kt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Platform.ios.kt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -120,6 +282,7 @@
 		7555FF72242A565900829871 = {
 			isa = PBXGroup;
 			children = (
+				D9AD55832C6DD48100FC5962 /* Kotlin Debug */,
 				AB1DB47929225F7C00F7AF9C /* Configuration */,
 				7555FF7D242A565900829871 /* iosApp */,
 				D97108A72C392D680054DBE0 /* ReportExtension */,
@@ -178,11 +341,317 @@
 		D9714FB52C40783C006EAD97 /* Data */ = {
 			isa = PBXGroup;
 			children = (
-				D99B831A2C24937D00CEF980 /* ChatAIAPIImpl.swift */,
 				D9714FB62C407851006EAD97 /* NetworkAPIImpl.swift */,
 				D9714FB82C40CEDF006EAD97 /* UsageAPIImpl.swift */,
 			);
 			path = Data;
+			sourceTree = "<group>";
+		};
+		D9AD55832C6DD48100FC5962 /* Kotlin Debug */ = {
+			isa = PBXGroup;
+			children = (
+				D9AD55E92C6DD4B800FC5962 /* commonMain */,
+				D9AD55F02C6DD4B800FC5962 /* iosMain */,
+			);
+			path = "Kotlin Debug";
+			sourceTree = "<group>";
+		};
+		D9AD55952C6DD4B800FC5962 /* drawable */ = {
+			isa = PBXGroup;
+			children = (
+				D9AD55842C6DD4B800FC5962 /* compose-multiplatform.xml */,
+				D9AD55852C6DD4B800FC5962 /* ic_awards.xml */,
+				D9AD55862C6DD4B800FC5962 /* ic_bubble_paywall.xml */,
+				D9AD55872C6DD4B800FC5962 /* ic_chat_bubble.xml */,
+				D9AD55882C6DD4B800FC5962 /* ic_close.xml */,
+				D9AD55892C6DD4B800FC5962 /* ic_help.xml */,
+				D9AD558A2C6DD4B800FC5962 /* ic_message_corner.xml */,
+				D9AD558B2C6DD4B800FC5962 /* ic_message.xml */,
+				D9AD558C2C6DD4B800FC5962 /* ic_messages.xml */,
+				D9AD558D2C6DD4B800FC5962 /* ic_objective.xml */,
+				D9AD558E2C6DD4B800FC5962 /* ic_premium.xml */,
+				D9AD558F2C6DD4B800FC5962 /* ic_send.xml */,
+				D9AD55902C6DD4B800FC5962 /* ic_settings.xml */,
+				D9AD55912C6DD4B800FC5962 /* ic_statistics.xml */,
+				D9AD55922C6DD4B800FC5962 /* ic_streak.xml */,
+				D9AD55932C6DD4B800FC5962 /* ic_thumb_down_off.xml */,
+				D9AD55942C6DD4B800FC5962 /* ic_thumb_down.xml */,
+			);
+			path = drawable;
+			sourceTree = "<group>";
+		};
+		D9AD55972C6DD4B800FC5962 /* values */ = {
+			isa = PBXGroup;
+			children = (
+				D9AD55962C6DD4B800FC5962 /* strings.xml */,
+			);
+			path = values;
+			sourceTree = "<group>";
+		};
+		D9AD55982C6DD4B800FC5962 /* composeResources */ = {
+			isa = PBXGroup;
+			children = (
+				D9AD55952C6DD4B800FC5962 /* drawable */,
+				D9AD55972C6DD4B800FC5962 /* values */,
+			);
+			path = composeResources;
+			sourceTree = "<group>";
+		};
+		D9AD559E2C6DD4B800FC5962 /* local */ = {
+			isa = PBXGroup;
+			children = (
+				D9AD55992C6DD4B800FC5962 /* DailyUsageStats.kt */,
+				D9AD559A2C6DD4B800FC5962 /* NetworkAPI.kt */,
+				D9AD559B2C6DD4B800FC5962 /* SendingData.kt */,
+				D9AD559C2C6DD4B800FC5962 /* UsageAPI.kt */,
+				D9AD559D2C6DD4B800FC5962 /* UsageStats.kt */,
+			);
+			path = local;
+			sourceTree = "<group>";
+		};
+		D9AD55A42C6DD4B800FC5962 /* remote */ = {
+			isa = PBXGroup;
+			children = (
+				D9AD559F2C6DD4B800FC5962 /* AnalyticsAPI.kt */,
+				D9AD55A02C6DD4B800FC5962 /* AuthAPI.kt */,
+				D9AD55A12C6DD4B800FC5962 /* ChallengesAPI.kt */,
+				D9AD55A22C6DD4B800FC5962 /* ChatMessagesAPI.kt */,
+				D9AD55A32C6DD4B800FC5962 /* UserAPI.kt */,
+			);
+			path = remote;
+			sourceTree = "<group>";
+		};
+		D9AD55A82C6DD4B800FC5962 /* repository */ = {
+			isa = PBXGroup;
+			children = (
+				D9AD55A52C6DD4B800FC5962 /* ChallengeRepositoryImpl.kt */,
+				D9AD55A62C6DD4B800FC5962 /* ChatRepositoryImpl.kt */,
+				D9AD55A72C6DD4B800FC5962 /* UserRepositoryImpl.kt */,
+			);
+			path = repository;
+			sourceTree = "<group>";
+		};
+		D9AD55AB2C6DD4B800FC5962 /* utils */ = {
+			isa = PBXGroup;
+			children = (
+				D9AD55A92C6DD4B800FC5962 /* FirebaseAuth.kt */,
+				D9AD55AA2C6DD4B800FC5962 /* UsageStatsUtils.kt */,
+			);
+			path = utils;
+			sourceTree = "<group>";
+		};
+		D9AD55AC2C6DD4B800FC5962 /* data */ = {
+			isa = PBXGroup;
+			children = (
+				D9AD559E2C6DD4B800FC5962 /* local */,
+				D9AD55A42C6DD4B800FC5962 /* remote */,
+				D9AD55A82C6DD4B800FC5962 /* repository */,
+				D9AD55AB2C6DD4B800FC5962 /* utils */,
+			);
+			path = data;
+			sourceTree = "<group>";
+		};
+		D9AD55B02C6DD4B800FC5962 /* di */ = {
+			isa = PBXGroup;
+			children = (
+				D9AD55AD2C6DD4B800FC5962 /* ChatAIAPIModule.kt */,
+				D9AD55AE2C6DD4B800FC5962 /* ComposeKoinDI.kt */,
+				D9AD55AF2C6DD4B800FC5962 /* LocalAppProvidables.kt */,
+			);
+			path = di;
+			sourceTree = "<group>";
+		};
+		D9AD55B92C6DD4B800FC5962 /* generativeui */ = {
+			isa = PBXGroup;
+			children = (
+				D9AD55B12C6DD4B800FC5962 /* ComposeAsyncImageNode.kt */,
+				D9AD55B22C6DD4B800FC5962 /* ComposeColumn.kt */,
+				D9AD55B32C6DD4B800FC5962 /* ComposeLayout.kt */,
+				D9AD55B42C6DD4B800FC5962 /* ComposeNode.kt */,
+				D9AD55B52C6DD4B800FC5962 /* ComposeTextNode.kt */,
+				D9AD55B62C6DD4B800FC5962 /* GenerativeUIUtils.kt */,
+				D9AD55B72C6DD4B800FC5962 /* NodeModifier.kt */,
+				D9AD55B82C6DD4B800FC5962 /* SerializableModels.kt */,
+			);
+			path = generativeui;
+			sourceTree = "<group>";
+		};
+		D9AD55BC2C6DD4B800FC5962 /* mapper */ = {
+			isa = PBXGroup;
+			children = (
+				D9AD55BA2C6DD4B800FC5962 /* DomainToUIMapper.kt */,
+				D9AD55BB2C6DD4B800FC5962 /* UIToDomainMapper.kt */,
+			);
+			path = mapper;
+			sourceTree = "<group>";
+		};
+		D9AD55C62C6DD4B800FC5962 /* model */ = {
+			isa = PBXGroup;
+			children = (
+				D9AD55BD2C6DD4B800FC5962 /* TrendTimeInForeground.kt */,
+				D9AD55BE2C6DD4B800FC5962 /* UIBenefit.kt */,
+				D9AD55BF2C6DD4B800FC5962 /* UICard.kt */,
+				D9AD55C02C6DD4B800FC5962 /* UIChallenge.kt */,
+				D9AD55C12C6DD4B800FC5962 /* UIDailyUsageStats.kt */,
+				D9AD55C22C6DD4B800FC5962 /* UIMessage.kt */,
+				D9AD55C32C6DD4B800FC5962 /* UIPaymentPlan.kt */,
+				D9AD55C42C6DD4B800FC5962 /* UIUsageStats.kt */,
+				D9AD55C52C6DD4B800FC5962 /* UIUser.kt */,
+			);
+			path = model;
+			sourceTree = "<group>";
+		};
+		D9AD55C82C6DD4B800FC5962 /* mainscreen */ = {
+			isa = PBXGroup;
+			children = (
+				D9AD55C72C6DD4B800FC5962 /* BubbleTopAppBar.kt */,
+			);
+			path = mainscreen;
+			sourceTree = "<group>";
+		};
+		D9AD55CF2C6DD4B800FC5962 /* bubble */ = {
+			isa = PBXGroup;
+			children = (
+				D9AD55C92C6DD4B800FC5962 /* BubbleMessageCard.kt */,
+				D9AD55CA2C6DD4B800FC5962 /* BubbleMessagesBox.kt */,
+				D9AD55CB2C6DD4B800FC5962 /* BubblerMessageCard.kt */,
+				D9AD55CC2C6DD4B800FC5962 /* BubbleTabActions.kt */,
+				D9AD55CD2C6DD4B800FC5962 /* BubbleTabTitle.kt */,
+				D9AD55CE2C6DD4B800FC5962 /* BubbleTextField.kt */,
+			);
+			path = bubble;
+			sourceTree = "<group>";
+		};
+		D9AD55D22C6DD4B800FC5962 /* home */ = {
+			isa = PBXGroup;
+			children = (
+				D9AD55D02C6DD4B800FC5962 /* ChallengesCategories.kt */,
+				D9AD55D12C6DD4B800FC5962 /* DonorsShorts.kt */,
+			);
+			path = home;
+			sourceTree = "<group>";
+		};
+		D9AD55D62C6DD4B800FC5962 /* tab */ = {
+			isa = PBXGroup;
+			children = (
+				D9AD55CF2C6DD4B800FC5962 /* bubble */,
+				D9AD55D22C6DD4B800FC5962 /* home */,
+				D9AD55D32C6DD4B800FC5962 /* BubbleTab.kt */,
+				D9AD55D42C6DD4B800FC5962 /* HomeTab.kt */,
+				D9AD55D52C6DD4B800FC5962 /* ProfileTab.kt */,
+			);
+			path = tab;
+			sourceTree = "<group>";
+		};
+		D9AD55DB2C6DD4B800FC5962 /* screen */ = {
+			isa = PBXGroup;
+			children = (
+				D9AD55C82C6DD4B800FC5962 /* mainscreen */,
+				D9AD55D62C6DD4B800FC5962 /* tab */,
+				D9AD55D72C6DD4B800FC5962 /* CardsSection.kt */,
+				D9AD55D82C6DD4B800FC5962 /* ChallengeScreen.kt */,
+				D9AD55D92C6DD4B800FC5962 /* MainScreen.kt */,
+				D9AD55DA2C6DD4B800FC5962 /* PaywallScreen.kt */,
+			);
+			path = screen;
+			sourceTree = "<group>";
+		};
+		D9AD55DF2C6DD4B800FC5962 /* screenmodel */ = {
+			isa = PBXGroup;
+			children = (
+				D9AD55DC2C6DD4B800FC5962 /* BubbleTabScreenModel.kt */,
+				D9AD55DD2C6DD4B800FC5962 /* BubbleTopAppBarScreenModel.kt */,
+				D9AD55DE2C6DD4B800FC5962 /* ProfileTabScreenModel.kt */,
+			);
+			path = screenmodel;
+			sourceTree = "<group>";
+		};
+		D9AD55E22C6DD4B800FC5962 /* theme */ = {
+			isa = PBXGroup;
+			children = (
+				D9AD55E02C6DD4B800FC5962 /* Color.kt */,
+				D9AD55E12C6DD4B800FC5962 /* Theme.kt */,
+			);
+			path = theme;
+			sourceTree = "<group>";
+		};
+		D9AD55E32C6DD4B800FC5962 /* ui */ = {
+			isa = PBXGroup;
+			children = (
+				D9AD55E22C6DD4B800FC5962 /* theme */,
+			);
+			path = ui;
+			sourceTree = "<group>";
+		};
+		D9AD55E42C6DD4B800FC5962 /* presentation */ = {
+			isa = PBXGroup;
+			children = (
+				D9AD55BC2C6DD4B800FC5962 /* mapper */,
+				D9AD55C62C6DD4B800FC5962 /* model */,
+				D9AD55DB2C6DD4B800FC5962 /* screen */,
+				D9AD55DF2C6DD4B800FC5962 /* screenmodel */,
+				D9AD55E32C6DD4B800FC5962 /* ui */,
+			);
+			path = presentation;
+			sourceTree = "<group>";
+		};
+		D9AD55E82C6DD4B800FC5962 /* kotlin */ = {
+			isa = PBXGroup;
+			children = (
+				D9AD55AC2C6DD4B800FC5962 /* data */,
+				D9AD55B02C6DD4B800FC5962 /* di */,
+				D9AD55B92C6DD4B800FC5962 /* generativeui */,
+				D9AD55E42C6DD4B800FC5962 /* presentation */,
+				D9AD55E52C6DD4B800FC5962 /* App.kt */,
+				D9AD55E62C6DD4B800FC5962 /* Greeting.kt */,
+				D9AD55E72C6DD4B800FC5962 /* Platform.kt */,
+			);
+			path = kotlin;
+			sourceTree = "<group>";
+		};
+		D9AD55E92C6DD4B800FC5962 /* commonMain */ = {
+			isa = PBXGroup;
+			children = (
+				D9AD55982C6DD4B800FC5962 /* composeResources */,
+				D9AD55E82C6DD4B800FC5962 /* kotlin */,
+			);
+			name = commonMain;
+			path = ../../composeApp/src/commonMain;
+			sourceTree = "<group>";
+		};
+		D9AD55EA2C6DD4B800FC5962 /* data */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = data;
+			sourceTree = "<group>";
+		};
+		D9AD55EC2C6DD4B800FC5962 /* di */ = {
+			isa = PBXGroup;
+			children = (
+				D9AD55EB2C6DD4B800FC5962 /* ChatAIAPIModule.ios.kt */,
+			);
+			path = di;
+			sourceTree = "<group>";
+		};
+		D9AD55EF2C6DD4B800FC5962 /* kotlin */ = {
+			isa = PBXGroup;
+			children = (
+				D9AD55EA2C6DD4B800FC5962 /* data */,
+				D9AD55EC2C6DD4B800FC5962 /* di */,
+				D9AD55ED2C6DD4B800FC5962 /* MainViewController.kt */,
+				D9AD55EE2C6DD4B800FC5962 /* Platform.ios.kt */,
+			);
+			path = kotlin;
+			sourceTree = "<group>";
+		};
+		D9AD55F02C6DD4B800FC5962 /* iosMain */ = {
+			isa = PBXGroup;
+			children = (
+				D9AD55EF2C6DD4B800FC5962 /* kotlin */,
+			);
+			name = iosMain;
+			path = ../../composeApp/src/iosMain;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -280,10 +749,92 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D9AD561A2C6DD4B800FC5962 /* GenerativeUIUtils.kt in Resources */,
+				D9AD56392C6DD4B800FC5962 /* BubbleTopAppBarScreenModel.kt in Resources */,
+				D9AD56002C6DD4B800FC5962 /* ic_thumb_down_off.xml in Resources */,
+				D9AD56012C6DD4B800FC5962 /* ic_thumb_down.xml in Resources */,
+				D9AD56082C6DD4B800FC5962 /* AnalyticsAPI.kt in Resources */,
+				D9AD56022C6DD4B800FC5962 /* strings.xml in Resources */,
+				D9AD56272C6DD4B800FC5962 /* UIUser.kt in Resources */,
+				D9AD560E2C6DD4B800FC5962 /* ChatRepositoryImpl.kt in Resources */,
+				D9AD563C2C6DD4B800FC5962 /* Theme.kt in Resources */,
+				D9AD56152C6DD4B800FC5962 /* ComposeAsyncImageNode.kt in Resources */,
+				D9AD55F62C6DD4B800FC5962 /* ic_help.xml in Resources */,
+				D9AD560D2C6DD4B800FC5962 /* ChallengeRepositoryImpl.kt in Resources */,
+				D9AD55F32C6DD4B800FC5962 /* ic_bubble_paywall.xml in Resources */,
+				D9AD560B2C6DD4B800FC5962 /* ChatMessagesAPI.kt in Resources */,
+				D9AD55F52C6DD4B800FC5962 /* ic_close.xml in Resources */,
+				D9AD56182C6DD4B800FC5962 /* ComposeNode.kt in Resources */,
+				D9AD563D2C6DD4B800FC5962 /* App.kt in Resources */,
+				D9AD56342C6DD4B800FC5962 /* CardsSection.kt in Resources */,
+				D9AD56052C6DD4B800FC5962 /* SendingData.kt in Resources */,
+				D9AD56112C6DD4B800FC5962 /* UsageStatsUtils.kt in Resources */,
+				D9AD56102C6DD4B800FC5962 /* FirebaseAuth.kt in Resources */,
+				D9AD55F12C6DD4B800FC5962 /* compose-multiplatform.xml in Resources */,
+				D9AD56072C6DD4B800FC5962 /* UsageStats.kt in Resources */,
+				D9AD55FB2C6DD4B800FC5962 /* ic_premium.xml in Resources */,
+				D9AD562C2C6DD4B800FC5962 /* BubbleTabActions.kt in Resources */,
+				D9AD55F22C6DD4B800FC5962 /* ic_awards.xml in Resources */,
+				D9AD56222C6DD4B800FC5962 /* UIChallenge.kt in Resources */,
+				D9AD55F92C6DD4B800FC5962 /* ic_messages.xml in Resources */,
+				D9AD563A2C6DD4B800FC5962 /* ProfileTabScreenModel.kt in Resources */,
+				D9AD562E2C6DD4B800FC5962 /* BubbleTextField.kt in Resources */,
+				D9AD56032C6DD4B800FC5962 /* DailyUsageStats.kt in Resources */,
+				D9AD55F82C6DD4B800FC5962 /* ic_message.xml in Resources */,
+				D9AD56422C6DD4B800FC5962 /* Platform.ios.kt in Resources */,
+				D9AD56382C6DD4B800FC5962 /* BubbleTabScreenModel.kt in Resources */,
+				D9AD563E2C6DD4B800FC5962 /* Greeting.kt in Resources */,
+				D9AD56322C6DD4B800FC5962 /* HomeTab.kt in Resources */,
+				D9AD56192C6DD4B800FC5962 /* ComposeTextNode.kt in Resources */,
+				D9AD560C2C6DD4B800FC5962 /* UserAPI.kt in Resources */,
+				D9AD56212C6DD4B800FC5962 /* UICard.kt in Resources */,
+				D9AD56282C6DD4B800FC5962 /* BubbleTopAppBar.kt in Resources */,
+				D9AD55FA2C6DD4B800FC5962 /* ic_objective.xml in Resources */,
+				D9AD56092C6DD4B800FC5962 /* AuthAPI.kt in Resources */,
+				D9AD563B2C6DD4B800FC5962 /* Color.kt in Resources */,
+				D9AD562F2C6DD4B800FC5962 /* ChallengesCategories.kt in Resources */,
+				D9AD56122C6DD4B800FC5962 /* ChatAIAPIModule.kt in Resources */,
+				D9AD562A2C6DD4B800FC5962 /* BubbleMessagesBox.kt in Resources */,
+				D9AD56262C6DD4B800FC5962 /* UIUsageStats.kt in Resources */,
 				058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */,
+				D9AD56292C6DD4B800FC5962 /* BubbleMessageCard.kt in Resources */,
+				D9AD560F2C6DD4B800FC5962 /* UserRepositoryImpl.kt in Resources */,
+				D9AD56142C6DD4B800FC5962 /* LocalAppProvidables.kt in Resources */,
+				D9AD561D2C6DD4B800FC5962 /* DomainToUIMapper.kt in Resources */,
+				D9AD562B2C6DD4B800FC5962 /* BubblerMessageCard.kt in Resources */,
+				D9AD56252C6DD4B800FC5962 /* UIPaymentPlan.kt in Resources */,
+				D9AD56202C6DD4B800FC5962 /* UIBenefit.kt in Resources */,
+				D9AD56042C6DD4B800FC5962 /* NetworkAPI.kt in Resources */,
+				D9AD55F72C6DD4B800FC5962 /* ic_message_corner.xml in Resources */,
+				D9AD56412C6DD4B800FC5962 /* MainViewController.kt in Resources */,
+				D9AD563F2C6DD4B800FC5962 /* Platform.kt in Resources */,
 				D933A8792C5ABEE300B572BA /* GoogleService-Info.plist in Resources */,
 				058557BB273AAA24004C7B11 /* Assets.xcassets in Resources */,
+				D9AD561E2C6DD4B800FC5962 /* UIToDomainMapper.kt in Resources */,
+				D9AD56332C6DD4B800FC5962 /* ProfileTab.kt in Resources */,
 				D99B83172C2492D500CEF980 /* GenerativeAI-Info.plist in Resources */,
+				D9AD55FE2C6DD4B800FC5962 /* ic_statistics.xml in Resources */,
+				D9AD561F2C6DD4B800FC5962 /* TrendTimeInForeground.kt in Resources */,
+				D9AD56172C6DD4B800FC5962 /* ComposeLayout.kt in Resources */,
+				D9AD56372C6DD4B800FC5962 /* PaywallScreen.kt in Resources */,
+				D9AD55F42C6DD4B800FC5962 /* ic_chat_bubble.xml in Resources */,
+				D9AD56162C6DD4B800FC5962 /* ComposeColumn.kt in Resources */,
+				D9AD56362C6DD4B800FC5962 /* MainScreen.kt in Resources */,
+				D9AD55FC2C6DD4B800FC5962 /* ic_send.xml in Resources */,
+				D9AD55FF2C6DD4B800FC5962 /* ic_streak.xml in Resources */,
+				D9AD55FD2C6DD4B800FC5962 /* ic_settings.xml in Resources */,
+				D9AD56062C6DD4B800FC5962 /* UsageAPI.kt in Resources */,
+				D9AD561B2C6DD4B800FC5962 /* NodeModifier.kt in Resources */,
+				D9AD56402C6DD4B800FC5962 /* ChatAIAPIModule.ios.kt in Resources */,
+				D9AD56352C6DD4B800FC5962 /* ChallengeScreen.kt in Resources */,
+				D9AD561C2C6DD4B800FC5962 /* SerializableModels.kt in Resources */,
+				D9AD56242C6DD4B800FC5962 /* UIMessage.kt in Resources */,
+				D9AD562D2C6DD4B800FC5962 /* BubbleTabTitle.kt in Resources */,
+				D9AD56302C6DD4B800FC5962 /* DonorsShorts.kt in Resources */,
+				D9AD56312C6DD4B800FC5962 /* BubbleTab.kt in Resources */,
+				D9AD56132C6DD4B800FC5962 /* ComposeKoinDI.kt in Resources */,
+				D9AD56232C6DD4B800FC5962 /* UIDailyUsageStats.kt in Resources */,
+				D9AD560A2C6DD4B800FC5962 /* ChallengesAPI.kt in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -344,7 +895,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D99B831B2C24937D00CEF980 /* ChatAIAPIImpl.swift in Sources */,
 				D9714FB92C40CEDF006EAD97 /* UsageAPIImpl.swift in Sources */,
 				D9714FB72C407851006EAD97 /* NetworkAPIImpl.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
