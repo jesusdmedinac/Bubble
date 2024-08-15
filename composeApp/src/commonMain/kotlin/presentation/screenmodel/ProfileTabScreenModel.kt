@@ -27,11 +27,13 @@ import org.orbitmvi.orbit.syntax.simple.reduce
 import presentation.mapper.toDomain
 import presentation.mapper.toUI
 import presentation.model.ChallengeStatus
+import presentation.model.TrendTimeInForeground
 import presentation.model.UIChallenge
 import presentation.model.UIDailyUsageStats
 import presentation.model.UIUsageStats
 import presentation.model.UIUser
 import kotlin.math.max
+import kotlin.math.pow
 
 class ProfileTabScreenModel(
     private val usageAPI: UsageAPI,
@@ -202,6 +204,37 @@ data class ProfileTabState(
     fun averageTimeInForeground(): Long = dailyUsageStats
         .sumOf { it.usageStats.sumOf { it.totalTimeInForeground } } /
             max(dailyUsageStats.size, 1)
+
+    /**
+     * We calculate the trend of time in foreground following next steps:
+     *
+     * 1. We define a dailyTotals on UIDailyUsageStats.
+     * 2. We calculate the difference between each dailyTotals.
+     * 3. We calculate the average difference.
+     * 4. We calculate the standard deviation.
+     * 5. We calculate the trend of time in foreground.
+     */
+    fun trendTimeInForeground(): TrendTimeInForeground {
+        // 2. Calculate the difference between each dailyTotals.
+        val dailyDifferences = dailyUsageStats
+            .map { it.dailyTotals }
+            .zipWithNext { a, b -> b - a }
+        // 3. Calculate the average difference.
+        val averageDifference = dailyDifferences.average()
+        // 4. Calculate the standard deviation.
+        val standardDeviation = dailyDifferences
+                .map { (it - averageDifference).pow(2) }.average().pow(0.5)
+        // 5. Calculate the trend of time in foreground.
+        return when {
+            averageDifference > 2 * standardDeviation -> TrendTimeInForeground.RAPIDLY_RISING
+            averageDifference > standardDeviation -> TrendTimeInForeground.RISING
+            averageDifference > 0 -> TrendTimeInForeground.SLOWLY_RISING
+            averageDifference == 0.0 -> TrendTimeInForeground.STABLE
+            averageDifference < -2 * standardDeviation -> TrendTimeInForeground.RAPIDLY_FALLING
+            averageDifference < -standardDeviation -> TrendTimeInForeground.FALLING
+            else -> TrendTimeInForeground.SLOWLY_FALLING
+        }
+    }
 
     fun formattedAverageTimeInForeground(): String = averageTimeInForeground()
         .formattedDuration(includeSeconds = false)

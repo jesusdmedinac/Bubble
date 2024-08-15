@@ -41,7 +41,7 @@ class BubbleTabScreenModel(
     private val networkAPI: NetworkAPI,
     private val analyticsAPI: AnalyticsAPI,
     private val challengeRepository: ChallengeRepository,
-    private val ChallengeUseCase: ChallengeUseCase,
+    private val challengeUseCase: ChallengeUseCase,
     private val addSendMessagePointsUseCase: AddSendMessagePointsUseCase,
 ) : ScreenModel, ContainerHost<BubbleTabState, BubbleTabSideEffect> {
     private val connectionFlow = channelFlow {
@@ -196,7 +196,7 @@ class BubbleTabScreenModel(
                 addingChallenge = true
             )
         }
-        ChallengeUseCase
+        challengeUseCase
             .accept(challenge.toDomain())
             .onSuccess { domainChallenge ->
                 analyticsAPI.sendSaveChallengeEvent(

@@ -24,7 +24,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
@@ -64,12 +66,15 @@ import bubble.composeapp.generated.resources.Res
 import bubble.composeapp.generated.resources.ic_chat_bubble
 import bubble.composeapp.generated.resources.ic_streak
 import bubble.composeapp.generated.resources.ic_thumb_down
+import bubble.composeapp.generated.resources.ic_thumb_down_off
 import bubble.composeapp.generated.resources.tab_title_profile
 import cafe.adriel.voyager.koin.koinNavigatorScreenModel
 import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
+import com.mikepenz.markdown.m2.Markdown
+import com.mikepenz.markdown.m2.markdownColor
 import data.formattedDuration
 import data.today
 import di.LocalAppNavigator
@@ -242,12 +247,11 @@ object ProfileTab : Tab {
                                 screenModel.completeChallenge(challenge)
                             },
                             colors = ButtonDefaults.textButtonColors(
-                                contentColor = MaterialTheme.colorScheme.onSecondary,
-                                containerColor = MaterialTheme.colorScheme.secondary,
+                                contentColor = MaterialTheme.colorScheme.secondary,
+                                containerColor = MaterialTheme.colorScheme.background,
                             ),
                             shape = RectangleShape,
                             modifier = Modifier
-                                .height(88.dp)
                         ) {
                             Text("Completar")
                         }
@@ -258,12 +262,11 @@ object ProfileTab : Tab {
                                 screenModel.cancelChallenge(challenge)
                             },
                             colors = ButtonDefaults.textButtonColors(
-                                contentColor = MaterialTheme.colorScheme.onError,
-                                containerColor = MaterialTheme.colorScheme.error
+                                contentColor = MaterialTheme.colorScheme.error,
+                                containerColor = MaterialTheme.colorScheme.background
                             ),
                             shape = RectangleShape,
                             modifier = Modifier
-                                .height(88.dp)
                         ) {
                             Text("Cancelar")
                         }
@@ -307,12 +310,11 @@ object ProfileTab : Tab {
                                     screenModel.acceptChallenge(challenge)
                                 },
                                 colors = ButtonDefaults.textButtonColors(
-                                    contentColor = MaterialTheme.colorScheme.onSecondary,
-                                    containerColor = MaterialTheme.colorScheme.secondary,
+                                    contentColor = MaterialTheme.colorScheme.secondary,
+                                    containerColor = MaterialTheme.colorScheme.background,
                                 ),
                                 shape = RectangleShape,
                                 modifier = Modifier
-                                    .height(88.dp)
                             ) {
                                 Column(
                                     horizontalAlignment = Alignment.CenterHorizontally
@@ -328,15 +330,14 @@ object ProfileTab : Tab {
                                     screenModel.rejectChallenge(challenge)
                                 },
                                 colors = ButtonDefaults.textButtonColors(
-                                    containerColor = MaterialTheme.colorScheme.background,
-                                    contentColor = MaterialTheme.colorScheme.error
+                                    contentColor = MaterialTheme.colorScheme.error,
+                                    containerColor = MaterialTheme.colorScheme.background
                                 ),
                                 shape = RectangleShape,
                                 modifier = Modifier
-                                    .height(88.dp)
                             ) {
                                 Icon(
-                                    painter = painterResource(Res.drawable.ic_thumb_down),
+                                    painter = painterResource(Res.drawable.ic_thumb_down_off),
                                     contentDescription = null,
                                 )
                             }
@@ -381,12 +382,11 @@ object ProfileTab : Tab {
                                     screenModel.undoRejection(challenge)
                                 },
                                 colors = ButtonDefaults.textButtonColors(
-                                    contentColor = MaterialTheme.colorScheme.background,
-                                    containerColor = MaterialTheme.colorScheme.error
+                                    contentColor = MaterialTheme.colorScheme.error,
+                                    containerColor = MaterialTheme.colorScheme.background
                                 ),
                                 shape = RectangleShape,
                                 modifier = Modifier
-                                    .height(88.dp)
                             ) {
                                 Icon(
                                     painter = painterResource(Res.drawable.ic_thumb_down),
@@ -438,14 +438,26 @@ object ProfileTab : Tab {
                 Column(
                     modifier = Modifier.padding(16.dp)
                 ) {
-                    Text(
-                        text = state.formattedTodayDate(),
-                        style = MaterialTheme.typography.titleSmall,
-                    )
-                    Text(
-                        text = state.formattedAverageTimeInForeground(),
-                        style = MaterialTheme.typography.titleLarge,
-                    )
+                    Row {
+                        Column {
+                            Text(
+                                text = state.formattedTodayDate(),
+                                style = MaterialTheme.typography.titleSmall,
+                            )
+                            Text(
+                                text = state.formattedAverageTimeInForeground(),
+                                style = MaterialTheme.typography.titleLarge,
+                            )
+                        }
+                        Spacer(modifier = Modifier.weight(1f))
+                        val trendDegreesAnimation by animateFloatAsState(state.trendTimeInForeground().degrees)
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowForward,
+                            contentDescription = null,
+                            modifier = Modifier.padding(end = 16.dp)
+                                .rotate(trendDegreesAnimation)
+                        )
+                    }
                     val pathEffect =
                         PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
                     val textMeasurer = rememberTextMeasurer()
@@ -651,8 +663,7 @@ object ProfileTab : Tab {
             onClink = {
             },
             modifier = Modifier
-                .fillMaxWidth()
-                .height(88.dp),
+                .fillMaxWidth(),
             content = {
                 ListItem(
                     headlineContent = {
