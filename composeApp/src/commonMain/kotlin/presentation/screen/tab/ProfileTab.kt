@@ -1,6 +1,7 @@
 package presentation.screen.tab
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -24,7 +25,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.KeyboardArrowUp
@@ -73,15 +73,15 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
-import com.mikepenz.markdown.m2.Markdown
-import com.mikepenz.markdown.m2.markdownColor
 import data.formattedDuration
 import data.today
 import di.LocalAppNavigator
 import di.LocalUsageAPI
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import presentation.model.TrendTimeInForeground
 import presentation.model.UIChallenge
 import presentation.screenmodel.ProfileTabScreenModel
 import presentation.screenmodel.ProfileTabState
@@ -450,13 +450,24 @@ object ProfileTab : Tab {
                             )
                         }
                         Spacer(modifier = Modifier.weight(1f))
-                        val trendDegreesAnimation by animateFloatAsState(state.trendTimeInForeground().degrees)
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowForward,
-                            contentDescription = null,
-                            modifier = Modifier.padding(end = 16.dp)
-                                .rotate(trendDegreesAnimation)
-                        )
+                        val trendTimeInForeground = state.trendTimeInForeground()
+                        val trendColorAnimation by animateColorAsState(trendTimeInForeground.color)
+                        val trendDegreesAnimation by animateFloatAsState(trendTimeInForeground.degrees)
+                        Box(
+                            modifier = Modifier
+                                .size(32.dp)
+                                .clip(CircleShape)
+                                .background(trendColorAnimation)
+                                .padding(4.dp),
+                        ) {
+                            Icon(
+                                Icons.AutoMirrored.Filled.ArrowForward,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .rotate(trendDegreesAnimation),
+                                tint = Color.White,
+                            )
+                        }
                     }
                     val pathEffect =
                         PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
