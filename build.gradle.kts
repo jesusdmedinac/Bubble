@@ -10,6 +10,8 @@ plugins {
     alias(libs.plugins.kotlinxSerialization) apply false
     id("com.google.gms.google-services") version "4.4.2" apply false
     id("com.google.firebase.crashlytics") version "3.0.2" apply false
+    id("com.github.johnrengelman.shadow") version "7.1.2" apply false
+    id("com.google.cloud.tools.appengine") version "2.4.2" apply false
 }
 
 buildscript {
