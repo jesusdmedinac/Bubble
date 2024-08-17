@@ -1,6 +1,7 @@
 package presentation.screen.tab
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -14,11 +15,7 @@ import androidx.compose.foundation.gestures.animateTo
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -28,10 +25,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -39,7 +37,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -63,12 +60,16 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.rememberTextMeasurer
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import bubble.composeapp.generated.resources.Res
 import bubble.composeapp.generated.resources.ic_chat_bubble
+import bubble.composeapp.generated.resources.ic_streak
 import bubble.composeapp.generated.resources.ic_thumb_down
+import bubble.composeapp.generated.resources.ic_thumb_down_off
 import bubble.composeapp.generated.resources.tab_title_profile
 import cafe.adriel.voyager.koin.getNavigatorScreenModel
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -78,6 +79,7 @@ import cafe.adriel.voyager.navigator.tab.TabOptions
 import data.formattedDuration
 import data.today
 import di.LocalAppNavigator
+import di.LocalSendingData
 import di.LocalUsageAPI
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
@@ -120,6 +122,10 @@ object ProfileTab : Tab {
             modifier = Modifier
                 .fillMaxWidth()
         ) {
+            item {
+                ResumeGrid(state)
+            }
+
             if (state.isUserLoggedIn) {
                 item {
                     UserProfileCard()
@@ -177,12 +183,11 @@ object ProfileTab : Tab {
                                 screenModel.completeChallenge(challenge)
                             },
                             colors = ButtonDefaults.textButtonColors(
-                                contentColor = MaterialTheme.colorScheme.onSecondary,
-                                containerColor = MaterialTheme.colorScheme.secondary,
+                                contentColor = MaterialTheme.colorScheme.secondary,
+                                containerColor = MaterialTheme.colorScheme.background,
                             ),
                             shape = RectangleShape,
                             modifier = Modifier
-                                .height(88.dp)
                         ) {
                             Text("Completar")
                         }
@@ -193,12 +198,11 @@ object ProfileTab : Tab {
                                 screenModel.cancelChallenge(challenge)
                             },
                             colors = ButtonDefaults.textButtonColors(
-                                contentColor = MaterialTheme.colorScheme.onError,
-                                containerColor = MaterialTheme.colorScheme.error
+                                contentColor = MaterialTheme.colorScheme.error,
+                                containerColor = MaterialTheme.colorScheme.background
                             ),
                             shape = RectangleShape,
                             modifier = Modifier
-                                .height(88.dp)
                         ) {
                             Text("Cancelar")
                         }
@@ -242,12 +246,11 @@ object ProfileTab : Tab {
                                     screenModel.acceptChallenge(challenge)
                                 },
                                 colors = ButtonDefaults.textButtonColors(
-                                    contentColor = MaterialTheme.colorScheme.onSecondary,
-                                    containerColor = MaterialTheme.colorScheme.secondary,
+                                    contentColor = MaterialTheme.colorScheme.secondary,
+                                    containerColor = MaterialTheme.colorScheme.background,
                                 ),
                                 shape = RectangleShape,
                                 modifier = Modifier
-                                    .height(88.dp)
                             ) {
                                 Column(
                                     horizontalAlignment = Alignment.CenterHorizontally
@@ -263,15 +266,14 @@ object ProfileTab : Tab {
                                     screenModel.rejectChallenge(challenge)
                                 },
                                 colors = ButtonDefaults.textButtonColors(
-                                    containerColor = MaterialTheme.colorScheme.background,
-                                    contentColor = MaterialTheme.colorScheme.error
+                                    contentColor = MaterialTheme.colorScheme.error,
+                                    containerColor = MaterialTheme.colorScheme.background
                                 ),
                                 shape = RectangleShape,
                                 modifier = Modifier
-                                    .height(88.dp)
                             ) {
                                 Icon(
-                                    painter = painterResource(Res.drawable.ic_thumb_down),
+                                    painter = painterResource(Res.drawable.ic_thumb_down_off),
                                     contentDescription = null,
                                 )
                             }
@@ -316,12 +318,11 @@ object ProfileTab : Tab {
                                     screenModel.undoRejection(challenge)
                                 },
                                 colors = ButtonDefaults.textButtonColors(
-                                    contentColor = MaterialTheme.colorScheme.background,
-                                    containerColor = MaterialTheme.colorScheme.error
+                                    contentColor = MaterialTheme.colorScheme.error,
+                                    containerColor = MaterialTheme.colorScheme.background
                                 ),
                                 shape = RectangleShape,
                                 modifier = Modifier
-                                    .height(88.dp)
                             ) {
                                 Icon(
                                     painter = painterResource(Res.drawable.ic_thumb_down),
@@ -330,6 +331,165 @@ object ProfileTab : Tab {
                             }
                         }
                     )
+                }
+            }
+        }
+    }
+
+    @Composable
+    private fun ResumeGrid(state: ProfileTabState) {
+        Column {
+            Text(
+                "Resumen",
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Card(
+                    modifier = Modifier
+                        .weight(1f)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .padding(8.dp)
+                    ) {
+                        Icon(
+                            painterResource(Res.drawable.ic_chat_bubble),
+                            contentDescription = null,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Column {
+                            Text(
+                                state.user.formattedPoints,
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.Bold,
+                            )
+                            Text(
+                                "Burbujas",
+                                style = MaterialTheme.typography.bodyLarge,
+                            )
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                Card(
+                    modifier = Modifier
+                        .weight(1f)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .padding(8.dp)
+                    ) {
+                        Icon(
+                            painterResource(Res.drawable.ic_streak),
+                            contentDescription = null,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Column {
+                            Text(
+                                state.user.formattedStreak,
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.Bold,
+                            )
+                            Text(
+                                "Días de racha",
+                                style = MaterialTheme.typography.bodyLarge,
+                            )
+                        }
+                    }
+                }
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Card(
+                    modifier = Modifier
+                        .weight(1f)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .padding(8.dp)
+                    ) {
+                        val trendTimeInForeground = state.trendTimeInForeground()
+                        val trendColorAnimation by animateColorAsState(trendTimeInForeground.color)
+                        val trendDegreesAnimation by animateFloatAsState(trendTimeInForeground.degrees)
+                        Box(
+                            modifier = Modifier
+                                .size(24.dp)
+                                .clip(CircleShape)
+                                .background(trendColorAnimation)
+                                .padding(4.dp),
+                        ) {
+                            Icon(
+                                Icons.AutoMirrored.Filled.ArrowForward,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .rotate(trendDegreesAnimation),
+                                tint = Color.White,
+                            )
+                        }
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Column {
+                            Text(
+                                trendTimeInForeground.label,
+                                style = MaterialTheme.typography.bodyLarge,
+                                overflow = TextOverflow.Ellipsis,
+                                maxLines = 1,
+                                fontWeight = FontWeight.Bold,
+                            )
+                            Text(
+                                "Tendencia",
+                                style = MaterialTheme.typography.bodyLarge,
+                            )
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.width(8.dp))
+                val sendingData = LocalSendingData.current
+                Card(
+                    modifier = Modifier
+                        .weight(1f)
+                        .clickable {
+                            sendingData.sendPlainText("""
+                                🙌 ¡Bubble está cambiando la forma en que uso mi smartphone! 📱
+                                ¡Logré acumular ${state.user.formattedPoints} burbujas 🫧! 
+                                Llevo una racha de ${state.user.formattedStreak} días consecutivos 🚀 y mi tendencia de uso es ${state.trendTimeInForeground().label.lowercase()} esta semana.
+                                Prueba Bubble: https://astro-bubble.pages.dev/
+                            """.trimIndent())
+                        }
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .padding(8.dp)
+                    ) {
+                        Icon(
+                            Icons.Default.Share,
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(24.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Column {
+                            Text(
+                                "Compartir resumen",
+                                style = MaterialTheme.typography.bodyLarge,
+                                overflow = TextOverflow.Ellipsis,
+                                maxLines = 1,
+                                fontWeight = FontWeight.Bold,
+                            )
+                            Text(" ")
+                        }
+                    }
                 }
             }
         }
@@ -362,9 +522,8 @@ object ProfileTab : Tab {
         Column {
             Text(
                 text = "Tiempo en pantalla",
-                style = MaterialTheme.typography.titleSmall,
-                modifier = Modifier
-                    .padding(horizontal = 16.dp, vertical = 4.dp)
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
             )
             Card(
                 modifier = Modifier
@@ -374,14 +533,37 @@ object ProfileTab : Tab {
                 Column(
                     modifier = Modifier.padding(16.dp)
                 ) {
-                    Text(
-                        text = state.formattedTodayDate(),
-                        style = MaterialTheme.typography.titleSmall,
-                    )
-                    Text(
-                        text = state.formattedAverageTimeInForeground(),
-                        style = MaterialTheme.typography.titleLarge,
-                    )
+                    Row {
+                        Column {
+                            Text(
+                                text = state.formattedTodayDate(),
+                                style = MaterialTheme.typography.titleSmall,
+                            )
+                            Text(
+                                text = state.formattedAverageTimeInForeground(),
+                                style = MaterialTheme.typography.titleLarge,
+                            )
+                        }
+                        Spacer(modifier = Modifier.weight(1f))
+                        val trendTimeInForeground = state.trendTimeInForeground()
+                        val trendColorAnimation by animateColorAsState(trendTimeInForeground.color)
+                        val trendDegreesAnimation by animateFloatAsState(trendTimeInForeground.degrees)
+                        Box(
+                            modifier = Modifier
+                                .size(32.dp)
+                                .clip(CircleShape)
+                                .background(trendColorAnimation)
+                                .padding(4.dp),
+                        ) {
+                            Icon(
+                                Icons.AutoMirrored.Filled.ArrowForward,
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .rotate(trendDegreesAnimation),
+                                tint = Color.White,
+                            )
+                        }
+                    }
                     val pathEffect =
                         PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
                     val textMeasurer = rememberTextMeasurer()
@@ -587,8 +769,7 @@ object ProfileTab : Tab {
             onClink = {
             },
             modifier = Modifier
-                .fillMaxWidth()
-                .height(88.dp),
+                .fillMaxWidth(),
             content = {
                 ListItem(
                     headlineContent = {

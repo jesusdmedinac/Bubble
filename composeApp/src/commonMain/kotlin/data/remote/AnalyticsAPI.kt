@@ -2,6 +2,7 @@ package data.remote
 
 import data.remote.model.DataChallenge
 import data.remote.model.DataMessage
+import data.remote.model.DataUser
 
 data class Param<T : Any>(
     val key: String,
@@ -55,6 +56,22 @@ interface AnalyticsAPI {
         )
     }
 
+    fun sendUpdateStreakEvent(
+        user: DataUser,
+        streak: List<String>
+    ) {
+        sendEvent(
+            Event(
+                EVENT_UPDATE_STREAK,
+                listOf(
+                    Param(PARAM_SCREEN_NAME, SCREEN_BUBBLE_TAB),
+                    Param(PARAM_USER, user.toString()),
+                    Param(PARAM_STREAK, streak.toString()),
+                )
+            )
+        )
+    }
+
     companion object {
         val Default: AnalyticsAPI = object : AnalyticsAPI {
             override fun sendEvent(event: Event) {
@@ -68,10 +85,12 @@ interface AnalyticsAPI {
         const val PARAM_STRING_LENGTH = "bb_string_length"
         const val PARAM_MESSAGE = "bb_message"
         const val PARAM_CHALLENGE = "bb_challenge"
+        const val PARAM_USER = "bb_user"
+        const val PARAM_STREAK = "bb_streak"
 
         const val EVENT_SEND_CLICK = "bb_send_click"
         const val EVENT_CHAT_RESPONSE = "bb_chat_response"
         const val EVENT_SAVE_CHALLENGE = "bb_save_challenge"
-
+        const val EVENT_UPDATE_STREAK = "bb_update_streak"
     }
 }

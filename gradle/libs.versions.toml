@@ -1,7 +1,8 @@
 [versions]
 agp = "8.2.0"
-version-code = "13"
-version-name = "0.3.0"
+kotlinxDatetime = "0.6.0"
+version-code = "14"
+version-name = "0.4.0"
 android-compileSdk = "34"
 android-minSdk = "26"
 android-targetSdk = "34"
@@ -17,7 +18,7 @@ gemini = "0.8.0"
 junit = "4.13.2"
 kotlin = "2.0.0"
 multiplatformMarkdownRendererM2 = "0.22.0"
-voyager = "1.1.0-beta02"
+voyager = "1.0.0"
 kamel = "0.9.0"
 ktor = "2.3.12"
 orbit = "8.0.0"
@@ -38,6 +39,7 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 androidx-material = { group = "com.google.android.material", name = "material", version.ref = "androidx-material" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "androidx-constraintlayout" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
+kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinxDatetime" }
 multiplatform-markdown-renderer-m2 = { module = "com.mikepenz:multiplatform-markdown-renderer-m2", version.ref = "multiplatformMarkdownRendererM2" }
 voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
 voyager-screenmodel = { module = "cafe.adriel.voyager:voyager-screenmodel", version.ref = "voyager" }

@@ -30,7 +30,7 @@ fun BubbleTopAppBar() {
                 titleContentColor = MaterialTheme.colorScheme.onSurface,
                 navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
             ),
-            modifier = Modifier.padding(8.dp)
+            modifier = Modifier.padding(8.dp),
         )
         Divider()
     }

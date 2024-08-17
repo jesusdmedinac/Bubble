@@ -6,12 +6,22 @@ import domain.model.ChallengeCategory
 import domain.model.ChallengeStatus
 import domain.model.Message
 import domain.model.Reward
+import domain.model.User
 import presentation.model.UIBubbleMessage
 import presentation.model.UIBubblerMessage
 import presentation.model.UIChallenge
 import presentation.model.UIMessage
 import presentation.model.UIMessageBody
 import presentation.model.UIReward
+import presentation.model.UIUser
+
+fun UIUser.toDomain(): User = User(
+    id = id,
+    messages = messages.map { it.toDomain() },
+    challenges = challenges.map { it.toDomain() },
+    streak = streak,
+    points = points
+)
 
 fun UIMessage.toDomain(): Message = Message(
     id = id,

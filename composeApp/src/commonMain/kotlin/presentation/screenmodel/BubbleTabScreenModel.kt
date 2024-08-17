@@ -7,13 +7,14 @@ import data.local.ConnectionState
 import data.local.HasUsagePermissionState
 import data.local.NetworkAPI
 import data.local.UsageAPI
-import data.mapper.toDomain
+import data.mapper.toData
 import data.remote.AnalyticsAPI
-import data.remote.model.DataChallengeStatus
-import data.remote.ChallengesAPI
-import domain.ChatRepository
+import domain.repository.ChatRepository
 import domain.model.Body
 import domain.model.Message
+import domain.repository.ChallengeRepository
+import domain.usecase.AddSendMessagePointsUseCase
+import domain.usecase.ChallengeUseCase
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.launch
@@ -38,8 +39,10 @@ class BubbleTabScreenModel(
     private val chatRepository: ChatRepository,
     private val usageAPI: UsageAPI,
     private val networkAPI: NetworkAPI,
-    private val challengesAPI: ChallengesAPI,
     private val analyticsAPI: AnalyticsAPI,
+    private val challengeRepository: ChallengeRepository,
+    private val challengeUseCase: ChallengeUseCase,
+    private val addSendMessagePointsUseCase: AddSendMessagePointsUseCase,
 ) : ScreenModel, ContainerHost<BubbleTabState, BubbleTabSideEffect> {
     private val connectionFlow = channelFlow {
         networkAPI.onConnectionStateChange { trySend(it) }
@@ -93,7 +96,7 @@ class BubbleTabScreenModel(
                         }
                 }
                 launch {
-                    challengesAPI
+                    challengeRepository
                         .getChallenges()
                         .onSuccess { challengesFlow ->
                             challengesFlow
@@ -104,7 +107,6 @@ class BubbleTabScreenModel(
                                         .forEach { uiMessage ->
                                             val challenge = challenges
                                                 .firstOrNull { it.id == uiMessage.body.challenge?.id }
-                                                ?.toDomain()
                                                 ?.toUI()
                                             if (challenge != null) {
                                                 val message = when (uiMessage) {
@@ -174,7 +176,7 @@ class BubbleTabScreenModel(
                 loading = true
             )
         }
-        chatRepository.sendMessage(
+        addSendMessagePointsUseCase(
             Message(
                 id = state.messages.size + 1,
                 author = "user",
@@ -194,13 +196,18 @@ class BubbleTabScreenModel(
                 addingChallenge = true
             )
         }
-        val dataChallenge = challenge.toDataChallenge()
-            .copy(status = DataChallengeStatus.ACCEPTED)
-        challengesAPI.saveChallenge(dataChallenge)
-        analyticsAPI.sendSaveChallengeEvent(
-            AnalyticsAPI.SCREEN_BUBBLE_TAB,
-            dataChallenge,
-        )
+        challengeUseCase
+            .accept(challenge.toDomain())
+            .onSuccess { domainChallenge ->
+                analyticsAPI.sendSaveChallengeEvent(
+                    AnalyticsAPI.SCREEN_BUBBLE_TAB,
+                    domainChallenge.toData(),
+                )
+            }
+            .onFailure {
+                it.printStackTrace()
+            }
+
         reduce {
             state.copy(
                 addingChallenge = false
@@ -209,12 +216,12 @@ class BubbleTabScreenModel(
     }
 
     fun rejectChallenge(challenge: UIChallenge) = intent {
-        val dataChallenge = challenge.toDataChallenge()
+        val dataChallenge = challenge
             .copy(rejected = !challenge.rejected)
-        challengesAPI.saveChallenge(dataChallenge)
+        challengeRepository.saveChallenge(dataChallenge.toDomain())
         analyticsAPI.sendSaveChallengeEvent(
             AnalyticsAPI.SCREEN_BUBBLE_TAB,
-            dataChallenge,
+            dataChallenge.toDomain().toData(),
         )
     }
 

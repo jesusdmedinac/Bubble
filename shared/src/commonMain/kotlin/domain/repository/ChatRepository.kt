@@ -1,4 +1,4 @@
-package domain
+package domain.repository
 
 import domain.model.Message
 import kotlinx.coroutines.flow.Flow

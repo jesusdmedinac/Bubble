@@ -4,12 +4,14 @@ import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import data.formattedDuration
 import data.local.UsageAPI
-import data.mapper.toDomain
+import data.mapper.toData
 import data.remote.AnalyticsAPI
-import data.remote.ChallengesAPI
-import data.remote.model.DataChallengeStatus
 import data.startOfWeekInMillis
+import domain.repository.ChallengeRepository
+import domain.repository.UserRepository
+import domain.usecase.ChallengeUseCase
 import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.LocalDateTime
@@ -22,36 +24,68 @@ import org.orbitmvi.orbit.ContainerHost
 import org.orbitmvi.orbit.container
 import org.orbitmvi.orbit.syntax.simple.intent
 import org.orbitmvi.orbit.syntax.simple.reduce
+import presentation.mapper.toDomain
 import presentation.mapper.toUI
 import presentation.model.ChallengeStatus
+import presentation.model.TrendTimeInForeground
 import presentation.model.UIChallenge
 import presentation.model.UIDailyUsageStats
 import presentation.model.UIUsageStats
+import presentation.model.UIUser
 import kotlin.math.max
+import kotlin.math.pow
 
 class ProfileTabScreenModel(
     private val usageAPI: UsageAPI,
-    private val challengesAPI: ChallengesAPI,
+    private val challengeRepository: ChallengeRepository,
     private val analyticsAPI: AnalyticsAPI,
+    private val challengeUseCase: ChallengeUseCase,
+    private val userRepository: UserRepository,
 ) : ScreenModel, ContainerHost<ProfileTabState, ProfileTabSideEffect> {
     override val container: Container<ProfileTabState, ProfileTabSideEffect> =
         screenModelScope.container(ProfileTabState()) {
             loadUsageStats()
             coroutineScope {
                 launch {
-                    challengesAPI
+                    challengeRepository
                         .getChallenges()
                         .onSuccess { challengesFlow ->
                             challengesFlow
                                 .collect { challenges ->
                                     reduce {
-                                        state.copy(challenges = challenges.map { it.toDomain().toUI() })
+                                        state.copy(challenges = challenges.map { it.toUI() })
                                     }
                                 }
                         }
                 }
+                launch {
+                    collectUserFlow()
+                }
             }
         }
+
+    private suspend fun collectUserFlow() {
+        userRepository
+            .getUserAsFlow()
+            .onSuccess { flow ->
+                flow.collect { user ->
+                    onUserLoad(user.toUI())
+                }
+            }
+            .onFailure { exception ->
+                exception.printStackTrace()
+                delay(1000)
+                collectUserFlow()
+            }
+    }
+
+    private fun onUserLoad(user: UIUser) = intent {
+        reduce {
+            state.copy(
+                user = user
+            )
+        }
+    }
 
     fun loadUsageStats() = intent {
         val hasPermission = usageAPI.hasPermission()
@@ -99,56 +133,60 @@ class ProfileTabScreenModel(
     }
 
     fun rejectChallenge(challenge: UIChallenge) = intent {
-        val dataChallenge = challenge.toDataChallenge()
+        val dataChallenge = challenge
             .copy(rejected = true)
-        challengesAPI.saveChallenge(dataChallenge)
+        challengeRepository.saveChallenge(dataChallenge.toDomain())
         analyticsAPI.sendSaveChallengeEvent(
             AnalyticsAPI.SCREEN_PROFILE_TAB,
-            dataChallenge,
+            dataChallenge.toDomain().toData(),
         )
     }
 
     fun undoRejection(challenge: UIChallenge) = intent {
-        val dataChallenge = challenge.toDataChallenge()
-            .copy(
-                rejected = false,
-                status = DataChallengeStatus.SUGGESTED
-            )
-        challengesAPI.saveChallenge(dataChallenge)
-        analyticsAPI.sendSaveChallengeEvent(
-            AnalyticsAPI.SCREEN_PROFILE_TAB,
-            dataChallenge,
-        )
+        challengeUseCase
+            .suggest(challenge.toDomain())
+            .onSuccess { domainChallenge ->
+                analyticsAPI.sendSaveChallengeEvent(
+                    AnalyticsAPI.SCREEN_PROFILE_TAB,
+                    domainChallenge.toData(),
+                )
+            }
+            .onFailure {
+                it.printStackTrace()
+            }
     }
 
     fun acceptChallenge(challenge: UIChallenge) = intent {
-        val dataChallenge = challenge.toDataChallenge()
-            .copy(status = DataChallengeStatus.ACCEPTED)
-        challengesAPI.saveChallenge(dataChallenge)
-        analyticsAPI.sendSaveChallengeEvent(
-            AnalyticsAPI.SCREEN_PROFILE_TAB,
-            dataChallenge,
-        )
+        challengeUseCase
+            .accept(challenge.toDomain())
+            .onSuccess { domainChallenge ->
+                analyticsAPI.sendSaveChallengeEvent(
+                    AnalyticsAPI.SCREEN_PROFILE_TAB,
+                    domainChallenge.toData(),
+                )
+            }
     }
 
     fun completeChallenge(challenge: UIChallenge) = intent {
-        val dataChallenge = challenge.toDataChallenge()
-            .copy(status = DataChallengeStatus.COMPLETED)
-        challengesAPI.saveChallenge(dataChallenge)
-        analyticsAPI.sendSaveChallengeEvent(
-            AnalyticsAPI.SCREEN_PROFILE_TAB,
-            dataChallenge,
-        )
+        challengeUseCase
+            .complete(challenge.toDomain())
+            .onSuccess { domainChallenge ->
+                analyticsAPI.sendSaveChallengeEvent(
+                    AnalyticsAPI.SCREEN_PROFILE_TAB,
+                    domainChallenge.toData(),
+                )
+            }
     }
 
     fun cancelChallenge(challenge: UIChallenge) = intent {
-        val dataChallenge = challenge.toDataChallenge()
-            .copy(status = DataChallengeStatus.CANCELLED)
-        challengesAPI.saveChallenge(dataChallenge)
-        analyticsAPI.sendSaveChallengeEvent(
-            AnalyticsAPI.SCREEN_PROFILE_TAB,
-            dataChallenge,
-        )
+        challengeUseCase
+            .cancel(challenge.toDomain())
+            .onSuccess { domainChallenge ->
+                analyticsAPI.sendSaveChallengeEvent(
+                    AnalyticsAPI.SCREEN_PROFILE_TAB,
+                    domainChallenge.toData(),
+                )
+            }
     }
 }
 
@@ -160,11 +198,43 @@ data class ProfileTabState(
     val todayDate: LocalDateTime? = Clock.System.now()
         .toLocalDateTime(TimeZone.currentSystemDefault()),
     val dailyUsageStats: List<UIDailyUsageStats> = emptyList(),
-    val challenges: List<UIChallenge> = emptyList()
+    val challenges: List<UIChallenge> = emptyList(),
+    val user: UIUser = UIUser(),
 ) {
     fun averageTimeInForeground(): Long = dailyUsageStats
         .sumOf { it.usageStats.sumOf { it.totalTimeInForeground } } /
             max(dailyUsageStats.size, 1)
+
+    /**
+     * We calculate the trend of time in foreground following next steps:
+     *
+     * 1. We define a dailyTotals on UIDailyUsageStats.
+     * 2. We calculate the difference between each dailyTotals.
+     * 3. We calculate the average difference.
+     * 4. We calculate the standard deviation.
+     * 5. We calculate the trend of time in foreground.
+     */
+    fun trendTimeInForeground(): TrendTimeInForeground {
+        // 2. Calculate the difference between each dailyTotals.
+        val dailyDifferences = dailyUsageStats
+            .map { it.dailyTotals }
+            .zipWithNext { a, b -> b - a }
+        // 3. Calculate the average difference.
+        val averageDifference = dailyDifferences.average()
+        // 4. Calculate the standard deviation.
+        val standardDeviation = dailyDifferences
+                .map { (it - averageDifference).pow(2) }.average().pow(0.5)
+        // 5. Calculate the trend of time in foreground.
+        return when {
+            averageDifference > 2 * standardDeviation -> TrendTimeInForeground.RAPIDLY_RISING
+            averageDifference > standardDeviation -> TrendTimeInForeground.RISING
+            averageDifference > 0 -> TrendTimeInForeground.SLOWLY_RISING
+            averageDifference == 0.0 -> TrendTimeInForeground.STABLE
+            averageDifference < -2 * standardDeviation -> TrendTimeInForeground.RAPIDLY_FALLING
+            averageDifference < -standardDeviation -> TrendTimeInForeground.FALLING
+            else -> TrendTimeInForeground.SLOWLY_FALLING
+        }
+    }
 
     fun formattedAverageTimeInForeground(): String = averageTimeInForeground()
         .formattedDuration(includeSeconds = false)

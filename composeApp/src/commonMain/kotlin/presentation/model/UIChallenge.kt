@@ -41,67 +41,6 @@ data class UIChallenge(
             """.trimIndent()
         }
 
-    fun toDataChallenge() = DataChallenge(
-        id = id,
-        title = name,
-        description = description,
-        image = image,
-        category = when (category) {
-            ChallengeCategory.TODO -> DataChallengeCategory.TODO
-            ChallengeCategory.LECTURA -> DataChallengeCategory.LECTURA
-            ChallengeCategory.AIRE_LIBRE -> DataChallengeCategory.AIRE_LIBRE
-            ChallengeCategory.ARTE -> DataChallengeCategory.ARTE
-            ChallengeCategory.EJERCICIO_Y_BIENESTAR_FISICO -> DataChallengeCategory.EJERCICIO_Y_BIENESTAR_FISICO
-            ChallengeCategory.MANUALIDADES_Y_PROYECTOS_DIY -> DataChallengeCategory.MANUALIDADES_Y_PROYECTOS_DIY
-            ChallengeCategory.COCINA_Y_COMIDA -> DataChallengeCategory.COCINA_Y_COMIDA
-            ChallengeCategory.VOLUNTARIADO_Y_COMUNIDAD -> DataChallengeCategory.VOLUNTARIADO_Y_COMUNIDAD
-            ChallengeCategory.DESARROLLO_PERSONAL_Y_APRENDIZAJE -> DataChallengeCategory.DESARROLLO_PERSONAL_Y_APRENDIZAJE
-            ChallengeCategory.SALUD_Y_BIENESTAR -> DataChallengeCategory.SALUD_Y_BIENESTAR
-            ChallengeCategory.DESAFIOS_RIDICULOS -> DataChallengeCategory.DESAFIOS_RIDICULOS
-            ChallengeCategory.MUSICA_Y_ENTRETENIMIENTO -> DataChallengeCategory.MUSICA_Y_ENTRETENIMIENTO
-        },
-        rejected = rejected,
-        status = when (status) {
-            ChallengeStatus.SUGGESTED -> DataChallengeStatus.SUGGESTED
-            ChallengeStatus.ACCEPTED -> DataChallengeStatus.ACCEPTED
-            ChallengeStatus.COMPLETED -> DataChallengeStatus.COMPLETED
-            ChallengeStatus.IN_PROGRESS -> DataChallengeStatus.IN_PROGRESS
-            ChallengeStatus.EXPIRED -> DataChallengeStatus.EXPIRED
-            ChallengeStatus.CANCELLED -> DataChallengeStatus.CANCELLED
-        }
-    )
-
-    fun toChallenge(): DataChallenge = DataChallenge(
-        id = id,
-        title = name,
-        description = description,
-        image = image,
-        rewards = rewards.map { it.toReward() },
-        category = when (category) {
-            ChallengeCategory.TODO -> DataChallengeCategory.TODO
-            ChallengeCategory.LECTURA -> DataChallengeCategory.LECTURA
-            ChallengeCategory.AIRE_LIBRE -> DataChallengeCategory.AIRE_LIBRE
-            ChallengeCategory.ARTE -> DataChallengeCategory.ARTE
-            ChallengeCategory.EJERCICIO_Y_BIENESTAR_FISICO -> DataChallengeCategory.EJERCICIO_Y_BIENESTAR_FISICO
-            ChallengeCategory.MANUALIDADES_Y_PROYECTOS_DIY -> DataChallengeCategory.MANUALIDADES_Y_PROYECTOS_DIY
-            ChallengeCategory.COCINA_Y_COMIDA -> DataChallengeCategory.COCINA_Y_COMIDA
-            ChallengeCategory.VOLUNTARIADO_Y_COMUNIDAD -> DataChallengeCategory.VOLUNTARIADO_Y_COMUNIDAD
-            ChallengeCategory.DESARROLLO_PERSONAL_Y_APRENDIZAJE -> DataChallengeCategory.DESARROLLO_PERSONAL_Y_APRENDIZAJE
-            ChallengeCategory.SALUD_Y_BIENESTAR -> DataChallengeCategory.SALUD_Y_BIENESTAR
-            ChallengeCategory.DESAFIOS_RIDICULOS -> DataChallengeCategory.DESAFIOS_RIDICULOS
-            ChallengeCategory.MUSICA_Y_ENTRETENIMIENTO -> DataChallengeCategory.MUSICA_Y_ENTRETENIMIENTO
-        },
-        rejected = rejected,
-        status = when (status) {
-            ChallengeStatus.SUGGESTED -> DataChallengeStatus.SUGGESTED
-            ChallengeStatus.ACCEPTED -> DataChallengeStatus.ACCEPTED
-            ChallengeStatus.COMPLETED -> DataChallengeStatus.COMPLETED
-            ChallengeStatus.IN_PROGRESS -> DataChallengeStatus.IN_PROGRESS
-            ChallengeStatus.EXPIRED -> DataChallengeStatus.EXPIRED
-            ChallengeStatus.CANCELLED -> DataChallengeStatus.CANCELLED
-        }
-    )
-
     val statusLabel: String
         get() = when {
             rejected -> ""
